@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "writelikeme"
+version = "0.1.0"
+description = "Personal style tuning of an open-weight LLM via LoRA SFT + on-policy DPO"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "pyyaml>=6.0",
+  "python-dotenv>=1.0",
+  "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+# Laptop: pipeline + eval harness. No CUDA.
+cpu = [
+  "scipy>=1.11",
+  "scikit-learn>=1.3",
+  "sentence-transformers>=3.0",
+  "torch>=2.2",
+  "anthropic>=0.34",
+  "google-api-python-client>=2.130",
+  "google-auth-oauthlib>=1.2",
+  "python-docx>=1.1",
+  "spacy>=3.7",
+  "jinja2>=3.1",
+  "pandas>=2.0",
+]
+# GPU box: training + generation. Install on top of a CUDA torch.
+gpu = [
+  "torch>=2.4",
+  "transformers>=4.56",
+  "peft>=0.14",
+  "trl>=0.21",
+  "accelerate>=0.34",
+  "datasets>=2.20",
+  "bitsandbytes>=0.43",
+  "sentencepiece",
+  "scikit-learn>=1.3",
+  "sentence-transformers>=3.0",
+  "jinja2>=3.1",
+]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[project.scripts]
+wlm = "wlm.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]

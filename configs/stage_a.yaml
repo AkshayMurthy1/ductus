@@ -1,0 +1,64 @@
+# Stage A — LoRA SFT on instruction-backtranslated pairs.
+# This is the recipe the plan locks in. Ablations in configs/ablations/ inherit from it via
+# `_extends: ../stage_a.yaml` and override one thing each, so every row of the ablation table
+# is a one-line diff.
+
+run_name: stage_a
+notes: "baseline recipe: all-linear LoRA r16, DoRA, NEFTune 5, 2 epochs"
+
+model:
+  name: Qwen/Qwen2.5-3B-Instruct
+  dtype: bfloat16
+  load_in_4bit: false          # 3B bf16 weights are ~6 GB; 24 GB fits this with room to spare
+  attn_implementation: sdpa
+  max_seq_len: 1024
+
+lora:
+  target_modules: all-linear   # attention (q,k,v,o) AND MLP (gate,up,down)
+  r: 16
+  lora_alpha: 32               # alpha ≈ 2r
+  lora_dropout: 0.05
+  use_dora: true               # recommended default: wins at low rank / small data
+  use_rslora: false            # turn on if you raise r above ~32
+  rank_pattern: {}             # e.g. {gate_proj: 8, up_proj: 8, down_proj: 8} if MLP leaks topics
+  alpha_pattern: {}
+  layers_to_transform: null    # null = all layers
+
+sft:
+  epochs: 2.0
+  lr: 1.5e-4
+  lr_scheduler: cosine
+  warmup_ratio: 0.05
+  per_device_batch_size: 2
+  grad_accum: 8                # effective batch 16
+  gradient_checkpointing: true
+  neftune_noise_alpha: 5.0     # helps most in exactly this small-data regime
+  loraplus_lr_ratio: 0.0       # try 4.0 as a near-free ablation
+  train_on_completions_only: true
+  raw_next_token_mix: 0.1      # keep low: highest topic-memorization risk in the recipe
+  eval_steps: 25
+  save_steps: 25
+  early_stopping_patience: 3
+  seed: 17
+
+gen:
+  temperature: 0.8
+  top_p: 0.95
+  max_new_tokens: 400
+  baseline_n_shots: 5
+
+data:
+  chunk_min_words: 60
+  chunk_max_words: 320
+  questions_per_chunk: 2
+  val_frac: 0.15
+  blind_frac: 0.15
+  split_by: document           # never 'pair' -- same-document chunks leak across the split
+  scrub_entities: true
+  seed: 17
+
+eval:
+  style_embedder: AnnaWegmann/Style-Embedding
+  av_classifier: logreg
+  fluency_max_ppl_regression: 0.15
+  informal_tag: informal

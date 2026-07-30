@@ -1,0 +1,5 @@
+_extends: ../stage_a.yaml
+run_name: a06_no_dora
+notes: "Plain LoRA. Isolates DoRA's contribution at this data scale."
+lora:
+  use_dora: false

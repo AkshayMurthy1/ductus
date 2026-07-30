@@ -1,0 +1,5 @@
+_extends: ../stage_a.yaml
+run_name: a14_no_scrubbing
+notes: "DIAGNOSTIC ONLY -- do not ship the adapter from this run. Entity scrubbing off, to quantify how much of the AV gain is content leak rather than style. Requires rebuilding the dataset with `wlm scrub --no-entities`."
+data:
+  scrub_entities: false

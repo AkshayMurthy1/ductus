@@ -1,0 +1,5 @@
+_extends: ../stage_a.yaml
+run_name: a02_mlp_only
+notes: "Mirror of a01. Expect the opposite failure: idiom without rhythm."
+lora:
+  target_modules: [gate_proj, up_proj, down_proj]

@@ -1,0 +1,23 @@
+# Never commit the corpus or anything derived from it.
+# `!data/**/` re-includes directories so the negations below can apply inside them; git will not
+# descend into an excluded directory otherwise.
+data/**
+!data/**/
+!data/**/.gitkeep
+!data/**/README.md
+runs/**
+!runs/**/
+!runs/.gitkeep
+
+# Secrets
+.env
+*credentials*.json
+token.json
+
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+*.pyc
+wandb/

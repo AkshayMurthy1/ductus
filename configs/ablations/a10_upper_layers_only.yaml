@@ -1,0 +1,5 @@
+_extends: ../stage_a.yaml
+run_name: a10_upper_layers_only
+notes: "Middle-to-upper layers carry more stylistic abstraction. Fewer params, less overfitting. Indices are for a 36-layer Qwen2.5-3B; adjust for other depths."
+lora:
+  layers_to_transform: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35]

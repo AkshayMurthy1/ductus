@@ -1,0 +1,8 @@
+_extends: ../stage_a.yaml
+run_name: a05_split_rank_low_mlp
+notes: "The plan's prescribed fix for topic leak: attention r16, MLP r8. Run this if a leakage check fails."
+lora:
+  r: 16
+  lora_alpha: 32
+  rank_pattern: {gate_proj: 8, up_proj: 8, down_proj: 8}
+  alpha_pattern: {gate_proj: 16, up_proj: 16, down_proj: 16}

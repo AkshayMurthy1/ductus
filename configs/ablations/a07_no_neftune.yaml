@@ -1,0 +1,5 @@
+_extends: ../stage_a.yaml
+run_name: a07_no_neftune
+notes: "NEFTune off. Its claimed benefit is largest in small-data SFT, so this should cost something."
+sft:
+  neftune_noise_alpha: null

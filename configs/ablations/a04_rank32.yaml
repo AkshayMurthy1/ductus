@@ -1,0 +1,7 @@
+_extends: ../stage_a.yaml
+run_name: a04_rank32
+notes: "Upper end. rsLoRA on because rank is raised. Watch for topic leak, not just val loss."
+lora:
+  r: 32
+  lora_alpha: 64
+  use_rslora: true

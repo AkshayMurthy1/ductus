@@ -1,0 +1,6 @@
+_extends: ../stage_a.yaml
+run_name: a03_rank8
+notes: "Lower capacity. On one person's corpus this often matches r16 with less overfitting."
+lora:
+  r: 8
+  lora_alpha: 16

@@ -1,0 +1,5 @@
+_extends: ../stage_a.yaml
+run_name: a12_embeddings
+notes: "Small-rank adapter on embeddings/lm_head. Only worth it for very distinctive tokens (emoji, slang, unusual punctuation). Overfits easily -- ablation, never a default."
+lora:
+  modules_to_save: [embed_tokens, lm_head]

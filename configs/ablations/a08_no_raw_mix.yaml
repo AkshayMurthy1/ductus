@@ -1,0 +1,5 @@
+_extends: ../stage_a.yaml
+run_name: a08_no_raw_mix
+notes: "Pure instruction pairs, no raw next-token modeling. Tests whether the raw mix buys cadence or only leakage."
+sft:
+  raw_next_token_mix: 0.0

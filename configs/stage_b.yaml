@@ -1,0 +1,29 @@
+_extends: ./stage_a.yaml
+
+run_name: stage_b
+notes: "on-policy DPO sharpening on top of Stage A; plain sigmoid loss first"
+
+dpo:
+  beta: 0.1
+  epochs: 1.0
+  lr: 5.0e-6                   # ~30x below Stage A; DPO on small preference sets diverges fast
+  per_device_batch_size: 1
+  grad_accum: 8
+  max_prompt_len: 512
+  max_len: 1024
+  loss_type: sigmoid           # plain DPO first. Change ONE thing at a time.
+  av_reward_filter: false      # turn on only after plain DPO gives a number you trust
+  av_margin: 0.05
+  length_match_tolerance: 0.35  # so DPO learns voice, not "write longer"
+  # "stage_a" loads a second frozen copy of the Stage-A adapter as the reference policy, so the
+  # KL term anchors to Stage A. "base" anchors to the base model instead -- cheaper, but Stage B
+  # is then free to walk away from everything Stage A learned.
+  reference_policy: stage_a
+  seed: 17
+
+gen:
+  # Sample the "rejected" side at the temperature you will actually serve at -- otherwise you
+  # are correcting a failure mode that never occurs in production.
+  temperature: 0.8
+  top_p: 0.95
+  max_new_tokens: 400

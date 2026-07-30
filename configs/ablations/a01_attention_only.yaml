@@ -1,0 +1,5 @@
+_extends: ../stage_a.yaml
+run_name: a01_attention_only
+notes: "Does the MLP matter? Attention-only should capture cadence but underfit word choice."
+lora:
+  target_modules: [q_proj, k_proj, v_proj, o_proj]

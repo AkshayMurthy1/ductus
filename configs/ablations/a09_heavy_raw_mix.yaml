@@ -1,0 +1,5 @@
+_extends: ../stage_a.yaml
+run_name: a09_heavy_raw_mix
+notes: "Deliberately over-weighted raw mix. Expect better cadence AND worse leakage -- that trade is the finding."
+sft:
+  raw_next_token_mix: 0.4

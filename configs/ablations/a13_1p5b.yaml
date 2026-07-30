@@ -1,0 +1,5 @@
+_extends: ../stage_a.yaml
+run_name: a13_1p5b
+notes: "Faster iteration model. Use this to debug the pipeline; report headline numbers on 3B."
+model:
+  name: Qwen/Qwen2.5-1.5B-Instruct

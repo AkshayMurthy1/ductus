@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_FILE_PATHS\" | grep -qE 'src/wlm/|tests/'; then cd \"$CLAUDE_PROJECT_DIR\" && python -m pytest -q 2>&1 | tail -5 && python -m ruff check src tests 2>&1 | tail -5; fi"
+          }
+        ]
+      }
+    ]
+  }
+}

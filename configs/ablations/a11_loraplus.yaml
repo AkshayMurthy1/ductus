@@ -1,0 +1,5 @@
+_extends: ../stage_a.yaml
+run_name: a11_loraplus
+notes: "LoRA+: 4x LR on the B matrices. Near-free if it helps."
+sft:
+  loraplus_lr_ratio: 4.0
