@@ -3,6 +3,7 @@ because it produces confident wrong conclusions instead of an obvious blank."""
 
 from __future__ import annotations
 
+from collections import Counter
 from pathlib import Path
 
 import pytest
@@ -86,6 +87,37 @@ def test_msttr_is_length_normalized():
     assert 0.0 < short <= 1.0
     repeated = msttr(("the cat " * 80).split())
     assert repeated < 0.5
+
+
+# The POS-trigram block only exists when the spaCy model is installed, so the tests above
+# exercise it on some machines and not others. These build the block by hand so the guarantees
+# hold either way -- an untagged trigram feature is exactly how the asymmetry survived unnoticed.
+def _with_pos(text: str, counts: dict) -> dict:
+    v = stylometry_vector(text)
+    v["pos_trigrams"] = Counter(counts)
+    return v
+
+
+def test_pos_trigram_distance_is_symmetric_on_disjoint_key_sets():
+    a = _with_pos(TERSE, {("NOUN", "VERB", "NOUN"): 10, ("DET", "NOUN", "VERB"): 5})
+    b = _with_pos(TERSE, {("ADJ", "ADJ", "NOUN"): 7, ("DET", "NOUN", "VERB"): 5})
+    assert stylometry_distance(a, b)["distributions"]["pos_trigrams"] == pytest.approx(
+        stylometry_distance(b, a)["distributions"]["pos_trigrams"], abs=1e-12
+    )
+
+
+def test_pos_trigram_distance_penalizes_trigrams_only_one_side_uses():
+    """The regression guard. Trigrams absent from the *first* argument used to be dropped and
+    renormalized away, so a generation's unfamiliar syntax cost it nothing."""
+    author = _with_pos(TERSE, {("NOUN", "VERB", "NOUN"): 10})
+    same = _with_pos(TERSE, {("NOUN", "VERB", "NOUN"): 10})
+    partly = _with_pos(TERSE, {("NOUN", "VERB", "NOUN"): 5, ("ADJ", "ADJ", "ADJ"): 5})
+    alien = _with_pos(TERSE, {("ADJ", "ADJ", "ADJ"): 10})
+
+    d = lambda x, y: stylometry_distance(x, y)["distributions"]["pos_trigrams"]  # noqa: E731
+    assert d(author, same) == pytest.approx(0.0, abs=1e-9)
+    assert d(author, alien) == pytest.approx(1.0, abs=1e-9)
+    assert 0.0 < d(author, partly) < d(author, alien)
 
 
 def test_biggest_gaps_is_sorted_and_labeled():

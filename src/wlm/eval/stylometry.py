@@ -77,7 +77,8 @@ def _tokens(text: str) -> list[str]:
     return [w.lower() for w in WORD.findall(text)]
 
 
-def _dist(counter: Counter, keys: list[str]) -> np.ndarray:
+def _dist(counter: Counter, keys: list) -> np.ndarray:
+    """Renormalized distribution of `counter` over `keys` (keys may be words or POS tuples)."""
     total = sum(counter.get(k, 0) for k in keys)
     if total == 0:
         return np.full(len(keys), 1.0 / len(keys))
@@ -170,9 +171,11 @@ def stylometry_vector(text: str) -> dict[str, Any]:
     if nlp is not None and toks:
         doc = nlp(text[:200_000])
         tags = [t.pos_ for t in doc if not t.is_space]
-        tri = Counter(zip(tags, tags[1:], tags[2:], strict=False))
-        keys = sorted(tri, key=lambda k: -tri[k])[:200]
-        out["pos_trigrams"] = {"keys": keys, "dist": _dist(tri, keys)}
+        # Keep the *full* counts, not this text's top-N. The POS tagset is ~18 tags, so the
+        # support is bounded at ~6k trigrams and usually far smaller. Truncating per-text would
+        # make the key set depend on which text you looked at first, which is how this feature
+        # was previously both asymmetric and blind to trigrams only the generation produces.
+        out["pos_trigrams"] = Counter(zip(tags, tags[1:], tags[2:], strict=False))
     return out
 
 
@@ -201,11 +204,14 @@ def stylometry_distance(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
     """Per-feature and aggregate distance between two stylometry vectors. Lower is better."""
     dists = {k: _js(a["dists"][k], b["dists"][k]) for k in a["dists"]}
     if "pos_trigrams" in a and "pos_trigrams" in b:
-        # Re-project b onto a's trigram keys so the two vectors are comparable.
-        keys = a["pos_trigrams"]["keys"]
-        bk = dict(zip(b["pos_trigrams"]["keys"], b["pos_trigrams"]["dist"], strict=False))
-        bvec = np.array([bk.get(k, 0.0) for k in keys], dtype=float)
-        dists["pos_trigrams"] = _js(a["pos_trigrams"]["dist"], bvec)
+        # Compare over the union of observed trigrams. The union is order-independent (so the
+        # distance is symmetric) and it retains trigrams present in only one side (so a
+        # generation's unfamiliar syntax is penalized rather than normalized away).
+        keys = sorted(set(a["pos_trigrams"]) | set(b["pos_trigrams"]))
+        if keys:
+            dists["pos_trigrams"] = _js(
+                _dist(a["pos_trigrams"], keys), _dist(b["pos_trigrams"], keys)
+            )
 
     scal = {}
     for k, scale in _SCALAR_SCALE.items():
