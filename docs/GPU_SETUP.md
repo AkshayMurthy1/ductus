@@ -7,7 +7,7 @@ on 1–3B is minutes to low hours. Rent by the hour; there's no reason to buy ha
 
 ```bash
 # Pick an image with CUDA 12.x + PyTorch preinstalled (RunPod's "PyTorch 2.4" template is fine).
-git clone <your-repo> writelikeme && cd writelikeme
+git clone <your-repo> ductus && cd ductus
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[gpu]"
 nvidia-smi                     # confirm the card and driver
@@ -24,14 +24,14 @@ the scrubbed, split pairs and the fitted verifier.
 
 ```bash
 # from the laptop
-rsync -av data/processed/ GPUBOX:~/writelikeme/data/processed/
-rsync -av runs/av/        GPUBOX:~/writelikeme/runs/av/
+rsync -av data/processed/ GPUBOX:~/ductus/data/processed/
+rsync -av runs/av/        GPUBOX:~/ductus/runs/av/
 ```
 
 Then pull results back:
 
 ```bash
-rsync -av GPUBOX:~/writelikeme/runs/ runs/
+rsync -av GPUBOX:~/ductus/runs/ runs/
 ```
 
 Adapters are tens of MB, so this is fast. Keep the raw corpus on your own machine — the GPU box is

@@ -343,7 +343,7 @@ def render_report(result: dict[str, Any]) -> str:
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>writelikeme — {_esc(run)}</title><style>{CSS}</style></head>
+<title>ductus — {_esc(run)}</title><style>{CSS}</style></head>
 <body><div class="viz-root">
 <button class="toggle" onclick="document.documentElement.dataset.theme =
   document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'">theme</button>

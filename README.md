@@ -1,4 +1,4 @@
-# writelikeme
+# ductus
 
 Personal style tuning of an open-weight transformer. Learns **form** (grammar, rhythm, flow,
 idiom) from one person's own writing and emits a small, reversible, deletable LoRA adapter.
@@ -26,8 +26,8 @@ Everything crosses the boundary as files under `data/` and `runs/`, so `rsync` i
 integration you need:
 
 ```bash
-rsync -av data/processed/ gpu:~/writelikeme/data/processed/     # push pairs
-rsync -av gpu:~/writelikeme/runs/ runs/                          # pull adapters + generations
+rsync -av data/processed/ gpu:~/ductus/data/processed/     # push pairs
+rsync -av gpu:~/ductus/runs/ runs/                          # pull adapters + generations
 ```
 
 ## Quickstart (laptop, no GPU needed)

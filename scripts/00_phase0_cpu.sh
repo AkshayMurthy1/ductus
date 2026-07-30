@@ -20,4 +20,4 @@ echo "  2. split summary: _doc_overlap is empty and both registers appear in val
 echo "  3. verifier AUC >= 0.75 -- and if it is above 0.97, check that your distractors are"
 echo "     register-matched rather than trivially different from your own writing"
 echo
-echo "Then: rsync -av data/processed/ runs/av/ GPUBOX:~/writelikeme/  and run scripts/01_phase1_gpu.sh"
+echo "Then: rsync -av data/processed/ runs/av/ GPUBOX:~/ductus/  and run scripts/01_phase1_gpu.sh"

@@ -5,7 +5,7 @@ session.
 
 ## What this is
 
-`writelikeme` learns one person's **writing form** (grammar, rhythm, flow, idiom) from their own
+`ductus` learns one person's **writing form** (grammar, rhythm, flow, idiom) from their own
 prose and emits a small reversible LoRA adapter on an open-weight 1–3B instruct model. It
 deliberately does **not** learn their facts. Full design: `docs/PLAN.md`.
 

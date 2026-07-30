@@ -1,4 +1,4 @@
-# Implementation Plan — "Write Like Me": Personal Style Tuning of a Transformer
+# Implementation Plan — "Ductus": Personal Style Tuning of a Transformer
 
 > The design document this repo implements. `CLAUDE.md` points here; keep them in sync. When a
 > code decision contradicts this file, one of the two is wrong — resolve it explicitly rather

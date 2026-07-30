@@ -1,4 +1,4 @@
-"""writelikeme — personal style tuning of an open-weight LLM.
+"""ductus — personal style tuning of an open-weight LLM.
 
 Learns form (grammar, rhythm, idiom) from one person's writing; not their facts.
 """
