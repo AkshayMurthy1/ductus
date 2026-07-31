@@ -40,6 +40,10 @@ cp .env.example .env          # add ANTHROPIC_API_KEY for backtranslation
 # 0. Smoke-test the whole CPU pipeline on the bundled fixture author
 make demo
 
+# 0b. Optional: build the larger development fixture (public-domain, ~256k words).
+#     See "Development corpus" below -- this is for exercising the pipeline, not a real run.
+python scripts/build_dev_corpus.py
+
 # 1. Real corpus: drop .txt/.md/.docx into data/raw/author/, or link Google Docs
 wlm ingest local  --in data/raw/author --out data/interim/docs.jsonl
 #   ... or:
@@ -98,6 +102,27 @@ src/wlm/train/    Stage-A SFT, Stage-B DPO
 docs/PROMPTS.md   phase-by-phase Claude Code prompts
 docs/ABLATIONS.md ablation table to fill in (Phase 2 deliverable)
 ```
+
+## Development corpus
+
+`data/raw/author/` and `data/raw/distractor/` may contain a **development fixture** rather than
+anyone's real writing. Check `data/raw/author/README.md` before assuming otherwise.
+
+The fixture is public-domain Project Gutenberg text, rebuilt by `scripts/build_dev_corpus.py`:
+
+| | contents |
+|---|---|
+| author | **G.K. Chesterton** — 148 documents, ~256k words, five essay collections |
+| distractor | **21 other essayists** — 420 windows, Addison through Twain, Chesterton excluded |
+
+It exists because the eval harness only means something at scale. On a 5k-word corpus the
+verifier's AUC swung 0.26 depending on whether classes were balanced; on this fixture the two
+fits agree to within 0.003 (AUC ≈ 0.92). Use it to validate changes to chunking, splitting,
+scrubbing or the AV before pointing anything at real writing.
+
+It is **not** a product, and it proves nothing about any real user. Delete it before a real run —
+`python scripts/build_dev_corpus.py --clean`. Do not mix it with a real corpus: the adapter would
+learn the average of two voices and the verifier would have no coherent positive class.
 
 ## Privacy posture
 
