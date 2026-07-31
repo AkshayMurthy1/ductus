@@ -135,16 +135,20 @@ def chunk_records(
     rows: list[dict[str, Any]] = []
     for d in docs:
         for i, c in enumerate(chunk_document(d["text"], min_words=min_words, max_words=max_words)):
-            rows.append(
-                {
-                    "chunk_id": f"{d['doc_id']}-{i:03d}",
-                    "doc_id": d["doc_id"],
-                    "source": d.get("source", ""),
-                    "register": d.get("register", "unknown"),
-                    "n_words": len(c.split()),
-                    "text": c,
-                }
-            )
+            row = {
+                "chunk_id": f"{d['doc_id']}-{i:03d}",
+                "doc_id": d["doc_id"],
+                "source": d.get("source", ""),
+                "register": d.get("register", "unknown"),
+                "chunk_index": i,
+                "n_words": len(c.split()),
+                "text": c,
+            }
+            # Carry the document's real prompt, if it has one. Policy about which chunks may use
+            # it lives in backtranslate; this layer only preserves the fact.
+            if d.get("prompt"):
+                row["prompt"] = d["prompt"]
+            rows.append(row)
     return rows
 
 

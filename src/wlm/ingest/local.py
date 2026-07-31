@@ -30,6 +30,27 @@ def doc_id(source: str, text: str) -> str:
     return hashlib.sha1(f"{source}|{len(text)}".encode()).hexdigest()[:12]
 
 
+def split_front_matter(raw: str) -> tuple[dict[str, str], str]:
+    """Pull a leading `---` block off a document.
+
+    Used to carry the *real* prompt a passage was written to answer. A generated question is a
+    guess; when the true prompt exists, it is ground truth and should be preferred. Parsed here,
+    before normalize_document, because normalization would eat the delimiters.
+    """
+    if not raw.lstrip().startswith("---"):
+        return {}, raw
+    body = raw.lstrip()
+    end = body.find("\n---", 3)
+    if end == -1:
+        return {}, raw
+    meta: dict[str, str] = {}
+    for line in body[3:end].strip().split("\n"):
+        key, sep, val = line.partition(":")
+        if sep and key.strip():
+            meta[key.strip()] = val.strip()
+    return meta, body[end + 4:].lstrip("\n")
+
+
 def ingest_local(
     in_dir: str | Path,
     *,
@@ -53,7 +74,8 @@ def ingest_local(
         if not path.is_file() or path.suffix.lower() not in SUPPORTED:
             continue
         raw = _read(path)
-        text = normalize_document(raw)
+        meta, raw_body = split_front_matter(raw)
+        text = normalize_document(raw_body)
         if not text:
             skipped.append({"source": str(path), "reason": "empty after normalize"})
             continue
@@ -64,16 +86,17 @@ def ingest_local(
         if not keep_templates and looks_like_template(text):
             skipped.append({"source": str(path), "reason": "template/too short"})
             continue
-        docs.append(
-            {
-                "doc_id": doc_id(str(path), text),
-                "source": str(path.relative_to(in_dir)),
-                "origin": "local",
-                "register": register or _guess_register(path),
-                "chars_raw": len(raw),
-                "text": text,
-            }
-        )
+        rec = {
+            "doc_id": doc_id(str(path), text),
+            "source": str(path.relative_to(in_dir)),
+            "origin": "local",
+            "register": register or _guess_register(path),
+            "chars_raw": len(raw),
+            "text": text,
+        }
+        if meta.get("prompt"):
+            rec["prompt"] = meta["prompt"]
+        docs.append(rec)
 
     if skipped:
         print(f"[ingest] skipped {len(skipped)} file(s):")

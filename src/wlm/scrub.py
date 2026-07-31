@@ -64,6 +64,68 @@ NER_LABELS = {
     "LANGUAGE": "THING",
 }
 
+# Terms that trip the NER but are load-bearing vocabulary rather than identity. Technical
+# eponyms dominate academic prose, and en_core_web_sm reads them as people: scrubbing "Euler" out
+# of "Euler-Lagrange equations" corrupts a sentence the author wrote and teaches the model that
+# its own subject matter is unspeakable. Extend via `data.never_scrub` in YAML.
+DEFAULT_NEVER_SCRUB = frozenset({
+    "euler", "lagrange", "lagrangian", "fourier", "gauss", "gaussian", "newton", "newtonian",
+    "bayes", "bayesian", "hamiltonian", "laplace", "taylor", "riemann", "hilbert", "markov",
+    "poisson", "boltzmann", "maxwell", "hessian", "jacobian", "navier", "stokes", "dirac",
+    "fermi", "noether", "hooke", "bernoulli", "kalman", "monte carlo", "black-scholes",
+    "python", "numpy", "scipy", "pytorch", "tensorflow", "matlab", "ansys", "julia", "linux",
+})
+
+_WORDCHAR = re.compile(r"[0-9A-Za-z]")
+# Only true compound joiners. En/em dashes are punctuation in this kind of prose -- treating
+# them as joiners silently suppresses real scrubs ("Kevin Esvelt—the leader of..." kept a name).
+_HYPHENS = "-‐‑"
+
+
+def _span_is_scrubbable(text: str, ent: Any, never: frozenset[str] | set[str]) -> bool:
+    """Reject entity spans that would damage a word the author actually wrote.
+
+    Three failure modes, all observed on real text with en_core_web_sm:
+
+    1. A span starting mid-word. The tokenizer splits "wasn't" into "was" + "n't" and the model
+       tags "n't" as a GPE, so a faithful replacement yields "was<PLACE>" -- a destroyed
+       contraction, and contraction rate is a feature the stylometry and verifier measure.
+    2. A span covering only part of a hyphenated compound: "Euler-Lagrange" -> "<PERSON>-Lagrange".
+       When the entity spans the whole compound ("UW-Milwaukee") it is a real name and still goes.
+    3. An all-caps PERSON, which is an acronym or a piece of software ("ANSYS"), never a name.
+    """
+    if ent.text.strip().lower() in never:
+        return False
+    if ent.label_ == "PERSON" and ent.text.isupper() and len(ent.text.strip()) > 1:
+        return False
+
+    before = text[ent.start_char - 1] if ent.start_char > 0 else ""
+    after = text[ent.end_char] if ent.end_char < len(text) else ""
+
+    # Left edge: inside a word, or trailing a hyphen/apostrophe that follows one.
+    if before and (
+        _WORDCHAR.match(before)
+        or (
+            before in _HYPHENS + "'’"
+            and ent.start_char >= 2
+            and _WORDCHAR.match(text[ent.start_char - 2])
+        )
+    ):
+        return False
+    # Right edge: inside a word, or leading a hyphen that precedes one. Apostrophes are allowed
+    # here so possessives ("Akshay's") still scrub.
+    if after and (
+        _WORDCHAR.match(after)
+        or (
+            after in _HYPHENS
+            and ent.end_char + 1 < len(text)
+            and _WORDCHAR.match(text[ent.end_char + 1])
+        )
+    ):
+        return False
+    return True
+
+
 _NLP = None
 _NLP_TRIED = False
 
@@ -92,8 +154,10 @@ def scrub_text(
     *,
     entities: bool = True,
     extra_terms: list[str] | None = None,
+    never_scrub: list[str] | None = None,
 ) -> tuple[str, list[dict[str, Any]]]:
     """Return (scrubbed_text, removals). Placeholders preserve token slots and cadence."""
+    never = DEFAULT_NEVER_SCRUB | {t.strip().lower() for t in (never_scrub or []) if t.strip()}
     removals: list[dict[str, Any]] = []
     out = text
 
@@ -120,6 +184,9 @@ def scrub_text(
             # Right-to-left so earlier spans keep their offsets.
             spans = [e for e in doc.ents if e.label_ in NER_LABELS]
             for ent in sorted(spans, key=lambda e: e.start_char, reverse=True):
+                if not _span_is_scrubbable(out, ent, never):
+                    removals.append({"kind": ent.label_, "text": ent.text, "n": 0, "kept": True})
+                    continue
                 ph = f"<{NER_LABELS[ent.label_]}>"
                 removals.append({"kind": ent.label_, "text": ent.text, "n": 1})
                 out = out[: ent.start_char] + ph + out[ent.end_char :]
@@ -149,6 +216,7 @@ def scrub_records(
     *,
     entities: bool = True,
     extra_terms: list[str] | None = None,
+    never_scrub: list[str] | None = None,
     max_placeholder_density: float = 0.12,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     """Scrub every chunk. Returns (kept, log, summary).
@@ -162,7 +230,9 @@ def scrub_records(
     counts: Counter[str] = Counter()
 
     for r in rows:
-        scrubbed, removals = scrub_text(r["text"], entities=entities, extra_terms=extra_terms)
+        scrubbed, removals = scrub_text(
+            r["text"], entities=entities, extra_terms=extra_terms, never_scrub=never_scrub
+        )
         for rem in removals:
             counts[rem["kind"]] += rem.get("n", 1)
         density = placeholder_density(scrubbed)

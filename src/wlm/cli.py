@@ -50,7 +50,9 @@ def cmd_ingest(a) -> int:
     if a.source == "local":
         from wlm.ingest.local import ingest_local
 
-        docs = ingest_local(a.input, register=a.register)
+        docs = ingest_local(
+            a.input, register=a.register, keep_templates=getattr(a, "keep_templates", False)
+        )
     else:
         from wlm.ingest.gdocs import ingest_gdocs
 
@@ -113,6 +115,7 @@ def cmd_scrub(a) -> int:
         rows,
         entities=cfg.data.scrub_entities and not a.no_entities,
         extra_terms=terms,
+        never_scrub=cfg.data.never_scrub,
     )
     write_jsonl(a.out, kept)
     write_jsonl(paths.SCRUB_LOG, log)
@@ -140,6 +143,8 @@ def cmd_backtranslate(a) -> int:
         offline=a.offline,
         model=a.model,
         audit=a.audit,
+        use_supplied_prompts=cfg.data.use_supplied_prompts,
+        supplied_prompt_scope=cfg.data.supplied_prompt_scope,
     )
     write_jsonl(a.out, pairs)
     _dump("backtranslation stats", stats)
@@ -159,6 +164,8 @@ def cmd_split(a) -> int:
         blind_frac=cfg.data.blind_frac,
         by=cfg.data.split_by,
         seed=cfg.data.seed,
+        group_near_duplicates=cfg.data.group_near_duplicates,
+        near_dup_threshold=cfg.data.near_dup_threshold,
     )
     counts = write_splits(splits, a.outdir)
     summary = split_summary(splits)
@@ -499,6 +506,9 @@ def build_parser() -> argparse.ArgumentParser:
         s.add_argument("--register", default=None, choices=[None, "formal", "informal", "unknown"])
         if name == "local":
             s.add_argument("--in", dest="input", default=str(paths.AUTHOR_RAW))
+            # The template filter is tuned for forms and outlines; short-line prose such as a
+            # letter trips it. Keep the escape hatch visible rather than losing real writing.
+            s.add_argument("--keep-templates", action="store_true", default=False)
         else:
             s.add_argument("--folder-id", default=None)
             s.add_argument("--typed-only", action="store_true", default=True)
