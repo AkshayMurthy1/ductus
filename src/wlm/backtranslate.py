@@ -152,23 +152,47 @@ def build_pairs(
     offline: bool = False,
     model: str | None = None,
     audit: bool = False,
+    use_supplied_prompts: bool = True,
+    supplied_prompt_scope: str = "first_chunk",
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """chunks -> (question, chunk) pairs. Multiple questions per chunk augments scarce data."""
+    """chunks -> (question, chunk) pairs. Multiple questions per chunk augments scarce data.
+
+    A chunk carrying a `prompt` was written to answer a real question. Preferring it costs an API
+    call and removes a fabrication step -- no generated question can recover "List five things
+    that are important to you" from the answer. Continuation chunks fall back to generation:
+    pairing the prompt with a mid-passage fragment would teach the model to answer by starting
+    in the middle of an argument.
+    """
+    if supplied_prompt_scope not in {"first_chunk", "all_chunks"}:
+        raise ValueError("supplied_prompt_scope must be 'first_chunk' or 'all_chunks'")
     bt = Backtranslator(model=model, offline=offline)
     pairs: list[dict[str, Any]] = []
-    stats = {"chunks": len(chunks), "dropped_by_audit": 0, "rewritten": 0, "no_question": 0}
+    stats = {"chunks": len(chunks), "dropped_by_audit": 0, "rewritten": 0, "no_question": 0,
+             "supplied_prompt": 0, "generated": 0}
 
     for c in tqdm(chunks, desc="backtranslate"):
-        try:
-            qs = bt.questions_for(c["text"], n=n_per_chunk, register=c.get("register", "unknown"))
-        except Exception as e:  # keep going; one bad chunk shouldn't kill a corpus run
-            print(f"[backtranslate] {c['chunk_id']}: {type(e).__name__}: {e}")
-            continue
+        supplied = (
+            use_supplied_prompts
+            and bool(c.get("prompt"))
+            and (supplied_prompt_scope == "all_chunks" or c.get("chunk_index", 0) == 0)
+        )
+        if supplied:
+            qs = [c["prompt"]]
+            stats["supplied_prompt"] += 1
+        else:
+            try:
+                qs = bt.questions_for(
+                    c["text"], n=n_per_chunk, register=c.get("register", "unknown")
+                )
+            except Exception as e:  # keep going; one bad chunk shouldn't kill a corpus run
+                print(f"[backtranslate] {c['chunk_id']}: {type(e).__name__}: {e}")
+                continue
+            stats["generated"] += 1
         if not qs:
             stats["no_question"] += 1
             continue
         for j, q in enumerate(qs):
-            if audit:
+            if audit and not supplied:
                 a = bt.audit(c["text"], q)
                 if a.get("verdict") == "drop":
                     stats["dropped_by_audit"] += 1
@@ -185,7 +209,10 @@ def build_pairs(
                     "prompt": q,
                     "response": c["text"],
                     "n_words": c.get("n_words", len(c["text"].split())),
-                    "generator": "offline-template" if offline else bt.model,
+                    "generator": (
+                        "supplied-prompt" if supplied
+                        else ("offline-template" if offline else bt.model)
+                    ),
                 }
             )
     stats["pairs"] = len(pairs)

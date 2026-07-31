@@ -8,10 +8,55 @@ model score well by recall, and every downstream number becomes a lie.
 from __future__ import annotations
 
 import random
+import re
 from collections import defaultdict
 from typing import Any
 
 from wlm.paths import write_jsonl
+
+
+def _five_grams(text: str) -> set[tuple[str, ...]]:
+    w = re.findall(r"[a-z']+", text.lower())
+    return {tuple(w[i : i + 5]) for i in range(len(w) - 4)}
+
+
+def near_duplicate_groups(
+    pairs: list[dict[str, Any]], *, threshold: float = 0.15
+) -> dict[str, str]:
+    """Map doc_id -> group id, unioning documents that share too much verbatim phrasing.
+
+    Splitting by document is only a real guard when documents are *distinct*. One passage reused
+    across two prompts -- a "why us" paragraph recycled for another school, an essay rewritten
+    for a second application -- lands in two documents with two ids, so a document-level split
+    happily puts one in train and its twin in blind. The metric then measures recall.
+
+    Containment (shared 5-grams over the smaller document) rather than Jaccard, so a short
+    passage lifted wholesale into a long one is still caught.
+    """
+    by_doc: dict[str, list[str]] = defaultdict(list)
+    for p in pairs:
+        by_doc[p["doc_id"]].append(p.get("response", ""))
+    docs = sorted(by_doc)
+    grams = {d: _five_grams("\n".join(dict.fromkeys(by_doc[d]))) for d in docs}
+
+    parent = {d: d for d in docs}
+
+    def find(x: str) -> str:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for i, a in enumerate(docs):
+        for b in docs[i + 1 :]:
+            ga, gb = grams[a], grams[b]
+            if not ga or not gb:
+                continue
+            if len(ga & gb) / min(len(ga), len(gb)) > threshold:
+                ra, rb = find(a), find(b)
+                if ra != rb:
+                    parent[rb] = ra
+    return {d: find(d) for d in docs}
 
 
 def split_pairs(
@@ -21,6 +66,8 @@ def split_pairs(
     blind_frac: float = 0.15,
     by: str = "document",
     seed: int = 17,
+    group_near_duplicates: bool = True,
+    near_dup_threshold: float = 0.15,
 ) -> dict[str, list[dict[str, Any]]]:
     if by not in {"document", "pair"}:
         raise ValueError("by must be 'document' or 'pair'")
@@ -37,9 +84,15 @@ def split_pairs(
             "train": rows[n_blind + n_val :],
         }
 
+    # Group first, then split by group: reused passages must move together or they leak.
+    group_of = (
+        near_duplicate_groups(pairs, threshold=near_dup_threshold)
+        if group_near_duplicates
+        else {}
+    )
     by_doc: dict[str, list[dict]] = defaultdict(list)
     for p in pairs:
-        by_doc[p["doc_id"]].append(p)
+        by_doc[group_of.get(p["doc_id"], p["doc_id"])].append(p)
 
     # Stratify by register so the informal set -- the hard case the plan cares about -- is
     # actually represented in val and blind instead of landing entirely in train by luck.

@@ -121,8 +121,21 @@ class DataCfg:
     chunk_min_words: int = 60
     chunk_max_words: int = 320
     questions_per_chunk: int = 2
+    # When a document carries the real prompt it was written to answer, prefer it over a
+    # generated question -- a generated one is a guess, the real one is ground truth.
+    use_supplied_prompts: bool = True
+    # "first_chunk": only the opening chunk answers the prompt; later chunks are mid-passage and
+    # get generated questions instead. "all_chunks" pairs every chunk with the prompt.
+    supplied_prompt_scope: str = "first_chunk"
     val_frac: float = 0.15
     blind_frac: float = 0.15
+    # A passage reused across two prompts becomes two documents; splitting by document then
+    # leaks it into blind. Group documents sharing more than this fraction of 5-grams.
+    group_near_duplicates: bool = True
+    near_dup_threshold: float = 0.15
+    # Terms the NER mistakes for names but which carry meaning, not identity. Adds to
+    # scrub.DEFAULT_NEVER_SCRUB; put your field's eponyms and tool names here.
+    never_scrub: list[str] = field(default_factory=list)
     # Split by document, not by chunk -- chunk-level splits leak an author's document voice
     # across the boundary and inflate every number you care about.
     split_by: str = "document"
