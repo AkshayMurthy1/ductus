@@ -278,10 +278,12 @@ def cmd_baseline(a) -> int:
     out.mkdir(parents=True, exist_ok=True)
     n = run_generation(
         cfg,
-        split_path=PROCESSED / f"{a.split}.jsonl",
+        split_path=Path(a.split_path or PROCESSED / f"{a.split}.jsonl"),
         out_path=out / "gen.jsonl",
         adapter=None,
-        fewshot_from=PROCESSED / "train.jsonl",  # exemplars from TRAIN only
+        # Exemplars from TRAIN only. Overridable so a corpus-size sweep can hold the eval split
+        # fixed while both arms -- few-shot and adapter -- see the same subsample.
+        fewshot_from=Path(a.train or PROCESSED / "train.jsonl"),
         n_shots=a.n_shots,
     )
     _p(f"{n} baseline generation(s) -> {out / 'gen.jsonl'}")
@@ -576,6 +578,8 @@ def build_parser() -> argparse.ArgumentParser:
     bl.add_argument("--config", default=str(paths.CONFIGS / "stage_a.yaml"))
     bl.add_argument("--out", default=str(RUNS / "baseline"))
     bl.add_argument("--split", default="blind")
+    bl.add_argument("--split-path", default=None)
+    bl.add_argument("--train", default=None, help="few-shot exemplar source (default: train.jsonl)")
     bl.add_argument("--n-shots", type=int, default=None)
     bl.set_defaults(func=cmd_baseline)
 
