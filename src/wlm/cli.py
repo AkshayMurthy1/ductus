@@ -229,6 +229,29 @@ def cmd_eval_fit_av(a) -> int:
     return 0 if metrics.auc >= 0.75 else 1
 
 
+# --------------------------------------------------------------------------- eval: contamination
+def cmd_eval_contamination(a) -> int:
+    from wlm.eval.av import load_distractor_texts
+    from wlm.eval.contamination import contamination_report
+
+    cfg = Config.load(a.config) if a.config else Config()
+    rows = read_jsonl(a.author)
+    # Dedupe: build_pairs emits several rows per passage; ppl on doubles double-weights them.
+    author = list(dict.fromkeys(r["response"].strip() for r in rows if r.get("response")))
+    distractor = load_distractor_texts(
+        a.distractor,
+        min_words=cfg.data.chunk_min_words,
+        max_words=cfg.data.chunk_max_words,
+        limit=a.limit,
+    )
+    rep = contamination_report(cfg, author, distractor)
+    _dump("contamination probe", rep)
+    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+    Path(a.out).write_text(json.dumps(rep, indent=2), encoding="utf-8")
+    _p(f"wrote {a.out}")
+    return 0
+
+
 # --------------------------------------------------------------------------- eval: run
 def cmd_eval_run(a) -> int:
     from wlm.eval.harness import run_from_files
@@ -244,6 +267,7 @@ def cmd_eval_run(a) -> int:
         model=a.model or "",
         split=a.split,
         fluency_path=a.fluency,
+        raw_docs_path=a.raw_docs,
     )
     _dump(
         "headline",
@@ -270,12 +294,23 @@ def cmd_eval_run(a) -> int:
 
 
 # --------------------------------------------------------------------------- GPU commands
+def _apply_seed(cfg: Config, seed: int | None) -> Config:
+    """CLI seed override: a variance cell must be a flag, not a YAML edit (one variable per run)."""
+    if seed is not None:
+        cfg.sft.seed = cfg.dpo.seed = cfg.gen.seed = seed
+    return cfg
+
+
 def cmd_baseline(a) -> int:
     from wlm.generate import run_generation
+    from wlm.train.common import save_run_meta
 
-    cfg = Config.load(a.config)
+    cfg = _apply_seed(Config.load(a.config), a.seed)
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
+    # The baseline is a run like any other, so it gets the same self-contained record — without
+    # this, its report.json carries no resolved config and the run matrix can't audit it.
+    save_run_meta(out, cfg, {"stage": "baseline", "metrics": {"n_train_rows": 0}})
     n = run_generation(
         cfg,
         split_path=Path(a.split_path or PROCESSED / f"{a.split}.jsonl"),
@@ -293,7 +328,7 @@ def cmd_baseline(a) -> int:
 
 
 def cmd_train(a) -> int:
-    cfg = Config.load(a.config)
+    cfg = _apply_seed(Config.load(a.config), a.seed)
     if a.stage == "sft":
         from wlm.train.stage_a_sft import train_stage_a
 
@@ -320,14 +355,24 @@ def cmd_train(a) -> int:
 
 def cmd_generate(a) -> int:
     from wlm.generate import run_generation
+    from wlm.train.common import save_run_meta
 
-    cfg = Config.load(a.config)
+    cfg = _apply_seed(Config.load(a.config), a.seed)
     n = run_generation(
         cfg,
         split_path=a.split_path or (PROCESSED / f"{a.split}.jsonl"),
         out_path=a.out,
         adapter=a.adapter,
     )
+    # A no-adapter run (the contamination floor) lands in a directory no trainer wrote metadata
+    # into; give it a record too. Never clobber a training run's own run_meta.json.
+    out_dir = Path(a.out).parent
+    if not (out_dir / "run_meta.json").exists():
+        save_run_meta(
+            out_dir,
+            cfg,
+            {"stage": "base-floor" if not a.adapter else "generate", "metrics": {}},
+        )
     _p(f"{n} generation(s) -> {a.out}")
     return 0
 
@@ -560,6 +605,15 @@ def build_parser() -> argparse.ArgumentParser:
     fa.add_argument("--balance", action="store_true", default=True)
     fa.add_argument("--no-balance", dest="balance", action="store_false")
     fa.set_defaults(func=cmd_eval_fit_av)
+    ct = ev_sub.add_parser("contamination",
+                           help="base-model familiarity with the author [GPU-friendly]")
+    ct.add_argument("--author", default=str(PROCESSED / "blind.jsonl"),
+                    help="held-out author pairs (blind split — never train)")
+    ct.add_argument("--distractor", default=str(paths.DISTRACTOR_RAW))
+    ct.add_argument("--config", default=str(paths.CONFIGS / "stage_a.yaml"))
+    ct.add_argument("--limit", type=int, default=None)
+    ct.add_argument("--out", default=str(RUNS / "contamination.json"))
+    ct.set_defaults(func=cmd_eval_contamination)
     er = ev_sub.add_parser("run")
     er.add_argument("--gen", required=True)
     er.add_argument("--ref", default=None)
@@ -572,6 +626,8 @@ def build_parser() -> argparse.ArgumentParser:
     er.add_argument("--model", default=None)
     er.add_argument("--fluency", default=None,
                     help="run dir or fluency_log.jsonl; defaults to the generations' directory")
+    er.add_argument("--raw-docs", default=str(INTERIM / "docs.jsonl"),
+                    help="pre-scrub docs.jsonl for the entity-emission leakage check")
     er.set_defaults(func=cmd_eval_run)
 
     bl = sub.add_parser("baseline", help="Phase-0 few-shot prompting baseline [GPU]")
@@ -581,6 +637,8 @@ def build_parser() -> argparse.ArgumentParser:
     bl.add_argument("--split-path", default=None)
     bl.add_argument("--train", default=None, help="few-shot exemplar source (default: train.jsonl)")
     bl.add_argument("--n-shots", type=int, default=None)
+    bl.add_argument("--seed", type=int, default=None,
+                    help="override every seed in the config (variance cells)")
     bl.set_defaults(func=cmd_baseline)
 
     tr = sub.add_parser("train", help="[GPU]")
@@ -592,6 +650,8 @@ def build_parser() -> argparse.ArgumentParser:
     tr.add_argument("--adapter", default=None, help="Stage-A adapter, required for dpo")
     tr.add_argument("--pairs", default=None)
     tr.add_argument("--val-pairs", default=None, help="held-out preference pairs for dpo eval")
+    tr.add_argument("--seed", type=int, default=None,
+                    help="override every seed in the config (variance cells)")
     tr.set_defaults(func=cmd_train)
 
     g = sub.add_parser("generate", help="[GPU]")
@@ -600,6 +660,8 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--split", default="blind")
     g.add_argument("--split-path", default=None)
     g.add_argument("--out", required=True)
+    g.add_argument("--seed", type=int, default=None,
+                    help="override every seed in the config (variance cells)")
     g.set_defaults(func=cmd_generate)
 
     dp = sub.add_parser("dpo-pairs", help="[GPU]")

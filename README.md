@@ -77,6 +77,18 @@ wlm dpo-pairs --adapter runs/stage_a --split val --out data/processed/dpo.jsonl
 wlm train dpo --config configs/stage_b.yaml --out runs/stage_b
 ```
 
+## Running the full research matrix
+
+The experiment defined in `RESEARCH_BRIEF.md` (corpus-size scaling, adaptation locus, DPO
+stage, contamination control, seed variance) has a single resumable driver and a deliverables
+assembler — see `docs/RUN_MATRIX.md`:
+
+```bash
+python scripts/make_size_sweep.py         # nested {2k..100k} corpus arms
+python scripts/run_matrix.py              # everything, resumable; --only rq1 etc. for subsets
+python scripts/assemble_results.py        # Tables 1-4 + Figure 1 from run records
+```
+
 ## The rule that keeps this honest
 
 Every training signal is anchored on the user's **real text**:

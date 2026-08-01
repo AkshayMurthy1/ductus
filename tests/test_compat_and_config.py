@@ -84,6 +84,21 @@ def test_every_ablation_loads_and_changes_exactly_one_thing(path):
     assert len(diffs) <= 3, f"{path.name} changes too much to attribute a delta: {diffs}"
 
 
+def test_seed_and_checkpoint_knobs_are_config_not_code():
+    """The variance cells and the checkpoint-trajectory run both hang off these knobs."""
+    cfg = Config.load(CONFIGS / "stage_a.yaml")
+    assert isinstance(cfg.gen.seed, int)
+    assert isinstance(cfg.sft.save_total_limit, int)
+    traj = Config.load(CONFIGS / "trajectory.yaml")
+    assert traj.sft.save_total_limit >= 100, "trajectory runs must keep every checkpoint"
+    base = Config.load(CONFIGS / "stage_a.yaml").to_dict()
+    diffs = _diff(base, traj.to_dict())
+    diffs = [d for d in diffs if not d.startswith(("run_name", "notes"))]
+    assert all(d.startswith("sft.save_total_limit") for d in diffs), (
+        f"trajectory.yaml must change nothing but checkpoint retention: {diffs}"
+    )
+
+
 def test_unknown_config_keys_are_rejected(tmp_path):
     p = tmp_path / "bad.yaml"
     p.write_text("lora:\n  totally_made_up: 3\n", encoding="utf-8")

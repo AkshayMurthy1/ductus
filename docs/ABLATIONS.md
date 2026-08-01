@@ -3,6 +3,12 @@
 The core research result. Fill one row per config in `configs/ablations/`. Every row is a
 one-variable diff from the Stage-A recipe, so a delta is attributable.
 
+> The RQ2 subset of this grid (a01 / a02 / a05 vs the reference) is driven automatically by
+> `scripts/run_matrix.py --only rq2` and lands, with the style-per-unit-leakage ratio, in
+> `runs/results/tables.md` via `scripts/assemble_results.py`. Pair it with
+> `scripts/adapter_anatomy.py` on each adapter to see *where* the update mass moved, not just
+> what it scored.
+
 ## How to read this table
 
 - **AV informal** is the headline. Formal prose is the easy case; the informal column is where

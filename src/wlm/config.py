@@ -64,6 +64,9 @@ class SftCfg:
     raw_next_token_mix: float = 0.1
     eval_steps: int = 25
     save_steps: int = 25
+    # Raise for a checkpoint-trajectory run (scripts/05_checkpoint_trajectory.sh), which needs
+    # every checkpoint kept so the style-vs-leakage frontier can be traced across training time.
+    save_total_limit: int = 3
     logging_steps: int = 5
     early_stopping_patience: int = 3
     seed: int = 17
@@ -101,6 +104,9 @@ class DpoCfg:
 class GenCfg:
     temperature: float = 0.8
     top_p: float = 0.95
+    # Sampling seed. Threaded so a variance cell (same config, different seed) is a CLI flag
+    # rather than a YAML edit -- see RESEARCH_BRIEF §3 "Variance".
+    seed: int = 17
     max_new_tokens: int = 400
     n_per_prompt: int = 1
     # Input cap at generation time. Deliberately NOT model.max_seq_len: that is a *training*

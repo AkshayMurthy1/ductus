@@ -153,6 +153,17 @@ is genuinely first-party.
 - **Deliverable:** documented Stage-A recipe + ablation table (the core research result — this
   quantifies what actually moves style vs. what leaks content).
 
+### Phase 2b — the research-brief matrix (RESEARCH_BRIEF.md)
+
+The brief reframes Phases 0–3 as one experiment: the **style–content frontier** (authorship
+attribution vs leakage), traced across corpus size (RQ1), adaptation locus (RQ2) and training
+stage (RQ3), with a base-model contamination floor and a private control author. Execution and
+assembly are tooled: `scripts/run_matrix.py` (resumable driver), `scripts/assemble_results.py`
+(Tables 1–4 + the frontier figure), `scripts/05_checkpoint_trajectory.sh` (the frontier across
+*training steps* — the primary question measured as a rate, not an endpoint), and
+`scripts/adapter_anatomy.py` (where in the network the update mass lands). See
+`docs/RUN_MATRIX.md`; the requirement-by-requirement mapping is `docs/BRIEF_AUDIT.md`.
+
 ### Phase 3 — Stage B: on-policy DPO sharpening
 - With the Stage-A adapter, prompt held-out questions; the model's generation is "rejected," the
   user's real matching chunk is "chosen." Match length/format so DPO learns *voice*, not
@@ -182,8 +193,10 @@ is genuinely first-party.
   author? (Primary metric; mirrors the 2509.14543 benchmark methodology.)
 - **Stylometry match** — distributional distance on sentence length, burstiness, function words,
   punctuation, POS n-grams. (A stylometric HMM can live here as one such metric.)
-- **Content-leakage check** — verify it did *not* memorize private facts (paraphrase test on
-  held-out topics).
+- **Content-leakage check** — verify it did *not* memorize private facts. Three dimensions:
+  verbatim n-gram overlap with training text, entity emission against the pre-scrub corpus, and
+  **semantic echo** (excess content-embedding similarity to training passages, zero-referenced
+  against the author's own held-out text — catches memorization that survives a paraphrase).
 - **General-fluency regression** — small standard benchmark to confirm no catastrophic forgetting.
 - **Human blind test** — the real bar: can people who know the author's writing tell which is
   which?

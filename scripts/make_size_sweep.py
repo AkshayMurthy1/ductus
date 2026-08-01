@@ -35,7 +35,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PROCESSED = ROOT / "data/processed"
 SWEEP = PROCESSED / "sweep"
-DEFAULT_SIZES = [5_000, 25_000, 100_000]
+# RESEARCH_BRIEF §3 (RQ1): ≈{2k, 5k, 10k, 25k, 50k, 100k} words.
+DEFAULT_SIZES = [2_000, 5_000, 10_000, 25_000, 50_000, 100_000]
 
 
 def main() -> int:

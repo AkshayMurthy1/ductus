@@ -11,7 +11,9 @@ import pytest
 from wlm.eval.fluency import repetition_score
 from wlm.eval.leakage import (
     build_fact_probes,
+    run_leakage_suite,
     score_fact_probes,
+    semantic_echo,
     verbatim_overlap,
 )
 from wlm.eval.report import grouped_bar_chart, hbar_chart, render_report
@@ -153,6 +155,52 @@ def test_verbatim_overlap_clean_on_novel_text():
     train = ["one two three four five six seven eight nine ten eleven twelve thirteen"]
     gen = ["completely different words arranged in an entirely unrelated order for this test case"]
     assert verbatim_overlap(gen, train, n=12)["rate"] == 0.0
+
+
+def _stub_encode(texts):
+    """Deterministic bag-of-words embedding so the semantic-echo test needs no model download."""
+    import numpy as np
+
+    # A fixed hash bucket per word keeps the encoder consistent across separate calls.
+    vecs = np.zeros((len(texts), 64), dtype=float)
+    for i, t in enumerate(texts):
+        for w in t.lower().split():
+            vecs[i, hash(w) % 64] += 1.0
+    norms = np.linalg.norm(vecs, axis=1, keepdims=True)
+    return vecs / np.clip(norms, 1e-9, None)
+
+
+def test_semantic_echo_zero_when_generations_match_the_heldout_reference():
+    """Convention: zero on identical inputs. gen == held-out reference means no excess pull
+    toward training content, which is exactly echo = 0."""
+    train = ["alpha beta gamma delta epsilon", "zeta eta theta iota kappa"]
+    ref = ["completely unrelated sentence about sailing boats on a quiet lake"]
+    r = semantic_echo(ref, train, ref, encode=_stub_encode)
+    assert r["echo"] == pytest.approx(0.0, abs=1e-9)
+
+
+def test_semantic_echo_larger_when_generations_paraphrase_training_text():
+    train = ["the vendor migration slipped because the contract renewal stalled in procurement"]
+    gen = ["the migration of the vendor slipped because procurement stalled the contract renewal"]
+    ref = ["completely unrelated sentence about sailing boats on a quiet lake"]
+    r = semantic_echo(gen, train, ref, encode=_stub_encode)
+    assert r["echo"] > 0.3, "a near-copy of training content must register as echo"
+
+
+def test_leakage_suite_survives_a_missing_content_encoder():
+    """The suite must degrade to verbatim+entity rather than crash when the embedder is absent."""
+
+    def broken_encoder(_texts):
+        raise RuntimeError("no model available")
+
+    out = run_leakage_suite(
+        ["some generated text here"],
+        ["totally different training text"],
+        reference_texts=["held out reference text"],
+        content_encoder=broken_encoder,
+    )
+    assert "verbatim" in out and "verdict" in out
+    assert "semantic_echo" not in out
 
 
 def test_fact_probes_build_and_score():

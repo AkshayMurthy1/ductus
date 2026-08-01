@@ -40,10 +40,14 @@ deliberately does **not** learn their facts. Full design: `docs/PLAN.md`.
 | `src/wlm/scrub.py` | PII + topic-entity scrubbing to typed placeholders, with an audit log |
 | `src/wlm/backtranslate.py` | (question → passage) pair construction via the API model |
 | `src/wlm/dataset.py` | splits (by document), chat formatting, raw next-token mix |
-| `src/wlm/eval/` | stylometry, authorship verifier, leakage, fluency, harness, HTML report |
+| `src/wlm/eval/` | stylometry, authorship verifier, leakage (verbatim + entity + semantic echo), fluency, contamination probe, harness, HTML report |
 | `src/wlm/train/` | Stage-A SFT, Stage-B DPO |
-| `src/wlm/generate.py` | few-shot prompting baseline + adapter generation (same decode path) |
-| `configs/` | `stage_a.yaml`, `stage_b.yaml`, and one file per ablation |
+| `src/wlm/generate.py` | few-shot prompting baseline + adapter generation (same decode path, seeded) |
+| `configs/` | `stage_a.yaml`, `stage_b.yaml`, `trajectory.yaml`, and one file per ablation |
+| `scripts/run_matrix.py` | resumable driver for the whole RESEARCH_BRIEF matrix (floor/RQ1/RQ2/RQ3/seeds) |
+| `scripts/assemble_results.py` | Tables 1–4 + Figure 1 (frontier) from run records — never hand-transcribe |
+| `scripts/adapter_anatomy.py` | per-layer/module LoRA update-norm decomposition (RQ2's mechanistic companion) |
+| `docs/BRIEF_AUDIT.md` / `docs/RUN_MATRIX.md` | brief-to-code audit; how to run and assemble everything |
 
 ## Four traps this codebase has already been bitten by
 
@@ -87,6 +91,18 @@ questions — use it as the smoke test after touching the pipeline.
 When you add a metric to the eval harness, add a test that it is **zero on identical inputs and
 larger on genuinely different inputs**. A silently-broken metric is worse than a missing one
 because it produces confident wrong conclusions.
+
+## Research-brief invariants (added 2026-07-31)
+
+- **`report.json` is the one record of a run.** The harness merges the resolved config,
+  trainable-parameter counts and wall-clock into it; tables and figures are assembled from these
+  records by `scripts/assemble_results.py`, never typed in.
+- **Seeds are CLI-overridable** (`--seed` on `wlm train/generate/baseline`) and generation
+  sampling is genuinely seeded (`gen.seed`). Variance cells are flags, not YAML edits.
+- **The verifier is fitted once per corpus** and shared by every arm; if the assembler prints
+  more than one AUC, the ruler moved and the comparison is invalid.
+- **Entity leakage needs the pre-scrub docs** — `wlm eval run` reads them from
+  `data/interim/docs.jsonl` by default; deleting that file silently halves the leakage axis.
 
 ## What "done" means for a phase
 

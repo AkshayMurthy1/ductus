@@ -46,12 +46,24 @@ AUTHOR_BOOKS = {
 }
 
 # One collection per author, so every distractor file has a known and distinct provenance.
+# Belloc is the PRIMARY hard negative (RESEARCH_BRIEF §3): same decade, same essay form,
+# overlapping subject matter, different voice. Beerbohm, Lynd, Lucas and Gardiner are the
+# brief's other named era- and genre-matched contemporaries. (Shaw's prefaces are named too but
+# only exist inside play volumes on Gutenberg, where this extractor would sweep up dialogue —
+# skipped rather than admitted dirty.) The remaining authors add register variety; note that a
+# few (Addison, Emerson, Thoreau, Twain) are NOT era-matched — if the verifier AUC comes out
+# suspiciously high, drop them first, because "learned the era" is exactly the confound the
+# brief warns about.
 DISTRACTOR_BOOKS = {
     10343: "lamb", 386: "stevenson", 7432: "belloc", 77244: "arnold", 4652: "benson",
     59430: "repplier", 70: "twain", 2791: "addison", 1276: "meynell", 5177: "burroughs",
     11675: "legallienne", 12244: "birrell", 1463: "gissing", 4036: "pater",
     13088: "chapman", 39447: "more", 17452: "quiller-couch", 9846: "thoreau",
     2944: "emerson", 3020: "hazlitt", 18948: "mencken",
+    1956: "beerbohm",      # And Even Now (1920)
+    13448: "lynd",         # The Pleasures of Ignorance (1921)
+    73174: "lucas",        # Old Lamps for New (1911)
+    10675: "gardiner",     # Pebbles on the Shore (1916)
 }
 
 SKIP_HEADINGS = {"PREFACE", "CONTENTS", "CONTENTS:", "INDEX", "FOOTNOTES", "THE AUTHOR",

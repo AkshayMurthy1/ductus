@@ -153,10 +153,71 @@ def score_fact_probes(completions: list[str], probes: list[dict[str, str]]) -> d
     }
 
 
+def _default_content_encoder():
+    """A *content* embedder, deliberately the opposite of the AV's style embedder.
+
+    The AV embedder is trained to ignore topic; this metric needs one that is all topic. A
+    generic MiniLM sentence encoder is exactly that.
+    """
+    from sentence_transformers import SentenceTransformer
+
+    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+
+    def encode(texts: list[str]):
+        import numpy as np
+
+        return np.asarray(
+            model.encode(texts, convert_to_numpy=True, normalize_embeddings=True),
+            dtype="float32",
+        )
+
+    return encode
+
+
+def semantic_echo(
+    generations: list[str],
+    train_texts: list[str],
+    reference_texts: list[str],
+    *,
+    encode=None,
+) -> dict[str, Any]:
+    """Paraphrase-robust content leakage: is the model topically closer to its TRAINING passages
+    than the author's own held-out writing is?
+
+    Verbatim n-grams miss memorization that survives a reword. Under a content embedder, take
+    each generation's max cosine similarity to any training passage, then subtract the same
+    statistic computed for real held-out author text. Held-out text shares the author's topics
+    legitimately, so it is the correct zero point: echo ≈ 0 means the generations sit no closer
+    to the training content than the author's own unseen prose; a large positive echo means the
+    model reproduces training content in paraphrase even when no 12-gram matches.
+    """
+    import numpy as np
+
+    if not generations or not train_texts or not reference_texts:
+        return {"n": 0, "echo": None}
+    encode = encode or _default_content_encoder()
+    train_emb = encode(train_texts)
+    gen_max = np.max(encode(generations) @ train_emb.T, axis=1)
+    ref_max = np.max(encode(reference_texts) @ train_emb.T, axis=1)
+    echo = float(gen_max.mean() - ref_max.mean())
+    return {
+        "n": len(generations),
+        "gen_mean_max_sim": round(float(gen_max.mean()), 4),
+        "heldout_mean_max_sim": round(float(ref_max.mean()), 4),
+        "echo": round(echo, 4),
+        "interpretation": (
+            "≈0 healthy; >0.05 the model is paraphrasing training content the author's own "
+            "held-out text does not share"
+        ),
+    }
+
+
 def run_leakage_suite(
     generations: list[str],
     train_texts_scrubbed: list[str],
     author_texts_raw: list[str] | None = None,
+    reference_texts: list[str] | None = None,
+    content_encoder=None,
 ) -> dict[str, Any]:
     _NG_CACHE.clear()
     out: dict[str, Any] = {"verbatim": verbatim_overlap(generations, train_texts_scrubbed)}
@@ -164,6 +225,16 @@ def run_leakage_suite(
         ents = collect_author_entities(author_texts_raw)
         out["entities"] = entity_emission(generations, ents)
         out["entities"]["author_entity_vocab"] = len(ents)
+    if reference_texts:
+        try:
+            out["semantic_echo"] = semantic_echo(
+                generations, train_texts_scrubbed, reference_texts, encode=content_encoder
+            )
+        except Exception as e:  # missing package, no network for the model download, ...
+            print(
+                f"[leakage] semantic-echo check skipped ({type(e).__name__}: {e}) — only "
+                "verbatim and entity leakage were measured."
+            )
     out["verdict"] = (
         "FAIL: verbatim memorization"
         if out["verbatim"]["rate"] > 0.05

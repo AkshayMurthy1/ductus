@@ -89,9 +89,12 @@ def evaluate(
                 if any(g.get("register") == reg for g in generations)
             }
 
-    # --- leakage
+    # --- leakage. The real held-out passages are the zero point for the semantic-echo check:
+    # they share the author's topics legitimately, so any excess similarity to TRAIN is leak.
     if train_texts:
-        out["leakage"] = run_leakage_suite(gen_texts, train_texts, author_texts_raw)
+        out["leakage"] = run_leakage_suite(
+            gen_texts, train_texts, author_texts_raw, reference_texts=real_texts
+        )
 
     if fluency:
         out["fluency"] = fluency
@@ -189,6 +192,7 @@ def run_from_files(
     split: str = "blind",
     fluency_path: str | Path | None = None,
     config: dict[str, Any] | None = None,
+    raw_docs_path: str | Path | None = None,
 ) -> dict[str, Any]:
     gens = read_jsonl(gen_path)
     refs = read_jsonl(ref_path)
@@ -205,10 +209,23 @@ def run_from_files(
         )
     train_texts = [r["response"] for r in read_jsonl(train_path)] if train_path else None
 
-    # Pick up the run's own config and fluency log when they sit next to the generations.
+    # Pre-scrub author text: the entity-emission check needs the entities the author actually
+    # used, and those were (by design) scrubbed out of train.jsonl. Without this the report
+    # measures only half the leakage axis.
+    author_texts_raw = None
+    if raw_docs_path and Path(raw_docs_path).exists():
+        author_texts_raw = [d["text"] for d in read_jsonl(raw_docs_path) if d.get("text")]
+    elif raw_docs_path:
+        print(f"[eval] no raw docs at {raw_docs_path} — entity-emission leakage not measured.")
+
+    # Pick up the run's own config, training metrics and fluency log when they sit next to the
+    # generations, so report.json is the single self-contained record the run matrix reads.
     run_dir = Path(gen_path).parent
-    if config is None and (run_dir / "run_meta.json").exists():
-        config = json.loads((run_dir / "run_meta.json").read_text(encoding="utf-8")).get("config")
+    run_meta: dict[str, Any] = {}
+    if (run_dir / "run_meta.json").exists():
+        run_meta = json.loads((run_dir / "run_meta.json").read_text(encoding="utf-8"))
+    if config is None:
+        config = run_meta.get("config")
     fluency = load_fluency_log(fluency_path or run_dir)
 
     result = evaluate(
@@ -216,12 +233,27 @@ def run_from_files(
         real_reference=refs,
         verifier=verifier,
         train_texts=train_texts,
+        author_texts_raw=author_texts_raw,
         fluency=fluency,
         config=config,
         run_name=run_name,
         split=split,
         model=model,
     )
+    # Cost axis (brief §4.6): trainable parameter count and wall-clock, from training metadata.
+    meta_metrics = run_meta.get("metrics") or {}
+    training_block = {
+        k: v
+        for k, v in {
+            "stage": run_meta.get("stage"),
+            "trainable": meta_metrics.get("trainable"),
+            "train_runtime_s": meta_metrics.get("train_runtime_s"),
+            "n_train_rows": meta_metrics.get("n_train_rows"),
+        }.items()
+        if v is not None
+    }
+    if training_block:
+        result["training"] = training_block
     if baseline_json and Path(baseline_json).exists():
         result = compare_to_baseline(result, baseline_json)
     write_report(result, out_html)

@@ -87,6 +87,12 @@ def generate(
 ) -> list[dict[str, Any]]:
     import torch
 
+    # Seed the sampler. Without this, two runs of the same arm differ by an uncontrolled draw
+    # and the brief's variance cells (same config, different seed) are not actually seeded.
+    torch.manual_seed(cfg.gen.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(cfg.gen.seed)
+
     model, tok = loaded if loaded is not None else load_for_generation(cfg, adapter)
     out: list[dict[str, Any]] = []
     system = system_prompt if system_prompt is not None else cfg.gen.system_prompt
@@ -159,7 +165,12 @@ def run_generation(
     if fewshot_from:
         exemplars = [r["response"] for r in read_jsonl(fewshot_from)]
         system = build_fewshot_system(
-            exemplars, cfg.gen.system_prompt, n=n_shots or cfg.gen.baseline_n_shots
+            exemplars,
+            cfg.gen.system_prompt,
+            n=n_shots or cfg.gen.baseline_n_shots,
+            # Same seed as the sampler, so a variance cell re-rolls the exemplar draw too --
+            # exemplar choice is part of the few-shot method's noise, not a fixed constant.
+            seed=cfg.gen.seed,
         )
     gens = generate(
         cfg, prompts, adapter=adapter, system_prompt=system, n_per_prompt=cfg.gen.n_per_prompt

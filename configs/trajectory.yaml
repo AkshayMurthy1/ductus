@@ -1,0 +1,10 @@
+# The checkpoint-trajectory run (scripts/05_checkpoint_trajectory.sh): the reference Stage-A
+# recipe, unchanged except that every checkpoint is kept so the style-vs-leakage frontier can
+# be traced across training steps. Not an ablation row — same recipe, more checkpoints.
+_extends: ./stage_a.yaml
+
+run_name: trajectory
+notes: "reference recipe with all checkpoints kept for the training-time frontier"
+
+sft:
+  save_total_limit: 999

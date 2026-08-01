@@ -19,5 +19,11 @@ lint: ## Ruff check
 demo: ## End-to-end CPU dry run on the bundled fixture author (no API, no GPU)
 	python -m wlm.cli demo --outdir data/demo
 
+matrix: ## Execute the RESEARCH_BRIEF run matrix (resumable) [GPU]
+	python scripts/run_matrix.py
+
+results: ## Assemble Tables 1-4 + the frontier figure from run records
+	python scripts/assemble_results.py
+
 clean: ## Remove interim artifacts (keeps data/raw and runs)
 	rm -rf data/interim/* data/processed/* data/demo

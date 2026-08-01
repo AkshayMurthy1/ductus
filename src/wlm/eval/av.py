@@ -170,6 +170,13 @@ class AuthorshipVerifier:
                 "Fix this before reading any Stage-A result: add more author text, add "
                 "register-matched distractors, or try a different embedder."
             )
+        elif auc > 0.97:
+            print(
+                f"[av] WARNING held-out AUC={auc:.3f} is suspiciously high. Before celebrating, "
+                "check for a trivial confound: distractors mismatched on era, genre, or chunk "
+                "length; residual boilerplate; or scrubbing placeholders appearing on only one "
+                "side. A verifier keyed on a confound scores generations on the confound too."
+            )
         return self.metrics
 
     # ------------------------------------------------------------------ scoring
