@@ -48,6 +48,7 @@ deliberately does **not** learn their facts. Full design: `docs/PLAN.md`.
 | `scripts/assemble_results.py` | Tables 1–4 + Figure 1 (frontier) from run records — never hand-transcribe |
 | `scripts/adapter_anatomy.py` | per-layer/module LoRA update-norm decomposition (RQ2's mechanistic companion) |
 | `docs/BRIEF_AUDIT.md` / `docs/RUN_MATRIX.md` | brief-to-code audit; how to run and assemble everything |
+| `docs/STATUS.md` | **the living record of results and open work — read this for where the research stands** |
 
 ## Four traps this codebase has already been bitten by
 
@@ -80,7 +81,12 @@ Undoing any of these looks like a simplification and is not one.
 - CPU-side code (ingest → split, eval harness) must import and run with no CUDA and no network.
   Keep `transformers`/`peft`/`trl` imports **inside functions**, never at module top level.
 - Data files are JSONL. Read/write via `wlm.paths.read_jsonl` / `write_jsonl`.
-- Never commit anything under `data/` or `runs/`.
+- **Data commits follow provenance, not path** (policy in `.gitignore` + `data/README.md`):
+  the public-domain fixture corpus, the paid-for `pairs.jsonl`, and run *records*
+  (`report.json`, `run_meta.json`, `gen.jsonl`, `runs/results/`) are committed for
+  verifiability; weights, checkpoints, and deterministic intermediates never are. Run
+  `make check-data` before any commit touching `data/` or `runs/` — and if `data/raw/author`
+  ever holds a real person's writing, it must not ship regardless of the allow-list.
 
 ## Testing
 

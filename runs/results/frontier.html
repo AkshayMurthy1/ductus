@@ -1,0 +1,105 @@
+<!doctype html><meta charset='utf-8'><title>Figure 1 — the frontier</title><style>
+:root { color-scheme: light dark; }
+.viz-root { --surface-1:#fcfcfb; --surface-2:#f4f3f0; --border:#dedcd6; --grid:#e7e5e0;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#7c7a74;
+  --series-1:#2a78d6; --series-2:#eb6834; --series-3:#1baf7a;
+  background:var(--surface-1); color:var(--text-primary); max-width:980px; margin:0 auto;
+  padding:36px 24px 64px;
+  font:15px/1.55 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+@media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .viz-root {
+  --surface-1:#1a1a19; --surface-2:#232322; --border:#3a3a37; --grid:#2e2e2c;
+  --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#93918a;
+  --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70; } }
+:root[data-theme="dark"] .viz-root {
+  --surface-1:#1a1a19; --surface-2:#232322; --border:#3a3a37; --grid:#2e2e2c;
+  --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#93918a;
+  --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70; }
+body { margin:0; background:var(--surface-1); }
+h1 { font-size:23px; letter-spacing:-.015em; margin:0 0 4px; }
+.sub { color:var(--text-secondary); font-size:13.5px; margin:0 0 20px; }
+svg text { font:12px ui-sans-serif,-apple-system,sans-serif; fill:var(--text-secondary); }
+svg .lbl { font-size:11px; fill:var(--text-primary); }
+svg .axis { stroke:var(--border); stroke-width:1; }
+svg .grid { stroke:var(--grid); stroke-width:1; }
+table { border-collapse:collapse; margin-top:28px; font-size:13px; width:100%; }
+th,td { border:1px solid var(--border); padding:5px 9px; text-align:right;
+        font-variant-numeric:tabular-nums; }
+th:first-child,td:first-child { text-align:left; }
+th { background:var(--surface-2); }
+.legend { display:flex; gap:18px; margin:10px 0 4px; font-size:13px;
+          color:var(--text-secondary); align-items:center; flex-wrap:wrap; }
+.sw { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+</style><div class='viz-root'><h1>Figure 1 — style against leakage</h1><p class='sub'>One point per run. The operating point the product needs is the region where the y-axis rises while the x-axis stays put.</p><div class='legend'><span><span class="sw" style="background:var(--series-2)"></span>few-shot</span><span><span class="sw" style="background:var(--series-1)"></span>stage A</span><span><span class="sw" style="background:var(--series-3)"></span>stage A+B</span><span><span class="sw" style="background:var(--text-muted)"></span>base floor</span></div><svg viewBox="0 0 900 480" role="img" aria-label="Style vs leakage frontier: one point per run">
+<line class="grid" x1="62" x2="880" y1="428.0" y2="428.0"/>
+<text x="54" y="432.0" text-anchor="end">0.0</text>
+<line class="grid" x1="62" x2="880" y1="345.6" y2="345.6"/>
+<text x="54" y="349.6" text-anchor="end">0.2</text>
+<line class="grid" x1="62" x2="880" y1="263.2" y2="263.2"/>
+<text x="54" y="267.2" text-anchor="end">0.4</text>
+<line class="grid" x1="62" x2="880" y1="180.8" y2="180.8"/>
+<text x="54" y="184.8" text-anchor="end">0.6</text>
+<line class="grid" x1="62" x2="880" y1="98.4" y2="98.4"/>
+<text x="54" y="102.4" text-anchor="end">0.8</text>
+<line class="grid" x1="62" x2="880" y1="16.0" y2="16.0"/>
+<text x="54" y="20.0" text-anchor="end">1.0</text>
+<line class="grid" y1="16" y2="428" x1="62.0" x2="62.0"/>
+<text x="62.0" y="446" text-anchor="middle">0.000</text>
+<line class="grid" y1="16" y2="428" x1="198.3" x2="198.3"/>
+<text x="198.3" y="446" text-anchor="middle">0.025</text>
+<line class="grid" y1="16" y2="428" x1="334.7" x2="334.7"/>
+<text x="334.7" y="446" text-anchor="middle">0.050</text>
+<line class="grid" y1="16" y2="428" x1="471.0" x2="471.0"/>
+<text x="471.0" y="446" text-anchor="middle">0.074</text>
+<line class="grid" y1="16" y2="428" x1="607.3" x2="607.3"/>
+<text x="607.3" y="446" text-anchor="middle">0.099</text>
+<line class="grid" y1="16" y2="428" x1="743.7" x2="743.7"/>
+<text x="743.7" y="446" text-anchor="middle">0.124</text>
+<line class="grid" y1="16" y2="428" x1="880.0" x2="880.0"/>
+<text x="880.0" y="446" text-anchor="middle">0.149</text>
+<line class="axis" x1="62" x2="880" y1="428" y2="428"/>
+<line class="axis" x1="62" x2="62" y1="16" y2="428"/>
+<text x="471.0" y="470" text-anchor="middle">verbatim leakage rate → worse</text>
+<text transform="translate(16 222.0) rotate(-90)" text-anchor="middle">AV attribution rate → better</text>
+<path d="M629.5 426.4 L280.3 428.0 L629.5 428.0 L433.2 428.0 L170.9 428.0 L716.4 428.0 L258.3 426.4" fill="none" stroke="var(--series-2)" stroke-width="1.5" opacity="0.45"/>
+<path d="M62.0 428.0 L62.0 428.0 L62.0 426.4 L62.0 132.1 L62.0 87.9 L62.0 99.4 L62.0 102.6" fill="none" stroke="var(--series-1)" stroke-width="1.5" opacity="0.45"/>
+<g><path d="M57.0 428.0 H67.0 M62.0 423.0 V433.0" stroke="var(--text-muted)" stroke-width="2.5" fill="none"/><title>base floor · base — AV 0.000, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="421.0">base</text>
+<g><circle cx="62.0" cy="74.9" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · a01 — AV 0.857, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="67.9">a01</text>
+<g><circle cx="62.0" cy="101.0" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · a02 — AV 0.794, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="94.0">a02</text>
+<g><circle cx="62.0" cy="94.5" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · a05 — AV 0.809, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="87.5">a05</text>
+<g><rect x="711.9" y="423.5" width="9" height="9" rx="1.5" fill="var(--series-2)" stroke="var(--surface-1)" stroke-width="2"/><title>few-shot · 100k — AV 0.000, leak 0.119</title></g>
+<text class="lbl" x="724.4" y="421.0">100k</text>
+<g><circle cx="62.0" cy="99.4" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · 100k — AV 0.798, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="92.4">100k</text>
+<g><rect x="625.0" y="423.5" width="9" height="9" rx="1.5" fill="var(--series-2)" stroke="var(--surface-1)" stroke-width="2"/><title>few-shot · 10k — AV 0.000, leak 0.103</title></g>
+<text class="lbl" x="637.5" y="421.0">10k</text>
+<g><circle cx="62.0" cy="426.4" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · 10k — AV 0.004, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="419.4">10k</text>
+<g><path d="M62.0 353.3 L68.0 359.3 L62.0 365.3 L56.0 359.3 Z" fill="var(--series-3)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A+B · 10k — AV 0.167, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="352.3">10k</text>
+<g><rect x="428.7" y="423.5" width="9" height="9" rx="1.5" fill="var(--series-2)" stroke="var(--surface-1)" stroke-width="2"/><title>few-shot · 25k — AV 0.000, leak 0.068</title></g>
+<text class="lbl" x="441.2" y="421.0">25k</text>
+<g><circle cx="62.0" cy="132.1" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · 25k — AV 0.718, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="125.1">25k</text>
+<g><rect x="625.0" y="421.9" width="9" height="9" rx="1.5" fill="var(--series-2)" stroke="var(--surface-1)" stroke-width="2"/><title>few-shot · 2k — AV 0.004, leak 0.103</title></g>
+<text class="lbl" x="637.5" y="419.4">2k</text>
+<g><circle cx="62.0" cy="428.0" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · 2k — AV 0.000, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="421.0">2k</text>
+<g><rect x="166.4" y="423.5" width="9" height="9" rx="1.5" fill="var(--series-2)" stroke="var(--surface-1)" stroke-width="2"/><title>few-shot · 50k — AV 0.000, leak 0.020</title></g>
+<text class="lbl" x="178.9" y="421.0">50k</text>
+<g><circle cx="62.0" cy="87.9" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · 50k — AV 0.825, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="80.9">50k</text>
+<g><rect x="275.8" y="423.5" width="9" height="9" rx="1.5" fill="var(--series-2)" stroke="var(--surface-1)" stroke-width="2"/><title>few-shot · 5k — AV 0.000, leak 0.040</title></g>
+<text class="lbl" x="288.3" y="421.0">5k</text>
+<g><circle cx="62.0" cy="428.0" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · 5k — AV 0.000, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="421.0">5k</text>
+<g><rect x="253.8" y="421.9" width="9" height="9" rx="1.5" fill="var(--series-2)" stroke="var(--surface-1)" stroke-width="2"/><title>few-shot · full — AV 0.004, leak 0.036</title></g>
+<text class="lbl" x="266.3" y="419.4">full</text>
+<g><circle cx="62.0" cy="102.6" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · full — AV 0.790, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="95.6">full</text>
+<g><path d="M62.0 73.8 L68.0 79.8 L62.0 85.8 L56.0 79.8 Z" fill="var(--series-3)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A+B · full — AV 0.845, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="72.8">full</text>
+</svg><table><tr><th>run</th><th>series</th><th>AV</th><th>leak</th></tr><tr><td>base</td><td>base floor</td><td>0.0000</td><td>0.0000</td></tr><tr><td>100k</td><td>few-shot</td><td>0.0000</td><td>0.1190</td></tr><tr><td>10k</td><td>few-shot</td><td>0.0000</td><td>0.1032</td></tr><tr><td>25k</td><td>few-shot</td><td>0.0000</td><td>0.0675</td></tr><tr><td>2k</td><td>few-shot</td><td>0.0040</td><td>0.1032</td></tr><tr><td>50k</td><td>few-shot</td><td>0.0000</td><td>0.0198</td></tr><tr><td>5k</td><td>few-shot</td><td>0.0000</td><td>0.0397</td></tr><tr><td>full</td><td>few-shot</td><td>0.0040</td><td>0.0357</td></tr><tr><td>100k</td><td>stage A</td><td>0.7976</td><td>0.0000</td></tr><tr><td>10k</td><td>stage A</td><td>0.0040</td><td>0.0000</td></tr><tr><td>25k</td><td>stage A</td><td>0.7183</td><td>0.0000</td></tr><tr><td>2k</td><td>stage A</td><td>0.0000</td><td>0.0000</td></tr><tr><td>50k</td><td>stage A</td><td>0.8254</td><td>0.0000</td></tr><tr><td>5k</td><td>stage A</td><td>0.0000</td><td>0.0000</td></tr><tr><td>a01</td><td>stage A</td><td>0.8571</td><td>0.0000</td></tr><tr><td>a02</td><td>stage A</td><td>0.7937</td><td>0.0000</td></tr><tr><td>a05</td><td>stage A</td><td>0.8095</td><td>0.0000</td></tr><tr><td>full</td><td>stage A</td><td>0.7897</td><td>0.0000</td></tr><tr><td>10k</td><td>stage A+B</td><td>0.1667</td><td>0.0000</td></tr><tr><td>full</td><td>stage A+B</td><td>0.8452</td><td>0.0000</td></tr></table></div>

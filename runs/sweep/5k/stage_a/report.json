@@ -1,0 +1,422 @@
+{
+  "run_name": "stage_a-5k",
+  "split": "blind",
+  "model": "",
+  "generated_at": "2026-08-01T05:56:54",
+  "n_generations": 252,
+  "stylometry": {
+    "overall": 0.0591,
+    "distributions": {
+      "sent_len_hist": 0.0172,
+      "word_len_hist": 0.004,
+      "function_words": 0.0175,
+      "punctuation": 0.0527,
+      "openers": 0.0618,
+      "pos_trigrams": 0.0962
+    },
+    "scalars_normalized": {
+      "sent_len_mean": 0.3873,
+      "sent_len_sd": 0.0329,
+      "burstiness": 0.2684,
+      "word_len_mean": 0.3864,
+      "msttr": 0.2984,
+      "contraction_rate": 0.0146,
+      "hedge_rate": 0.0058,
+      "intensifier_rate": 0.1215,
+      "first_person_rate": 0.4067,
+      "second_person_rate": 0.0644,
+      "em_dash_per_100": 0.1039,
+      "semicolon_per_100": 0.0155,
+      "paren_per_100": 0.188,
+      "question_per_100": 0.0347,
+      "exclaim_per_100": 0.0122,
+      "para_len_sents": 0.2922
+    },
+    "scalars_raw": {
+      "sent_len_mean": [
+        25.745,
+        22.647
+      ],
+      "sent_len_sd": [
+        15.351,
+        15.548
+      ],
+      "burstiness": [
+        -0.253,
+        -0.186
+      ],
+      "word_len_mean": [
+        4.357,
+        4.048
+      ],
+      "msttr": [
+        0.765,
+        0.729
+      ],
+      "contraction_rate": [
+        0.168,
+        0.197
+      ],
+      "hedge_rate": [
+        0.731,
+        0.739
+      ],
+      "intensifier_rate": [
+        0.858,
+        0.737
+      ],
+      "first_person_rate": [
+        2.421,
+        3.641
+      ],
+      "second_person_rate": [
+        0.389,
+        0.517
+      ],
+      "em_dash_per_100": [
+        0.087,
+        0.004
+      ],
+      "semicolon_per_100": [
+        1.021,
+        1.013
+      ],
+      "paren_per_100": [
+        0.183,
+        0.032
+      ],
+      "question_per_100": [
+        0.151,
+        0.116
+      ],
+      "exclaim_per_100": [
+        0.041,
+        0.028
+      ],
+      "para_len_sents": [
+        5.927,
+        6.658
+      ]
+    },
+    "ci_lo": 0.0572,
+    "ci_hi": 0.0703
+  },
+  "biggest_gaps": [
+    [
+      "scalar:first_person_rate",
+      0.4067
+    ],
+    [
+      "scalar:sent_len_mean",
+      0.3873
+    ],
+    [
+      "scalar:word_len_mean",
+      0.3864
+    ],
+    [
+      "scalar:msttr",
+      0.2984
+    ],
+    [
+      "scalar:para_len_sents",
+      0.2922
+    ],
+    [
+      "scalar:burstiness",
+      0.2684
+    ],
+    [
+      "scalar:paren_per_100",
+      0.188
+    ],
+    [
+      "scalar:intensifier_rate",
+      0.1215
+    ]
+  ],
+  "sent_len_hist": {
+    "buckets": [
+      "0-5",
+      "5-10",
+      "10-15",
+      "15-20",
+      "20-25",
+      "25-30",
+      "30-40",
+      "40-60",
+      "60+"
+    ],
+    "real": [
+      0.0112,
+      0.0661,
+      0.1396,
+      0.1814,
+      0.1598,
+      0.1303,
+      0.1777,
+      0.1008,
+      0.0332
+    ],
+    "generated": [
+      0.0278,
+      0.1286,
+      0.1739,
+      0.1888,
+      0.1391,
+      0.0988,
+      0.1248,
+      0.0909,
+      0.0275
+    ]
+  },
+  "config": {
+    "run_name": "stage_a",
+    "notes": "baseline recipe: all-linear LoRA r16, DoRA, NEFTune 5, 2 epochs",
+    "model": {
+      "name": "Qwen/Qwen2.5-3B-Instruct",
+      "dtype": "bfloat16",
+      "load_in_4bit": false,
+      "attn_implementation": "sdpa",
+      "max_seq_len": 1024,
+      "trust_remote_code": false
+    },
+    "lora": {
+      "target_modules": "all-linear",
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "bias": "none",
+      "use_dora": true,
+      "use_rslora": false,
+      "rank_pattern": {},
+      "alpha_pattern": {},
+      "layers_to_transform": null,
+      "modules_to_save": []
+    },
+    "sft": {
+      "epochs": 2.0,
+      "lr": 0.00015,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.05,
+      "per_device_batch_size": 2,
+      "grad_accum": 8,
+      "weight_decay": 0.0,
+      "max_grad_norm": 1.0,
+      "gradient_checkpointing": true,
+      "neftune_noise_alpha": 5.0,
+      "loraplus_lr_ratio": 0.0,
+      "train_on_completions_only": true,
+      "raw_next_token_mix": 0.1,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "save_total_limit": 3,
+      "logging_steps": 5,
+      "early_stopping_patience": 3,
+      "seed": 17
+    },
+    "dpo": {
+      "beta": 0.1,
+      "epochs": 1.0,
+      "lr": 5e-06,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.1,
+      "per_device_batch_size": 1,
+      "grad_accum": 8,
+      "gradient_checkpointing": true,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "logging_steps": 5,
+      "max_prompt_len": 512,
+      "max_len": 1024,
+      "loss_type": "sigmoid",
+      "reference_policy": "stage_a",
+      "av_reward_filter": false,
+      "av_margin": 0.05,
+      "length_match_tolerance": 0.35,
+      "seed": 17
+    },
+    "gen": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 17,
+      "max_new_tokens": 400,
+      "n_per_prompt": 1,
+      "max_prompt_tokens": 8192,
+      "baseline_n_shots": 5,
+      "system_prompt": "You are writing as the author. Match the author's grammatical structure, sentence rhythm, paragraph flow, and word choice. Do not imitate the author's topics or invent facts about their life."
+    },
+    "data": {
+      "chunk_min_words": 60,
+      "chunk_max_words": 320,
+      "questions_per_chunk": 2,
+      "use_supplied_prompts": true,
+      "supplied_prompt_scope": "first_chunk",
+      "val_frac": 0.15,
+      "blind_frac": 0.15,
+      "group_near_duplicates": true,
+      "near_dup_threshold": 0.15,
+      "never_scrub": [],
+      "split_by": "document",
+      "scrub_entities": true,
+      "seed": 17
+    },
+    "eval": {
+      "style_embedder": "AnnaWegmann/Style-Embedding",
+      "av_classifier": "logreg",
+      "fluency_max_ppl_regression": 0.15,
+      "informal_tag": "informal"
+    }
+  },
+  "av": {
+    "attribution_rate": 0.0,
+    "score_mean": 0.1018,
+    "score_median": 0.0714,
+    "score_sd": 0.0911,
+    "n": 252,
+    "threshold": 0.585,
+    "real_reference_attribution_rate": 0.7143,
+    "verifier_auc": 0.8957,
+    "verifier_accuracy": 0.8189,
+    "embedder": "AnnaWegmann/Style-Embedding",
+    "verifier_verdict": "PASS"
+  },
+  "leakage": {
+    "verbatim": {
+      "n": 12,
+      "gens_with_verbatim_ngram": 0,
+      "rate": 0.0,
+      "longest_verbatim_run_tokens": 0,
+      "examples": []
+    },
+    "entities": {
+      "n_distinct_leaked": 75,
+      "n_occurrences": 831,
+      "per_generation": 3.298,
+      "top": [
+        [
+          "The",
+          589
+        ],
+        [
+          "Church",
+          28
+        ],
+        [
+          "England",
+          16
+        ],
+        [
+          "America",
+          10
+        ],
+        [
+          "New",
+          10
+        ],
+        [
+          "Greeks",
+          10
+        ],
+        [
+          "John",
+          8
+        ],
+        [
+          "Jones",
+          7
+        ],
+        [
+          "London",
+          7
+        ],
+        [
+          "Milton",
+          7
+        ]
+      ],
+      "author_entity_vocab": 531
+    },
+    "semantic_echo": {
+      "n": 252,
+      "gen_mean_max_sim": 0.3506,
+      "heldout_mean_max_sim": 0.4375,
+      "echo": -0.0869,
+      "interpretation": "\u22480 healthy; >0.05 the model is paraphrasing training content the author's own held-out text does not share"
+    },
+    "verdict": "PASS"
+  },
+  "fluency": {
+    "ppl_adapter_on": 3.2906,
+    "ppl_adapter_off": 3.2888,
+    "relative_regression": 0.0006,
+    "max_allowed": 0.15,
+    "verdict": "PASS",
+    "n_probe_texts": 5,
+    "step": 8
+  },
+  "samples": [
+    {
+      "prompt": "Write a reflective essay analyzing a political figure's defense of an institution, examining the reasoning they use and comparing this rhetorical approach to how similar debates are conducted in another cultural or national context.",
+      "generated": "To the Committee on Defense of Liberty\n\nMy Lord, I speak to you, as a citizen of the United States, and as a member of one of its noblest bodies, the Supreme Court of the Union, when the country has called upon it to defend one of those institutions for which it is most earnestly contended. It has never been the habit of the Court to resist such calls. When the Government of the country has demanded its aid, in behalf of the public peace, the Court has, from time to time, given the Government some form of help; and, when the country has appealed to it in the cause of liberty, it has, at all times, rendered what assistance it could. And now, when a part of the American people has thought fit to call upon it for support, in the defense of one of the great pillars of our political system, the Court has undertaken the work with its usual readiness.\n\nIn the case before us the Court is requested to declare that the laws made in pursuance of the Constitution of the United States do not deprive one of its citizens of his freedom of speech and of his freedom of press. That is the only question we have to decide. We have no right to say more.\n\nIt is said that the power of taxation by which the laws are executed is a power essential to the exercise of every other power conferred by the Constitution. But that power does not extend to the denial of any liberty guaranteed by the Constitution",
+      "real": "While she looked at the ivy I opened for the first time for many weeks\nan <GROUP> newspaper, and I read a speech of Mr. <PERSON> in which\nhe said that <ORG> ought to be preserved because it\nrepresented something in the nature of permanent public opinion of\n<PLACE>, above the ebb and flow of the parties. Now Mr. <PERSON> is a\nperfectly sincere patriot, a man who, from his own point of view, thinks\nlong and seriously about the public needs, and he is, moreover, a man\nof entirely exceptionable intellectual power. But alas, in spite of\nall this, when I had read that speech I thought with a heavy heart that\nthere was one more thing that I had to add to the list of the specially\n<THING> things, such as kippers and cricket; I had to add the specially\n<THING> kind of humbug. In <PLACE> things are attacked and defended for\nwhat they are. <ORG> is attacked because it is <GROUP>,\nand defended because it is <GROUP>. The Republic is defended because\nit is <GROUP>, and attacked because it is <GROUP>. But here is the\nablest of <GROUP> politicians consoling everybody by telling them that\n<ORG> is not really <ORG>, but something quite\ndifferent, that the foolish accidental peers whom he meets every night\nare in some mysterious way experts upon the psychology of the democracy;\nthat if you want to know what the very poor want you must ask the very\nrich, and that if you want the truth about <ORG>,"
+    },
+    {
+      "prompt": "Write a reflective narrative about revisiting a memory from your youth involving an unfinished or newly constructed building. Describe your philosophical impressions of the empty structure at the time and include a specific incident or action you took during your visit.",
+      "generated": "I went back to the place where I used to play when I was a child. It is just a block away and there is only one way to get there. On that side street the houses are old and they have always been there. But there has been a change in the neighborhood. There are new houses on the other side of the street and some of them are almost completed.\n\nThere is a house with a small garden. A big man, who works for the builder, was putting up a fence. The fence is very high and it cuts off the garden. The house is still under construction but the people have got the keys. The house is finished inside. The people will have to pay the builder for the materials but the builder won\u2019t accept anything. This is a new rule. So the people have got their keys but they haven\u2019t got the house. They can\u2019t go in and they can\u2019t leave. There is no money to pay the builder and so they cannot finish the job. The builder has stopped work and he will wait till the owners pay him. The owner has sold the key and he won\u2019t give it back. He has taken the key to the builder but the builder won\u2019t take it because he doesn\u2019t want to finish the job. So the owner cannot sell his house. He has got no money. He can\u2019t buy food and he has nothing to eat. He has a wife and two children and all three of them are hungry.\n\nIt was like this when I was young. I used to play in the house. I used to play on the roof. I used to throw",
+      "real": "I remembered how I had walked up this new one-sided street all those\nyears ago; and I remembered what I had thought. I thought that this\nred and white glaring terrace at noon was really more <GROUP> and more\nlonesome than a glimmering churchyard at midnight. The churchyard could\nonly be full of the ghosts of the dead; but these houses were full of\nthe ghosts of the unborn. And a man can never find a home in the future\nas he can find it in the past. I was always fascinated by that medi\u00e6val\nnotion of erecting a rudely carpentered stage in the street, and acting\non it a miracle play of <TITLE> or the Last Judgment. And I\nthought to myself that each of these glaring, gaping, new jerry-built\nboxes was indeed a rickety stage erected for the acting of a real\nmiracle play; that human family that is almost the holy one, and that\nhuman death that is near to the last judgment.\n\nFor some foolish reason the last house but one in that imperfect row\nespecially haunted me with its hollow grin and empty window-eyes.\nSomething in the shape of this brick-and-mortar skeleton was attractive;\nand there being no workmen about, I strolled into it for curiosity and\nsolitude. I gave, with all the sky-deep gravity of youth, a benediction\nupon the man who was going to live there. I even remember that for the\nconvenience of meditation I called him <PERSON>.\n\nAs I reflected it crawled back into my memory th"
+    },
+    {
+      "prompt": "Write a philosophical essay contrasting two modes of reasoning: one that begins with first principles and fundamental purposes, and another that starts with immediate observations and works backward. Use an extended metaphor involving a common object to illustrate the difference between these approaches.",
+      "generated": "The two modes of reasoning I am to contrast are those that begin with first principles, and fundamental purposes, and those that start with immediate observations, and work backward.\nIn both cases there is the beginning, and the end; and a middle connecting them. In both cases it is necessary to think, and reason from what we do know to what we want to know. But in the one case it is assumed that we do know the first principles, and the fundamental purposes, which we have to discover and apply. In the other case the first principles and fundamental purposes are not known to us, but we have to find them out by observation and induction. In both cases there is this middle ground of thinking and reasoning from the knowledge we have, to the knowledge we want to get. But it is different in the two cases how we proceed.\nIn the one case the end is given, and we go back to the means. In the other case the means are given, and we go back from the means to the end. If I want to build a house, I take the plan of a house, which I know already, and I try to fit the parts together. If I see a house, and try to make the plan out of the parts, I know the result will be an unsatisfactory one.\nIn the former case the plan and purpose are given, and are part of what I know. In the latter case they are not given, and are not part of what I know. The former is like the process of putting on a suit o",
+      "real": "Now all this may sound very fanciful and mystical, but it is the right\nview of pokers, and no one who takes it will ever go in for any wrong\nview of pokers, such as using them to beat one's wife or torture one's\nchildren, or even (though that is more excusable) to make a policeman\njump, as the clown does in the pantomime. He who has thus gone back to\nthe beginning, and seen everything as quaint and new, will always see\nthings in their right order, the one depending on the other in degree of\npurpose and importance: the poker for the fire and the fire for the man\nand the man for the glory of God.\n\nThis is thinking forwards. Now our modern discussions about everything,\n<GROUP>, <PERSON>, or <ORG>, are all entangled in\nan opposite train of thought, which runs as follows:--A modern\nintellectual comes in and sees a poker. He is a positivist; he will not\nbegin with any dogmas about the nature of man, or any day-dreams about\nthe mystery of fire. He will begin with what he can see, the poker; and\nthe first thing he sees about the poker is that it is crooked. He says,\n\u201cPoor poker; it's crooked.\u201d Then he asks how it came to be crooked; and\nis told that there is a thing in the world (with which his temperament\nhas hitherto left him unacquainted)--a thing called fire. He points\nout, very kindly and clearly, how silly it is of people, if they want\na straight poker, to put it into a chemical "
+    },
+    {
+      "prompt": "Write three short anecdotal examples illustrating how unconventional or eccentric behavior can be more persuasive than eloquent rhetoric.",
+      "generated": "Once a gentleman of some pretensions in his own opinion, but withal a most absurd person, went to a dinner-party, and took off his hat as he entered the room; so that the company were much astonished to see him do it. \"Why,\" said he, \"I take it off to show my respect to the house.\" But this made them still more surprised. He was asked what house he meant? \"The one above me,\" says he. \"But you cannot take off your hat to every house you meet with,\" replied they. \"Then I will take off mine to the next house below me,\" said he; and then took off his hat again. This is the way with such people; if they speak well, they talk well too. [\"_The Spectator_\"]\n\nA young man, in whose conversation it was a pleasure to hear anything, and who had a great deal to say, when he pleased, met a very good-looking lady at a ball. He proposed dancing, but she said she would be sure to find somebody else to dance with. \"Oh, no,\" said he; \"do, for I have no partner.\" The lady did dance, and had the satisfaction of finding her partner so very agreeable that she danced till eleven o'clock in the night. [\"_The Spectator_\"]\n\nA man, who had been bred at Oxford, was appointed to a living; he came up to the town, and preached a sermon upon a text; he was understood to have done it with much ability; but the best part of the parishioners went away after the sermon, and did not return home till six o'clock. [\"_",
+      "real": "\u201cA little common sense impresses <GROUP> working-men more than\nhigh-flown argument. A speaker who, as he made his points, pulled\nbuttons off his waistcoat, won thousands of votes for his side.\u201d Or,\n\u201cSound common sense tells better in <PLACE> than high-flown argument.\nThus Senator <PERSON>, who threw his false teeth in the air every time he\nmade an epigram, won the solid approval of <GROUP> working-men.\u201d Or\nagain, \u201cThe sound common sense of a gentleman from <ORG>, who stuck\nstraws in his hair during the progress of his speech, assured the\nvictory of Mr. <PERSON>.\u201d"
+    },
+    {
+      "prompt": "Write a passage arguing that superficial appreciation of a culture's artistic or social expressions without understanding its underlying values is problematic.",
+      "generated": "Let me begin by acknowledging that there are people who do not appreciate the value of what they have not seen, and whose judgment is not to be trusted when it comes to matters of taste. They will say that this or that painting or statue is beautiful, or that the music is charming or melodious. But I can assure them, if they would only take the trouble to learn more about the history and civilization of the country from which such works have come, that they would find out that all these works were made to express religious ideas, which may be quite different from those to which they themselves are accustomed; and that they would find out too, that in many cases, the artist has been the victim of his own ignorance and prejudice. He has been misled by the priests, or has followed the orders of the priests, and has used the things which he himself would have considered as barbarous, or at least as very imperfect. If the people who like the pictures and music did not understand them, they would never have made them. They must have known what they were doing. And therefore they must have had some other idea than the one which the artists now give them. I am not here speaking of the case where a picture or statue was made with some special purpose in view, to serve as an object of worship, or to be a symbol of some doctrine. In this case it was understood by all. But I am speaking of",
+      "real": "Thus their obscenity is the expression of their passionate love of\ndragging all things into the light. The avarice of their peasants means\nthe independence of their peasants. What the <GROUP> call their\nrudeness in the streets is a phase of their social equality. The\nworried look of their women is connected with the responsibility of\ntheir women; and a certain unconscious brutality of hurry and gesture\nin the men is related to their inexhaustible and extraordinary military\ncourage. Of all countries, therefore, <PLACE> is the worst country for a\nsuperficial fool to admire. Let a fool hate <PLACE>: if the fool loves\nit he will soon be a knave. He will certainly admire it, not only for\nthe things that are not creditable, but actually for the things that\nare not there. He will admire the grace and indolence of the most\nindustrious people in the world. He will admire the romance and fantasy\nof the most determinedly respectable and commonplace people in the\nworld. This mistake the Englishman will make if he admires <PLACE> too\nhastily; but the mistake that he makes about <PLACE> will be slight\ncompared with the mistake that he makes about himself. An Englishman\nwho professes really to like <GROUP> realistic novels, really to be at\nhome in a <GROUP> modern theatre, really to experience no shock on first\nseeing the savage <GROUP> caricatures, is making a mistake very\ndangerous for his "
+    },
+    {
+      "prompt": "Write a personal essay that revisits a place from your past, comparing how it appears now with your memories of it from years ago.",
+      "generated": "I have no such essay in my files.",
+      "real": "We have read of some celebrated philosopher who was so absent-minded\nthat he paid a call at his own house. My own absent-mindedness is\nextreme, and my philosophy, of course, is the marvel of men and angels.\nBut I never quite managed to be so absent-minded as that. Some yards at\nleast from my own door, something vaguely familiar has always caught\nmy eye; and thus the joke has been spoiled. Of course I have quite\nconstantly walked into another man's house, thinking it was my own\nhouse; my visits became almost monotonous. But walking into my own house\nand thinking it was another man's house is a flight of poetic detachment\nstill beyond me. Something of the sensations that such an absent-minded\nman must feel I really felt the other day; and very pleasant sensations\nthey were. The best parts of every proper romance are the first chapter\nand the last chapter; and to knock at a strange door and find a nice\nwife would be to concentrate the beginning and end of all romance.\n\nMine was a milder and slighter experience, but its thrill was of the\nsame kind. For I strolled through a place I had imagined quite virgin\nand unvisited (as far as I was concerned), and I suddenly found I was\ntreading in my own footprints, and the footprints were nearly twenty\nyears old.\n\nIt was one of those stretches of country which always suggests an almost\nunnatural decay; thickets and heaths that have grown out"
+    }
+  ],
+  "training": {
+    "stage": "A",
+    "trainable": {
+      "total_params": 3116904448,
+      "trainable_params": 30965760,
+      "trainable_pct": 0.9935,
+      "trainable_by_kind": {
+        "attention": 7538688,
+        "mlp": 23427072,
+        "other": 0
+      }
+    },
+    "train_runtime_s": 116.5,
+    "n_train_rows": 49
+  },
+  "baseline_comparison": {
+    "AV attribution rate": {
+      "baseline": 0.0,
+      "this_run": 0.0,
+      "delta": 0.0
+    },
+    "stylometry distance (lower better)": {
+      "baseline": 0.1557,
+      "this_run": 0.0591,
+      "delta": 0.0966
+    },
+    "verbatim leakage rate (lower better)": {
+      "baseline": 0.0397,
+      "this_run": 0.0,
+      "delta": 0.0397
+    }
+  }
+}

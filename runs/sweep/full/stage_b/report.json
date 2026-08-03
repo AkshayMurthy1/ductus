@@ -1,0 +1,411 @@
+{
+  "run_name": "stage_b-full",
+  "split": "blind",
+  "model": "",
+  "generated_at": "2026-08-02T16:06:56",
+  "n_generations": 252,
+  "stylometry": {
+    "overall": 0.0549,
+    "distributions": {
+      "sent_len_hist": 0.0036,
+      "word_len_hist": 0.0066,
+      "function_words": 0.0148,
+      "punctuation": 0.0238,
+      "openers": 0.1149,
+      "pos_trigrams": 0.0555
+    },
+    "scalars_normalized": {
+      "sent_len_mean": 0.1671,
+      "sent_len_sd": 0.1153,
+      "burstiness": 0.0135,
+      "word_len_mean": 0.4806,
+      "msttr": 0.2832,
+      "contraction_rate": 0.0134,
+      "hedge_rate": 0.209,
+      "intensifier_rate": 0.2063,
+      "first_person_rate": 0.0791,
+      "second_person_rate": 0.057,
+      "em_dash_per_100": 0.0871,
+      "semicolon_per_100": 0.4051,
+      "paren_per_100": 0.1479,
+      "question_per_100": 0.0723,
+      "exclaim_per_100": 0.0249,
+      "para_len_sents": 0.2847
+    },
+    "scalars_raw": {
+      "sent_len_mean": [
+        25.745,
+        24.409
+      ],
+      "sent_len_sd": [
+        15.351,
+        14.659
+      ],
+      "burstiness": [
+        -0.253,
+        -0.25
+      ],
+      "word_len_mean": [
+        4.357,
+        3.973
+      ],
+      "msttr": [
+        0.765,
+        0.731
+      ],
+      "contraction_rate": [
+        0.168,
+        0.141
+      ],
+      "hedge_rate": [
+        0.731,
+        1.044
+      ],
+      "intensifier_rate": [
+        0.858,
+        1.065
+      ],
+      "first_person_rate": [
+        2.421,
+        2.659
+      ],
+      "second_person_rate": [
+        0.389,
+        0.502
+      ],
+      "em_dash_per_100": [
+        0.087,
+        0.017
+      ],
+      "semicolon_per_100": [
+        1.021,
+        1.223
+      ],
+      "paren_per_100": [
+        0.183,
+        0.064
+      ],
+      "question_per_100": [
+        0.151,
+        0.079
+      ],
+      "exclaim_per_100": [
+        0.041,
+        0.016
+      ],
+      "para_len_sents": [
+        5.927,
+        6.639
+      ]
+    },
+    "ci_lo": 0.052,
+    "ci_hi": 0.0651
+  },
+  "biggest_gaps": [
+    [
+      "scalar:word_len_mean",
+      0.4806
+    ],
+    [
+      "scalar:semicolon_per_100",
+      0.4051
+    ],
+    [
+      "scalar:para_len_sents",
+      0.2847
+    ],
+    [
+      "scalar:msttr",
+      0.2832
+    ],
+    [
+      "scalar:hedge_rate",
+      0.209
+    ],
+    [
+      "scalar:intensifier_rate",
+      0.2063
+    ],
+    [
+      "scalar:sent_len_mean",
+      0.1671
+    ],
+    [
+      "scalar:paren_per_100",
+      0.1479
+    ]
+  ],
+  "sent_len_hist": {
+    "buckets": [
+      "0-5",
+      "5-10",
+      "10-15",
+      "15-20",
+      "20-25",
+      "25-30",
+      "30-40",
+      "40-60",
+      "60+"
+    ],
+    "real": [
+      0.0112,
+      0.0661,
+      0.1396,
+      0.1814,
+      0.1598,
+      0.1303,
+      0.1777,
+      0.1008,
+      0.0332
+    ],
+    "generated": [
+      0.0046,
+      0.0912,
+      0.1533,
+      0.1794,
+      0.1671,
+      0.128,
+      0.1583,
+      0.0897,
+      0.0284
+    ]
+  },
+  "config": {
+    "run_name": "stage_b",
+    "notes": "on-policy DPO sharpening on top of Stage A; plain sigmoid loss first",
+    "model": {
+      "name": "Qwen/Qwen2.5-3B-Instruct",
+      "dtype": "bfloat16",
+      "load_in_4bit": false,
+      "attn_implementation": "sdpa",
+      "max_seq_len": 1024,
+      "trust_remote_code": false
+    },
+    "lora": {
+      "target_modules": "all-linear",
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "bias": "none",
+      "use_dora": true,
+      "use_rslora": false,
+      "rank_pattern": {},
+      "alpha_pattern": {},
+      "layers_to_transform": null,
+      "modules_to_save": []
+    },
+    "sft": {
+      "epochs": 2.0,
+      "lr": 0.00015,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.05,
+      "per_device_batch_size": 2,
+      "grad_accum": 8,
+      "weight_decay": 0.0,
+      "max_grad_norm": 1.0,
+      "gradient_checkpointing": true,
+      "neftune_noise_alpha": 5.0,
+      "loraplus_lr_ratio": 0.0,
+      "train_on_completions_only": true,
+      "raw_next_token_mix": 0.1,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "save_total_limit": 3,
+      "logging_steps": 5,
+      "early_stopping_patience": 3,
+      "seed": 17
+    },
+    "dpo": {
+      "beta": 0.1,
+      "epochs": 1.0,
+      "lr": 5e-06,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.1,
+      "per_device_batch_size": 1,
+      "grad_accum": 8,
+      "gradient_checkpointing": true,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "logging_steps": 5,
+      "max_prompt_len": 512,
+      "max_len": 1024,
+      "loss_type": "sigmoid",
+      "reference_policy": "stage_a",
+      "av_reward_filter": false,
+      "av_margin": 0.05,
+      "length_match_tolerance": 0.35,
+      "seed": 17
+    },
+    "gen": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 17,
+      "max_new_tokens": 400,
+      "n_per_prompt": 1,
+      "max_prompt_tokens": 8192,
+      "baseline_n_shots": 5,
+      "system_prompt": "You are writing as the author. Match the author's grammatical structure, sentence rhythm, paragraph flow, and word choice. Do not imitate the author's topics or invent facts about their life."
+    },
+    "data": {
+      "chunk_min_words": 60,
+      "chunk_max_words": 320,
+      "questions_per_chunk": 2,
+      "use_supplied_prompts": true,
+      "supplied_prompt_scope": "first_chunk",
+      "val_frac": 0.15,
+      "blind_frac": 0.15,
+      "group_near_duplicates": true,
+      "near_dup_threshold": 0.15,
+      "never_scrub": [],
+      "split_by": "document",
+      "scrub_entities": true,
+      "seed": 17
+    },
+    "eval": {
+      "style_embedder": "AnnaWegmann/Style-Embedding",
+      "av_classifier": "logreg",
+      "fluency_max_ppl_regression": 0.15,
+      "informal_tag": "informal"
+    }
+  },
+  "av": {
+    "attribution_rate": 0.8452,
+    "score_mean": 0.7027,
+    "score_median": 0.7305,
+    "score_sd": 0.1436,
+    "n": 252,
+    "threshold": 0.585,
+    "real_reference_attribution_rate": 0.7143,
+    "verifier_auc": 0.8957,
+    "verifier_accuracy": 0.8189,
+    "embedder": "AnnaWegmann/Style-Embedding",
+    "verifier_verdict": "PASS"
+  },
+  "leakage": {
+    "verbatim": {
+      "n": 12,
+      "gens_with_verbatim_ngram": 0,
+      "rate": 0.0,
+      "longest_verbatim_run_tokens": 0,
+      "examples": []
+    },
+    "entities": {
+      "n_distinct_leaked": 19,
+      "n_occurrences": 486,
+      "per_generation": 1.929,
+      "top": [
+        [
+          "The",
+          453
+        ],
+        [
+          "Englishman",
+          5
+        ],
+        [
+          "Art",
+          4
+        ],
+        [
+          "State",
+          4
+        ],
+        [
+          "Englishmen",
+          4
+        ],
+        [
+          "Church",
+          2
+        ],
+        [
+          "House",
+          2
+        ],
+        [
+          "London",
+          1
+        ],
+        [
+          "Empire",
+          1
+        ],
+        [
+          "Religion",
+          1
+        ]
+      ],
+      "author_entity_vocab": 531
+    },
+    "semantic_echo": {
+      "n": 252,
+      "gen_mean_max_sim": 0.5566,
+      "heldout_mean_max_sim": 0.5797,
+      "echo": -0.0231,
+      "interpretation": "\u22480 healthy; >0.05 the model is paraphrasing training content the author's own held-out text does not share"
+    },
+    "verdict": "PASS"
+  },
+  "fluency": {
+    "ppl_adapter_on": 3.3394,
+    "ppl_adapter_off": 3.2888,
+    "relative_regression": 0.0154,
+    "max_allowed": 0.15,
+    "verdict": "PASS",
+    "n_probe_texts": 5,
+    "step": 32
+  },
+  "samples": [
+    {
+      "prompt": "Write a reflective essay analyzing a political figure's defense of an institution, examining the reasoning they use and comparing this rhetorical approach to how similar debates are conducted in another cultural or national context.",
+      "generated": "But the real and most effective argument against <PERSON> is simply that\nhe is a liar. I say that <PERSON> was a liar. Not a liar of the ordinary\nsort who lies for the sake of lying, but a liar in the sense that he\nlied on the spur of the moment, a liar on a question that had no real\nimportance, a liar because he was asked for an immediate answer about\nsomething which there was nothing to answer about; the thing that he knew\nno more about than I do about the thing for which he has been called to\naccount. If you ask me what the <ORG> is like, I should reply that I have\nnever seen it and I know nothing about it. This is not merely true; it\nis literally true. I have never seen it and I know nothing about it. But\nI am very sure that it is not so unlike our own country as is the\nstatement, or even the general idea, that it is an aristocracy or oligarchy\nin the strict sense of those words.\n\nBut if we can only get the people to listen to the man who is really\nsaying these things, he will tell them that he does not care one straw\nwhether the <GROUP> aristocracy is aristocratic or oligarchical or not.\nHe cares about this much more--that it is the aristocracy or oligarchy\nof the poor. The thing must be settled, and settled soon, whether the\npeople are ruled by the rich or the poor; but whatever the rule may be,\nit must be the rule of the poor. He cares a great deal about the matter;\nbut ",
+      "real": "While she looked at the ivy I opened for the first time for many weeks\nan <GROUP> newspaper, and I read a speech of Mr. <PERSON> in which\nhe said that <ORG> ought to be preserved because it\nrepresented something in the nature of permanent public opinion of\n<PLACE>, above the ebb and flow of the parties. Now Mr. <PERSON> is a\nperfectly sincere patriot, a man who, from his own point of view, thinks\nlong and seriously about the public needs, and he is, moreover, a man\nof entirely exceptionable intellectual power. But alas, in spite of\nall this, when I had read that speech I thought with a heavy heart that\nthere was one more thing that I had to add to the list of the specially\n<THING> things, such as kippers and cricket; I had to add the specially\n<THING> kind of humbug. In <PLACE> things are attacked and defended for\nwhat they are. <ORG> is attacked because it is <GROUP>,\nand defended because it is <GROUP>. The Republic is defended because\nit is <GROUP>, and attacked because it is <GROUP>. But here is the\nablest of <GROUP> politicians consoling everybody by telling them that\n<ORG> is not really <ORG>, but something quite\ndifferent, that the foolish accidental peers whom he meets every night\nare in some mysterious way experts upon the psychology of the democracy;\nthat if you want to know what the very poor want you must ask the very\nrich, and that if you want the truth about <ORG>,"
+    },
+    {
+      "prompt": "Write a reflective narrative about revisiting a memory from your youth involving an unfinished or newly constructed building. Describe your philosophical impressions of the empty structure at the time and include a specific incident or action you took during your visit.",
+      "generated": "I went back to the <PLACE> and found the new wing still under construction,\na thing that has been said of many great buildings, but it was never\nsaid of the <PERSON>, because it is so difficult to build a house when\nit is not even finished. It had a vague air of something left over; it\nseemed like the end of the world in its way. I stood outside, gazing at\nthe new building, and suddenly I saw, not for the first time in my life,\nthat the real purpose of art is to make men see the things they have\nnever seen before. It is true, indeed, that if all art were to cease\nmen would still see the sky. But we should not see the clouds. If all\nart ceased I should still see the moon, but I should not know that it was\na moon. The moon is not a moon; it is a piece of silver, and it is only\nart that turns it into a symbol. Art does not merely describe the sky;\nit describes the sky by itself. It is not that it makes us see the sky,\nbut that it creates the idea of the sky. I do not mean to say that the\n<PERSON> is better than any other building; it is not better; but it is\ndifferent. It is not that it is more like the sky; it is that it is the\nsky.",
+      "real": "I remembered how I had walked up this new one-sided street all those\nyears ago; and I remembered what I had thought. I thought that this\nred and white glaring terrace at noon was really more <GROUP> and more\nlonesome than a glimmering churchyard at midnight. The churchyard could\nonly be full of the ghosts of the dead; but these houses were full of\nthe ghosts of the unborn. And a man can never find a home in the future\nas he can find it in the past. I was always fascinated by that medi\u00e6val\nnotion of erecting a rudely carpentered stage in the street, and acting\non it a miracle play of <TITLE> or the Last Judgment. And I\nthought to myself that each of these glaring, gaping, new jerry-built\nboxes was indeed a rickety stage erected for the acting of a real\nmiracle play; that human family that is almost the holy one, and that\nhuman death that is near to the last judgment.\n\nFor some foolish reason the last house but one in that imperfect row\nespecially haunted me with its hollow grin and empty window-eyes.\nSomething in the shape of this brick-and-mortar skeleton was attractive;\nand there being no workmen about, I strolled into it for curiosity and\nsolitude. I gave, with all the sky-deep gravity of youth, a benediction\nupon the man who was going to live there. I even remember that for the\nconvenience of meditation I called him <PERSON>.\n\nAs I reflected it crawled back into my memory th"
+    },
+    {
+      "prompt": "Write a philosophical essay contrasting two modes of reasoning: one that begins with first principles and fundamental purposes, and another that starts with immediate observations and works backward. Use an extended metaphor involving a common object to illustrate the difference between these approaches.",
+      "generated": "The second way is by considering things in themselves. In that case,\nwhen I say that my friend has a large and healthy mind, I know that it\nis true; for there is no thing more obvious than the fact that a man with\na large and healthy body can also have a large and healthy mind. But\nthere are other cases which may not be so plain; such as, that this man\nhas a strong and healthy body. Now, if you wish to know whether he really\ndoes have a strong and healthy body, you must begin from the outside.\nYou must examine all the things that you can see without going inside;\nthen you will have the most certain proof of what is within him. You must\nsee whether his face is pale and haggard, whether his hair is greasy, or\nwhether he has a cold, or whether he has been bleeding. In short, you must\nlook at everything except the man himself. This is very easy for those who\nare only interested in external appearance; but, of course, it is difficult\nfor those who are interested in internal reality. It is easy for the\ndoctor to look at a man\u2019s skin and feel his pulse, and conclude that his\nhealth is good. But it is difficult for the doctor to look at the skin\nof a corpse and feel the pulse of a corpse, and conclude that the man was\nhealthy. The doctor knows that if a man is healthy he must be healthy\ninside; but if he is dead, he must be dead outside. And that is the great\ndifficulty with which all ",
+      "real": "Now all this may sound very fanciful and mystical, but it is the right\nview of pokers, and no one who takes it will ever go in for any wrong\nview of pokers, such as using them to beat one's wife or torture one's\nchildren, or even (though that is more excusable) to make a policeman\njump, as the clown does in the pantomime. He who has thus gone back to\nthe beginning, and seen everything as quaint and new, will always see\nthings in their right order, the one depending on the other in degree of\npurpose and importance: the poker for the fire and the fire for the man\nand the man for the glory of God.\n\nThis is thinking forwards. Now our modern discussions about everything,\n<GROUP>, <PERSON>, or <ORG>, are all entangled in\nan opposite train of thought, which runs as follows:--A modern\nintellectual comes in and sees a poker. He is a positivist; he will not\nbegin with any dogmas about the nature of man, or any day-dreams about\nthe mystery of fire. He will begin with what he can see, the poker; and\nthe first thing he sees about the poker is that it is crooked. He says,\n\u201cPoor poker; it's crooked.\u201d Then he asks how it came to be crooked; and\nis told that there is a thing in the world (with which his temperament\nhas hitherto left him unacquainted)--a thing called fire. He points\nout, very kindly and clearly, how silly it is of people, if they want\na straight poker, to put it into a chemical "
+    },
+    {
+      "prompt": "Write three short anecdotal examples illustrating how unconventional or eccentric behavior can be more persuasive than eloquent rhetoric.",
+      "generated": "It is not necessary to go any further in this direction to show that the\ngreatest orators are not only not infallible, but often very fallible.\nI remember an incident of this kind when I was a boy; it happened in a\nvery small town in <ORG>. The mayor came to the hall with a speech\nwhich was to be read by a servant on his behalf. But the speech was\nso bad and so ridiculous that the whole hall burst into laughter; and\nthe servant, after reading it, said: \u201cI beg your pardon, gentlemen. It\nis quite true that the town of <PLACE> is not particularly beautiful;\nbut then, gentlemen, if you were ever so good as to come and see it, you\nwould find that it is almost always dark, except at night.\u201d The audience\nwas completely stunned; they could not help admitting that the speech was\nmore convincing than the most elaborate and elaborate and eloquent speech\nof any great orator. Then one of the gentlemen in the audience, who had\nhad some experience in the matter, proposed that the mayor should read\nhis own speech; which he did in the most solemn style; and the effect\nwas precisely the same as before.\n\n\u201cSir,\u201d he began, \u201cI wish to express my humble thanks to all\nthose who have contributed to this fund....\u201d And it is safe to say\nthat there was no such effect, because it was not the thing said; it\nwas merely the thing heard. It is not difficult to imagine the effect,\nbecause we hear it every day. ",
+      "real": "\u201cA little common sense impresses <GROUP> working-men more than\nhigh-flown argument. A speaker who, as he made his points, pulled\nbuttons off his waistcoat, won thousands of votes for his side.\u201d Or,\n\u201cSound common sense tells better in <PLACE> than high-flown argument.\nThus Senator <PERSON>, who threw his false teeth in the air every time he\nmade an epigram, won the solid approval of <GROUP> working-men.\u201d Or\nagain, \u201cThe sound common sense of a gentleman from <ORG>, who stuck\nstraws in his hair during the progress of his speech, assured the\nvictory of Mr. <PERSON>.\u201d"
+    },
+    {
+      "prompt": "Write a passage arguing that superficial appreciation of a culture's artistic or social expressions without understanding its underlying values is problematic.",
+      "generated": "But the real danger of such a superficial study lies in its assuming to be\nthe same as the real dangers of any other superficial study. When we\nstudy anything for its art, it is very easy to get the true impression of\nart; but equally easy to get no impression at all of what the real thing\nwas, what the people were like, what they did with the things they made,\nor how they lived. Art always remains an element in civilization, even\nwhen all else has passed away. It is the only thing which is permanent.\nIt is the thing on which all history depends. The moment you forget this\nyou begin to forget the whole thing.\n\nTake a case in point. I have seen many pictures of the <PLACE> <ORG>\nand <PERSON>, and admired them very much. But I should like to have seen\nthe people who produced them. I have never seen anything so utterly out of\ntouch as some modern <GROUP> artists who, I suppose, admire him\nmost. They do seem to think that he was merely a kind of <GROUP> artist,\nlike some <GROUP> landscape painter. His works are not really\npicturesque, but merely picturesque. They are not really pastoral, but\nmerely pastoral. They are not really quaint, but merely quaint. In short,\nthey are not quaint at all.",
+      "real": "Thus their obscenity is the expression of their passionate love of\ndragging all things into the light. The avarice of their peasants means\nthe independence of their peasants. What the <GROUP> call their\nrudeness in the streets is a phase of their social equality. The\nworried look of their women is connected with the responsibility of\ntheir women; and a certain unconscious brutality of hurry and gesture\nin the men is related to their inexhaustible and extraordinary military\ncourage. Of all countries, therefore, <PLACE> is the worst country for a\nsuperficial fool to admire. Let a fool hate <PLACE>: if the fool loves\nit he will soon be a knave. He will certainly admire it, not only for\nthe things that are not creditable, but actually for the things that\nare not there. He will admire the grace and indolence of the most\nindustrious people in the world. He will admire the romance and fantasy\nof the most determinedly respectable and commonplace people in the\nworld. This mistake the Englishman will make if he admires <PLACE> too\nhastily; but the mistake that he makes about <PLACE> will be slight\ncompared with the mistake that he makes about himself. An Englishman\nwho professes really to like <GROUP> realistic novels, really to be at\nhome in a <GROUP> modern theatre, really to experience no shock on first\nseeing the savage <GROUP> caricatures, is making a mistake very\ndangerous for his "
+    },
+    {
+      "prompt": "Write a personal essay that revisits a place from your past, comparing how it appears now with your memories of it from years ago.",
+      "generated": "I have no more use for this world than for some other places to which I\nhave been, such as <PLACE>. But that does not matter; there are\nalways places where we can be happy. I was in the <PLACE> <PLACE>\nthe other day, and saw the great <PERSON> park once again, and the\nsame old flowers were in bloom, as if they had been planted only the day\nbefore. When I went out into the park I said to myself, \u201cThe <ORG>\nis the greatest city in the world,\u201d and then I began to cry. In a moment\nthere came up a little street of small shops, and I began again, \u201cAll\nhumanity is here,\u201d and I sobbed with even greater power.\n\nAnd yet I have come away with one very definite conviction, that if ever\nit happens that I have to live somewhere permanently, I should prefer to\nlive in a town which has changed much since I last lived in it, because\nI should then have the feeling that every stone was still a living thing,\nevery building alive with a new vitality.",
+      "real": "We have read of some celebrated philosopher who was so absent-minded\nthat he paid a call at his own house. My own absent-mindedness is\nextreme, and my philosophy, of course, is the marvel of men and angels.\nBut I never quite managed to be so absent-minded as that. Some yards at\nleast from my own door, something vaguely familiar has always caught\nmy eye; and thus the joke has been spoiled. Of course I have quite\nconstantly walked into another man's house, thinking it was my own\nhouse; my visits became almost monotonous. But walking into my own house\nand thinking it was another man's house is a flight of poetic detachment\nstill beyond me. Something of the sensations that such an absent-minded\nman must feel I really felt the other day; and very pleasant sensations\nthey were. The best parts of every proper romance are the first chapter\nand the last chapter; and to knock at a strange door and find a nice\nwife would be to concentrate the beginning and end of all romance.\n\nMine was a milder and slighter experience, but its thrill was of the\nsame kind. For I strolled through a place I had imagined quite virgin\nand unvisited (as far as I was concerned), and I suddenly found I was\ntreading in my own footprints, and the footprints were nearly twenty\nyears old.\n\nIt was one of those stretches of country which always suggests an almost\nunnatural decay; thickets and heaths that have grown out"
+    }
+  ],
+  "training": {
+    "stage": "B",
+    "train_runtime_s": 387.6
+  },
+  "baseline_comparison": {
+    "AV attribution rate": {
+      "baseline": 0.7897,
+      "this_run": 0.8452,
+      "delta": 0.0555
+    },
+    "stylometry distance (lower better)": {
+      "baseline": 0.0635,
+      "this_run": 0.0549,
+      "delta": 0.0086
+    },
+    "verbatim leakage rate (lower better)": {
+      "baseline": 0.0,
+      "this_run": 0.0,
+      "delta": 0.0
+    }
+  }
+}

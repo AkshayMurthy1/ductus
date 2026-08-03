@@ -1,13 +1,45 @@
-# Never commit the corpus or anything derived from it.
-# `!data/**/` re-includes directories so the negations below can apply inside them; git will not
-# descend into an excluded directory otherwise.
+# Deny everything under data/ and runs/ by default, then re-include specific paths by
+# PROVENANCE, not by pipeline role. `!data/**/` re-includes directories so the negations below
+# can reach inside them; git will not descend into an excluded directory otherwise.
+#
+# The rule: a path is committable only if it is (a) redistributable and (b) either expensive to
+# regenerate or a scientific record. Weights, checkpoints and deterministic intermediates are not.
+# See data/README.md. Run `make check-data` before committing to preview exactly what is included.
 data/**
-!data/**/
-!data/**/.gitkeep
-!data/**/README.md
 runs/**
+!data/**/
 !runs/**/
-!runs/.gitkeep
+!data/**/.gitkeep
+!runs/**/.gitkeep
+!data/**/README.md
+
+# --- Redistributable corpora (public domain — provenance in data/README.md) -------------------
+!data/raw/author/**
+!data/raw/distractor/**
+
+# --- Derived data that cost money and cannot be reproduced -----------------------------------
+# pairs.jsonl is ~3k non-deterministic API calls. docs/chunks/scrubbed/splits are all
+# deterministic functions of raw + seed, so they regenerate exactly and stay out.
+!data/interim/pairs.jsonl
+
+# --- Run records: the science, never the weights ---------------------------------------------
+# report.json is the one record of a run (resolved config + metrics + wall-clock); gen.jsonl
+# cannot be reproduced without the adapter that made it. Adapters, checkpoints, optimizer states
+# and the tokenizer copies each checkpoint carries are all excluded by the default deny above.
+!runs/**/report.json
+!runs/**/report.html
+!runs/**/run_meta.json
+!runs/**/gen.jsonl
+!runs/results/**
+!runs/matrix_state.json
+!runs/contamination.json
+
+# --- Never, under any circumstances: first-party private writing -----------------------------
+# Listed last so it wins over every negation above (last matching pattern decides).
+# If you replace the public-domain fixture in data/raw/author/ with your own writing, move this
+# deny up to cover it, or the allow-list above will commit your prose.
+data/raw/_originals/**
+data/raw/**/private/**
 
 # Secrets
 .env

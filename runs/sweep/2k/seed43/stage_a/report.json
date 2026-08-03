@@ -1,0 +1,405 @@
+{
+  "run_name": "stage_a-2k-seed43",
+  "split": "blind",
+  "model": "",
+  "generated_at": "2026-08-02T20:20:33",
+  "n_generations": 252,
+  "stylometry": {
+    "overall": 0.0633,
+    "distributions": {
+      "sent_len_hist": 0.0261,
+      "word_len_hist": 0.0006,
+      "function_words": 0.0148,
+      "punctuation": 0.0563,
+      "openers": 0.0594,
+      "pos_trigrams": 0.088
+    },
+    "scalars_normalized": {
+      "sent_len_mean": 0.609,
+      "sent_len_sd": 0.3277,
+      "burstiness": 0.1373,
+      "word_len_mean": 0.0879,
+      "msttr": 0.0141,
+      "contraction_rate": 0.0711,
+      "hedge_rate": 0.0623,
+      "intensifier_rate": 0.2836,
+      "first_person_rate": 0.1294,
+      "second_person_rate": 0.0033,
+      "em_dash_per_100": 0.1087,
+      "semicolon_per_100": 0.8781,
+      "paren_per_100": 0.1901,
+      "question_per_100": 0.0705,
+      "exclaim_per_100": 0.0151,
+      "para_len_sents": 0.1778
+    },
+    "scalars_raw": {
+      "sent_len_mean": [
+        25.745,
+        20.873
+      ],
+      "sent_len_sd": [
+        15.351,
+        13.385
+      ],
+      "burstiness": [
+        -0.253,
+        -0.219
+      ],
+      "word_len_mean": [
+        4.357,
+        4.287
+      ],
+      "msttr": [
+        0.765,
+        0.763
+      ],
+      "contraction_rate": [
+        0.168,
+        0.31
+      ],
+      "hedge_rate": [
+        0.731,
+        0.637
+      ],
+      "intensifier_rate": [
+        0.858,
+        0.575
+      ],
+      "first_person_rate": [
+        2.421,
+        2.809
+      ],
+      "second_person_rate": [
+        0.389,
+        0.395
+      ],
+      "em_dash_per_100": [
+        0.087,
+        0.0
+      ],
+      "semicolon_per_100": [
+        1.021,
+        0.582
+      ],
+      "paren_per_100": [
+        0.183,
+        0.031
+      ],
+      "question_per_100": [
+        0.151,
+        0.221
+      ],
+      "exclaim_per_100": [
+        0.041,
+        0.056
+      ],
+      "para_len_sents": [
+        5.927,
+        5.482
+      ]
+    },
+    "ci_lo": 0.0593,
+    "ci_hi": 0.0753
+  },
+  "biggest_gaps": [
+    [
+      "scalar:semicolon_per_100",
+      0.8781
+    ],
+    [
+      "scalar:sent_len_mean",
+      0.609
+    ],
+    [
+      "scalar:sent_len_sd",
+      0.3277
+    ],
+    [
+      "scalar:intensifier_rate",
+      0.2836
+    ],
+    [
+      "scalar:paren_per_100",
+      0.1901
+    ],
+    [
+      "scalar:para_len_sents",
+      0.1778
+    ],
+    [
+      "scalar:burstiness",
+      0.1373
+    ],
+    [
+      "scalar:first_person_rate",
+      0.1294
+    ]
+  ],
+  "sent_len_hist": {
+    "buckets": [
+      "0-5",
+      "5-10",
+      "10-15",
+      "15-20",
+      "20-25",
+      "25-30",
+      "30-40",
+      "40-60",
+      "60+"
+    ],
+    "real": [
+      0.0112,
+      0.0661,
+      0.1396,
+      0.1814,
+      0.1598,
+      0.1303,
+      0.1777,
+      0.1008,
+      0.0332
+    ],
+    "generated": [
+      0.0389,
+      0.131,
+      0.1821,
+      0.1879,
+      0.1493,
+      0.1104,
+      0.1229,
+      0.0636,
+      0.0139
+    ]
+  },
+  "config": {
+    "run_name": "stage_a",
+    "notes": "baseline recipe: all-linear LoRA r16, DoRA, NEFTune 5, 2 epochs",
+    "model": {
+      "name": "Qwen/Qwen2.5-3B-Instruct",
+      "dtype": "bfloat16",
+      "load_in_4bit": false,
+      "attn_implementation": "sdpa",
+      "max_seq_len": 1024,
+      "trust_remote_code": false
+    },
+    "lora": {
+      "target_modules": "all-linear",
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "bias": "none",
+      "use_dora": true,
+      "use_rslora": false,
+      "rank_pattern": {},
+      "alpha_pattern": {},
+      "layers_to_transform": null,
+      "modules_to_save": []
+    },
+    "sft": {
+      "epochs": 2.0,
+      "lr": 0.00015,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.05,
+      "per_device_batch_size": 2,
+      "grad_accum": 8,
+      "weight_decay": 0.0,
+      "max_grad_norm": 1.0,
+      "gradient_checkpointing": true,
+      "neftune_noise_alpha": 5.0,
+      "loraplus_lr_ratio": 0.0,
+      "train_on_completions_only": true,
+      "raw_next_token_mix": 0.1,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "save_total_limit": 3,
+      "logging_steps": 5,
+      "early_stopping_patience": 3,
+      "seed": 43
+    },
+    "dpo": {
+      "beta": 0.1,
+      "epochs": 1.0,
+      "lr": 5e-06,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.1,
+      "per_device_batch_size": 1,
+      "grad_accum": 8,
+      "gradient_checkpointing": true,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "logging_steps": 5,
+      "max_prompt_len": 512,
+      "max_len": 1024,
+      "loss_type": "sigmoid",
+      "reference_policy": "stage_a",
+      "av_reward_filter": false,
+      "av_margin": 0.05,
+      "length_match_tolerance": 0.35,
+      "seed": 43
+    },
+    "gen": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 43,
+      "max_new_tokens": 400,
+      "n_per_prompt": 1,
+      "max_prompt_tokens": 8192,
+      "baseline_n_shots": 5,
+      "system_prompt": "You are writing as the author. Match the author's grammatical structure, sentence rhythm, paragraph flow, and word choice. Do not imitate the author's topics or invent facts about their life."
+    },
+    "data": {
+      "chunk_min_words": 60,
+      "chunk_max_words": 320,
+      "questions_per_chunk": 2,
+      "use_supplied_prompts": true,
+      "supplied_prompt_scope": "first_chunk",
+      "val_frac": 0.15,
+      "blind_frac": 0.15,
+      "group_near_duplicates": true,
+      "near_dup_threshold": 0.15,
+      "never_scrub": [],
+      "split_by": "document",
+      "scrub_entities": true,
+      "seed": 17
+    },
+    "eval": {
+      "style_embedder": "AnnaWegmann/Style-Embedding",
+      "av_classifier": "logreg",
+      "fluency_max_ppl_regression": 0.15,
+      "informal_tag": "informal"
+    }
+  },
+  "av": {
+    "attribution_rate": 0.004,
+    "score_mean": 0.0814,
+    "score_median": 0.0541,
+    "score_sd": 0.0814,
+    "n": 252,
+    "threshold": 0.585,
+    "real_reference_attribution_rate": 0.7143,
+    "verifier_auc": 0.8957,
+    "verifier_accuracy": 0.8189,
+    "embedder": "AnnaWegmann/Style-Embedding",
+    "verifier_verdict": "PASS"
+  },
+  "leakage": {
+    "verbatim": {
+      "n": 12,
+      "gens_with_verbatim_ngram": 0,
+      "rate": 0.0,
+      "longest_verbatim_run_tokens": 0,
+      "examples": []
+    },
+    "entities": {
+      "n_distinct_leaked": 91,
+      "n_occurrences": 777,
+      "per_generation": 3.083,
+      "top": [
+        [
+          "The",
+          535
+        ],
+        [
+          "Church",
+          15
+        ],
+        [
+          "England",
+          13
+        ],
+        [
+          "Jack",
+          12
+        ],
+        [
+          "Jones",
+          12
+        ],
+        [
+          "New",
+          8
+        ],
+        [
+          "Greeks",
+          8
+        ],
+        [
+          "East",
+          7
+        ],
+        [
+          "France",
+          6
+        ],
+        [
+          "China",
+          5
+        ]
+      ],
+      "author_entity_vocab": 531
+    },
+    "semantic_echo": {
+      "n": 252,
+      "gen_mean_max_sim": 0.3119,
+      "heldout_mean_max_sim": 0.4124,
+      "echo": -0.1006,
+      "interpretation": "\u22480 healthy; >0.05 the model is paraphrasing training content the author's own held-out text does not share"
+    },
+    "verdict": "PASS"
+  },
+  "fluency": {
+    "ppl_adapter_on": 3.2795,
+    "ppl_adapter_off": 3.2888,
+    "relative_regression": -0.0028,
+    "max_allowed": 0.15,
+    "verdict": "PASS",
+    "n_probe_texts": 5,
+    "step": 4
+  },
+  "samples": [
+    {
+      "prompt": "Write a reflective essay analyzing a political figure's defense of an institution, examining the reasoning they use and comparing this rhetorical approach to how similar debates are conducted in another cultural or national context.",
+      "generated": "Let me write thus:\n\nThe defence of the State is as old as man's need for government and as modern as his conception of individual rights; and, like the defence of any other institution, it must be made with due regard to the circumstances of the time and place. Thus said Thomas Jefferson in his second inaugural address.\n\nFor the sake of comparison, I will choose to examine the recent speech of President Xi Jinping defending the Chinese Communist Party's governance of Hong Kong during the 2019 pro-democracy protests. I will compare it to the arguments of Winston Churchill defending British institutions against the German threat during World War II.\n\nXi Jinping in his speech made two major points. First, the Communist Party of China had been elected by the people and was therefore the legitimate representative of all the people, especially the poor and oppressed. Second, because of the economic difficulties faced by the country, he urged the people to support the Communist Party and to work together to overcome the crisis. \n\nChurchill also had two main points. He first asserted that the war effort was at stake and that the Prime Minister needed to do everything to protect the people's interests and the country's interests. Secondly, he argued that the nation's institutions were the very pillars of Britain and that the Prime Minister could not betray the people by sacrificing thes",
+      "real": "While she looked at the ivy I opened for the first time for many weeks\nan <GROUP> newspaper, and I read a speech of Mr. <PERSON> in which\nhe said that <ORG> ought to be preserved because it\nrepresented something in the nature of permanent public opinion of\n<PLACE>, above the ebb and flow of the parties. Now Mr. <PERSON> is a\nperfectly sincere patriot, a man who, from his own point of view, thinks\nlong and seriously about the public needs, and he is, moreover, a man\nof entirely exceptionable intellectual power. But alas, in spite of\nall this, when I had read that speech I thought with a heavy heart that\nthere was one more thing that I had to add to the list of the specially\n<THING> things, such as kippers and cricket; I had to add the specially\n<THING> kind of humbug. In <PLACE> things are attacked and defended for\nwhat they are. <ORG> is attacked because it is <GROUP>,\nand defended because it is <GROUP>. The Republic is defended because\nit is <GROUP>, and attacked because it is <GROUP>. But here is the\nablest of <GROUP> politicians consoling everybody by telling them that\n<ORG> is not really <ORG>, but something quite\ndifferent, that the foolish accidental peers whom he meets every night\nare in some mysterious way experts upon the psychology of the democracy;\nthat if you want to know what the very poor want you must ask the very\nrich, and that if you want the truth about <ORG>,"
+    },
+    {
+      "prompt": "Write a reflective narrative about revisiting a memory from your youth involving an unfinished or newly constructed building. Describe your philosophical impressions of the empty structure at the time and include a specific incident or action you took during your visit.",
+      "generated": "There was one time when I visited a construction site in a town, where I had grown up as a child. It was the same site where, many years ago, my uncle and his friends had planned to build a large new house there. When the family of my uncle had been forced out of that house by a flood, and it was left standing empty and ruined, my uncle, together with some of his friends had intended to start from the ground up and build another house there, on the same spot.\nAt the time, when I had been just a young boy, I remember standing in front of the old ruins, and staring at the empty space. There was something quite magical about the sight, a feeling of vastness and openness. In my childhood imagination, I could see a big, beautiful new house there, with a yard full of flowers and trees and the sound of birds singing, and my uncle\u2019s friends laughing together around a fire. But I also knew that it would take a lot of work and many years of effort to make that dream come true.\nSo I felt both excited and worried. Excited because I thought that the site was waiting for me to turn into a builder like my uncle, to be strong and determined and creative; and worried because of the great struggle ahead.\nThen, much later, as an adult, I returned to the site. The building was still unfinished, but it was now taller than when I had seen it last. The construction workers had already added a second ",
+      "real": "I remembered how I had walked up this new one-sided street all those\nyears ago; and I remembered what I had thought. I thought that this\nred and white glaring terrace at noon was really more <GROUP> and more\nlonesome than a glimmering churchyard at midnight. The churchyard could\nonly be full of the ghosts of the dead; but these houses were full of\nthe ghosts of the unborn. And a man can never find a home in the future\nas he can find it in the past. I was always fascinated by that medi\u00e6val\nnotion of erecting a rudely carpentered stage in the street, and acting\non it a miracle play of <TITLE> or the Last Judgment. And I\nthought to myself that each of these glaring, gaping, new jerry-built\nboxes was indeed a rickety stage erected for the acting of a real\nmiracle play; that human family that is almost the holy one, and that\nhuman death that is near to the last judgment.\n\nFor some foolish reason the last house but one in that imperfect row\nespecially haunted me with its hollow grin and empty window-eyes.\nSomething in the shape of this brick-and-mortar skeleton was attractive;\nand there being no workmen about, I strolled into it for curiosity and\nsolitude. I gave, with all the sky-deep gravity of youth, a benediction\nupon the man who was going to live there. I even remember that for the\nconvenience of meditation I called him <PERSON>.\n\nAs I reflected it crawled back into my memory th"
+    },
+    {
+      "prompt": "Write a philosophical essay contrasting two modes of reasoning: one that begins with first principles and fundamental purposes, and another that starts with immediate observations and works backward. Use an extended metaphor involving a common object to illustrate the difference between these approaches.",
+      "generated": "I. Metaphor\n\nLet there be two carpenters, each working on a similar desk. The first, who begins with first principles and fundamental purposes, has studied the human hand and its relation to all other objects. He knows that a hand is formed by bones, flesh, sinews, and ligaments; that it is a part of the arm, and the arm part of the torso; that it is connected with the lungs and heart through blood vessels and nerves. This carpenter then takes a single piece of wood and cuts off a bit to form a hand, another piece to form an arm, yet another for the torso and so forth until he has a complete desk. His work is precise and exact; his pieces fit together like puzzle pieces and are held fast by joints and screws.\n\nThe second carpenter, however, does not begin with first principles and fundamental purposes, but instead starts with immediate observations and works backward. He looks at a desk, and asks what made it? A desk is made of pieces of wood; some pieces are wider than others, and some are shorter. There are also legs, and these legs have feet. He sees this and asks himself, what makes a leg? A leg is made of a certain sort of wood, cut in a certain way. He asks again what makes the wood, and discovers that wood comes from a tree and is made from sap. Now we are getting somewhere, he thinks to himself, the leg is just the sap of a tree, and a tree is just the sap of a seed. So",
+      "real": "Now all this may sound very fanciful and mystical, but it is the right\nview of pokers, and no one who takes it will ever go in for any wrong\nview of pokers, such as using them to beat one's wife or torture one's\nchildren, or even (though that is more excusable) to make a policeman\njump, as the clown does in the pantomime. He who has thus gone back to\nthe beginning, and seen everything as quaint and new, will always see\nthings in their right order, the one depending on the other in degree of\npurpose and importance: the poker for the fire and the fire for the man\nand the man for the glory of God.\n\nThis is thinking forwards. Now our modern discussions about everything,\n<GROUP>, <PERSON>, or <ORG>, are all entangled in\nan opposite train of thought, which runs as follows:--A modern\nintellectual comes in and sees a poker. He is a positivist; he will not\nbegin with any dogmas about the nature of man, or any day-dreams about\nthe mystery of fire. He will begin with what he can see, the poker; and\nthe first thing he sees about the poker is that it is crooked. He says,\n\u201cPoor poker; it's crooked.\u201d Then he asks how it came to be crooked; and\nis told that there is a thing in the world (with which his temperament\nhas hitherto left him unacquainted)--a thing called fire. He points\nout, very kindly and clearly, how silly it is of people, if they want\na straight poker, to put it into a chemical "
+    },
+    {
+      "prompt": "Write three short anecdotal examples illustrating how unconventional or eccentric behavior can be more persuasive than eloquent rhetoric.",
+      "generated": "To wit:  \nFirst Example:\n\nIn a certain kingdom, there was a man who went about barefooted, his head and hair hanging loose in disorder. His clothes were of the coarsest texture; he neither shaved nor combed himself; his beard was never cut, but grew to great length; and his face was so black that it made people look away from it. This man had a great reputation for wisdom and virtue among the people; they always called him 'the Sage'. He was in great esteem by all the great men, and was consulted by them on all occasions. His advice was highly valued; and many princes and potentates came to learn of him what he could teach them.\n\nSecond Example:\n\nThere was a poor fellow in our own country, who was an absolute cripple. He was born lame and never had been able to walk. The doctor told him he had lost his leg, that he could never move it again; he had no hope of improvement. But being a good patient, and having a strong will, he determined to regain the use of his limbs. The first thing he did was to get down on his knees before the fire, and begin to pray with his face towards it; then he took hold of a stick with both hands, and tried to put forth the strength of both legs at once; but failing in this, he fell backwards, and hurt his back. He got up again, and began to pray, and repeat psalms, and try to get the use of his legs; and though he succeeded less every day, yet he kep",
+      "real": "\u201cA little common sense impresses <GROUP> working-men more than\nhigh-flown argument. A speaker who, as he made his points, pulled\nbuttons off his waistcoat, won thousands of votes for his side.\u201d Or,\n\u201cSound common sense tells better in <PLACE> than high-flown argument.\nThus Senator <PERSON>, who threw his false teeth in the air every time he\nmade an epigram, won the solid approval of <GROUP> working-men.\u201d Or\nagain, \u201cThe sound common sense of a gentleman from <ORG>, who stuck\nstraws in his hair during the progress of his speech, assured the\nvictory of Mr. <PERSON>.\u201d"
+    },
+    {
+      "prompt": "Write a passage arguing that superficial appreciation of a culture's artistic or social expressions without understanding its underlying values is problematic.",
+      "generated": "Culture, in my opinion, is an expression of society. And it has to be understood to be appreciated. If one lacks knowledge of a people's language or its history, or even if they have never met another human being who speaks it or knows of its existence, how can they possibly appreciate its culture? Artistic expression is one such means of understanding, but it is not enough by itself. One can admire the works of Beethoven, of Matisse, of Picasso, of Monet, and the like, and still not understand them fully or appreciate them properly. To do so requires knowing why Beethoven composed his symphonies, what he wanted to express, and how he used musical forms to achieve that purpose. It is just as necessary to know why Matisse painted his works, what he was trying to say, and the techniques and materials he employed to create them. Knowledge of a people's culture and language makes possible the deep understanding that allows for a genuine appreciation of its cultural expressions, whether they be art, literature, music, poetry, architecture, or clothing. A superficial appreciation of these things without the requisite knowledge is simply an exercise of vanity.",
+      "real": "Thus their obscenity is the expression of their passionate love of\ndragging all things into the light. The avarice of their peasants means\nthe independence of their peasants. What the <GROUP> call their\nrudeness in the streets is a phase of their social equality. The\nworried look of their women is connected with the responsibility of\ntheir women; and a certain unconscious brutality of hurry and gesture\nin the men is related to their inexhaustible and extraordinary military\ncourage. Of all countries, therefore, <PLACE> is the worst country for a\nsuperficial fool to admire. Let a fool hate <PLACE>: if the fool loves\nit he will soon be a knave. He will certainly admire it, not only for\nthe things that are not creditable, but actually for the things that\nare not there. He will admire the grace and indolence of the most\nindustrious people in the world. He will admire the romance and fantasy\nof the most determinedly respectable and commonplace people in the\nworld. This mistake the Englishman will make if he admires <PLACE> too\nhastily; but the mistake that he makes about <PLACE> will be slight\ncompared with the mistake that he makes about himself. An Englishman\nwho professes really to like <GROUP> realistic novels, really to be at\nhome in a <GROUP> modern theatre, really to experience no shock on first\nseeing the savage <GROUP> caricatures, is making a mistake very\ndangerous for his "
+    },
+    {
+      "prompt": "Write a personal essay that revisits a place from your past, comparing how it appears now with your memories of it from years ago.",
+      "generated": "I was young, just out of my teens, in my first year at college. The first year, I found myself to be somewhat restless; I did not fit comfortably in the small town where I lived, nor did I want to conform to the routines of the new place. I longed to be away from the familiar, but I also found myself homesick. I had to leave home for many reasons. My father had died, leaving me without him. And the place where we lived had been an odd combination of a farm and a village. I could not understand why I was expected to keep a dairy cow. I would go out to check on her every morning at five o'clock, or she would have died. It was a job I did not like, and so it made me feel very unhappy. I left to find work at a factory, far from home, and in the summer months, I worked hard on a farm near New York City.\nIt was late June, a few weeks after I had arrived at college. I had stayed there for about a month. I was looking forward to my vacation. I went back to the old place and started to milk the cows. I had forgotten how difficult it was. I went to bed in the barn that night and awoke the next morning with severe stomach pains. My mother came to take care of me. I could not remember the name of the cow that had given me the trouble. The doctor treated me in the hospital. I got well enough and went back to school. I did not like the idea of being away from my family. So, I decided to go b",
+      "real": "We have read of some celebrated philosopher who was so absent-minded\nthat he paid a call at his own house. My own absent-mindedness is\nextreme, and my philosophy, of course, is the marvel of men and angels.\nBut I never quite managed to be so absent-minded as that. Some yards at\nleast from my own door, something vaguely familiar has always caught\nmy eye; and thus the joke has been spoiled. Of course I have quite\nconstantly walked into another man's house, thinking it was my own\nhouse; my visits became almost monotonous. But walking into my own house\nand thinking it was another man's house is a flight of poetic detachment\nstill beyond me. Something of the sensations that such an absent-minded\nman must feel I really felt the other day; and very pleasant sensations\nthey were. The best parts of every proper romance are the first chapter\nand the last chapter; and to knock at a strange door and find a nice\nwife would be to concentrate the beginning and end of all romance.\n\nMine was a milder and slighter experience, but its thrill was of the\nsame kind. For I strolled through a place I had imagined quite virgin\nand unvisited (as far as I was concerned), and I suddenly found I was\ntreading in my own footprints, and the footprints were nearly twenty\nyears old.\n\nIt was one of those stretches of country which always suggests an almost\nunnatural decay; thickets and heaths that have grown out"
+    }
+  ],
+  "training": {
+    "stage": "A",
+    "trainable": {
+      "total_params": 3116904448,
+      "trainable_params": 30965760,
+      "trainable_pct": 0.9935,
+      "trainable_by_kind": {
+        "attention": 7538688,
+        "mlp": 23427072,
+        "other": 0
+      }
+    },
+    "train_runtime_s": 91.0,
+    "n_train_rows": 26
+  }
+}

@@ -1,4 +1,4 @@
-.PHONY: help install-cpu install-gpu test lint demo clean
+.PHONY: help install-cpu install-gpu test lint demo check-data clean
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -24,6 +24,9 @@ matrix: ## Execute the RESEARCH_BRIEF run matrix (resumable) [GPU]
 
 results: ## Assemble Tables 1-4 + the frontier figure from run records
 	python scripts/assemble_results.py
+
+check-data: ## Preview exactly what data/ and runs/ would commit; fail on private writing
+	@python scripts/check_data.py
 
 clean: ## Remove interim artifacts (keeps data/raw and runs)
 	rm -rf data/interim/* data/processed/* data/demo
