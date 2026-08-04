@@ -29,11 +29,18 @@ import argparse
 import json
 import random
 import shutil
+import sys
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-PROCESSED = ROOT / "data/processed"
+REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "src"))
+
+# WLM_ROOT-aware, like every other entry point: the control-author and extra-author protocols
+# (docs/RUN_MATRIX.md §1, docs/EXPANSION.md) run this script under a second root, and a
+# repo-relative path here would silently sweep the wrong corpus.
+from wlm.paths import PROCESSED  # noqa: E402
+
 SWEEP = PROCESSED / "sweep"
 # RESEARCH_BRIEF §3 (RQ1): ≈{2k, 5k, 10k, 25k, 50k, 100k} words.
 DEFAULT_SIZES = [2_000, 5_000, 10_000, 25_000, 50_000, 100_000]

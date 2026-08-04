@@ -221,7 +221,8 @@ def cmd_eval_fit_av(a) -> int:
         k = min(len(author), len(distractor))
         author, author_groups, distractor = author[:k], author_groups[:k], distractor[:k]
 
-    v = AuthorshipVerifier(StyleEmbedder(cfg.eval.style_embedder), head=cfg.eval.av_classifier)
+    embedder = a.embedder or cfg.eval.style_embedder
+    v = AuthorshipVerifier(StyleEmbedder(embedder), head=cfg.eval.av_classifier)
     metrics = v.fit(author, distractor, seed=cfg.data.seed, author_groups=author_groups)
     v.save(a.out)
     _dump("verifier metrics", metrics.__dict__)
@@ -601,6 +602,9 @@ def build_parser() -> argparse.ArgumentParser:
     fa.add_argument("--distractor", default=str(paths.DISTRACTOR_RAW))
     fa.add_argument("--out", default=str(RUNS / "av"))
     fa.add_argument("--config", default=None)
+    fa.add_argument("--embedder", default=None,
+                    help="override eval.style_embedder (second-instrument fits; see "
+                         "scripts/second_instrument.py)")
     fa.add_argument("--limit", type=int, default=None)
     fa.add_argument("--balance", action="store_true", default=True)
     fa.add_argument("--no-balance", dest="balance", action="store_false")

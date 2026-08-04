@@ -152,6 +152,10 @@ class DataCfg:
 @dataclass
 class EvalCfg:
     style_embedder: str = "AnnaWegmann/Style-Embedding"
+    # Second, independently-trained style instrument (scripts/second_instrument.py). Every
+    # headline number should agree under both rulers before publication; a claim only one
+    # embedder supports is a claim about that embedder.
+    second_style_embedder: str = "StyleDistance/styledistance"
     av_classifier: str = "logreg"
     fluency_max_ppl_regression: float = 0.15  # fail the run if ppl worsens >15%
     informal_tag: str = "informal"
@@ -171,19 +175,23 @@ class Config:
 
     @classmethod
     def load(cls, path: str | Path) -> Config:
-        raw = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
-        base = raw.pop("_extends", None)
-        if base:
-            base_path = (Path(path).parent / base).resolve()
-            merged = _deep_merge(
-                yaml.safe_load(base_path.read_text(encoding="utf-8")) or {}, raw
-            )
-        else:
-            merged = raw
-        return _from_dict(cls, merged)
+        return _from_dict(cls, _load_raw(Path(path)))
 
     def to_dict(self) -> dict[str, Any]:
         return _to_dict(self)
+
+
+def _load_raw(path: Path, _seen: frozenset[Path] = frozenset()) -> dict:
+    """Resolve `_extends` chains recursively (a15 extends stage_b, which extends stage_a),
+    nearest file winning each key. Cycles fail loudly rather than recursing forever."""
+    path = path.resolve()
+    if path in _seen:
+        raise ValueError(f"_extends cycle through {path}")
+    raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    base = raw.pop("_extends", None)
+    if base:
+        return _deep_merge(_load_raw(path.parent / base, _seen | {path}), raw)
+    return raw
 
 
 def _deep_merge(a: dict, b: dict) -> dict:

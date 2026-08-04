@@ -1,0 +1,8 @@
+# The untested interaction cell (STATUS §R5): Stage-B DPO on top of the attention-only
+# Stage-A adapter (a01). RQ2 and RQ3 each varied against the reference recipe, so the
+# likely-best configuration was never run. The LoRA architecture at DPO time comes from the
+# saved a01 adapter, not from this file — this config only sets the DPO recipe and the name.
+# Driven by `run_matrix.py --only rq2x`, which requires the a01 run to exist first.
+_extends: ../stage_b.yaml
+run_name: a15_attn_dpo
+notes: "interaction cell: on-policy DPO on top of the attention-only (q,k,v,o) Stage-A adapter; hypothesis 0.87-0.91 AV at 7.5M params"

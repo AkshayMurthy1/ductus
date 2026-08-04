@@ -2,7 +2,9 @@
 
 How to execute every arm the brief requires, resume after failures, and assemble the
 deliverables (Tables 1–4, Figure 1) without ever transcribing a number by hand. Read
-`docs/BRIEF_AUDIT.md` for how each brief requirement maps onto the code.
+`docs/BRIEF_AUDIT.md` for how each brief requirement maps onto the code, and
+`docs/EXPANSION.md` for the beyond-the-brief sections (`rq2x`, `models`, extra authors, the
+second instrument, and the human panel).
 
 ## 0. One-time setup (CPU, then rsync to the GPU box)
 
@@ -35,6 +37,12 @@ python scripts/run_matrix.py --dry-run        # print the plan without running
 | `rq2` | attention-only / MLP-only / low-MLP-rank at one fixed arm (`--rq2-arm`, default `full`; the "both" cell is that arm's rq1 run) | §3 RQ2 |
 | `rq3` | Stage-B DPO on top of Stage A at `--rq3-arms` (default `10k full`) | §3 RQ3 |
 | `seeds` | seeds {29, 43} at the smallest and largest arms (+ the main run's 17 = 3 seeds/cell) | §3 variance |
+| `rq2x` | Stage-B DPO on top of the attention-only (a01) adapter — the interaction cell | EXPANSION Tier 0 |
+| `models` | per extra base model (`--model-configs`): baseline + Stage A at `--model-arms`, plus that model's contamination probe | EXPANSION Tier 2 |
+
+`rq2x` and `models` are opt-in (not in the default `--only` set), so the brief's matrix is
+unchanged unless you ask for them. `--rq2-configs a17_qk_only a18_vo_only` adds the per-matrix
+split of the attention cell (EXPANSION Tier 3).
 
 Every unit is done when its `report.json` exists, so re-running the same command after a crash,
 OOM, or preemption resumes exactly where it stopped. Failures are recorded in

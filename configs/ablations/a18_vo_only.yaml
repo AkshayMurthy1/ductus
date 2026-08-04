@@ -1,0 +1,9 @@
+# Per-matrix locus split, half 2: value/output only — the attention matrices Savine
+# (arXiv 2507.21009) identifies as the main memorizers. If this cell still shows zero verbatim
+# and background-rate entity emission, "voice lives in attention *without* engaging the
+# memorization-prone path" survives its strongest published counterexample. See a17.
+_extends: ../stage_a.yaml
+run_name: a18_vo_only
+notes: "per-matrix ablation: v,o only — the memorization-prone attention matrices in isolation"
+lora:
+  target_modules: [v_proj, o_proj]

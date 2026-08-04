@@ -1,0 +1,10 @@
+# Cross-family replication: does the ~25k-word cliff and the L-shaped frontier survive a
+# change of base-model family? (a13 is the within-family scale probe; this is the
+# between-family one.) Driven by `run_matrix.py --only models`, which runs the few-shot
+# baseline AND the adapter per arm on this model — the baseline must move with the base model
+# or the comparison is against the wrong floor. The verifier is text-side and does not change.
+_extends: ../stage_a.yaml
+run_name: a16_llama3b
+notes: "second model family: Llama-3.2-3B-Instruct, everything else identical to the reference recipe"
+model:
+  name: meta-llama/Llama-3.2-3B-Instruct

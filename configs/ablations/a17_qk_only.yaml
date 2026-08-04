@@ -1,0 +1,9 @@
+# Per-matrix locus split, half 1: query/key only. Savine (arXiv 2507.21009) finds the V/O
+# matrices memorize most in attention; our attention-only runs (a01) train q,k,v,o and leak
+# nothing. Splitting a01 into q,k (routing) vs v,o (content-carrying) tests whether that
+# tension is real. Read together with a18 and `scripts/adapter_anatomy.py`.
+_extends: ../stage_a.yaml
+run_name: a17_qk_only
+notes: "per-matrix ablation: q,k only — attention routing without the content-carrying V/O path"
+lora:
+  target_modules: [q_proj, k_proj]
