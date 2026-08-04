@@ -1,14 +1,13 @@
 """Tests for the venue-readiness expansion (docs/EXPANSION.md): new ablation configs, the
-between-instrument agreement metric, the human-panel logic, and the new run_matrix sections.
+between-instrument agreement metric, and the new run_matrix sections.
 
-All CPU, no network, no model downloads — the agreement and panel metrics are pure functions
-by design so they can be held to the repo's metric contract here: zero on identical inputs,
-larger on genuinely different ones.
+All CPU, no network, no model downloads — the agreement metric is a pure function by design
+so it can be held to the repo's metric contract here: zero on identical inputs, larger on
+genuinely different ones.
 """
 
 from __future__ import annotations
 
-import json
 import os
 import subprocess
 import sys
@@ -21,7 +20,6 @@ sys.path.insert(0, str(REPO / "src"))
 
 from wlm.config import Config  # noqa: E402
 from wlm.eval.agreement import instrument_agreement, rank_disagreement, spearman  # noqa: E402
-from wlm.eval.panel import build_panel, score_panel  # noqa: E402
 
 ABLATIONS = REPO / "configs" / "ablations"
 
@@ -84,56 +82,6 @@ def test_instrument_agreement_flags_the_outlier_run():
     perfect = instrument_agreement(runs[:2])
     assert perfect["rank_disagreement"] == 0.0
     assert perfect["flagged_runs"] == []
-
-
-# --------------------------------------------------------------------- human panel
-def _texts(tag: str, n: int = 15) -> list[str]:
-    return [f"{tag} passage number {i} with some words in it." for i in range(n)]
-
-
-def test_build_panel_is_deterministic_balanced_and_blind():
-    kwargs = dict(real=_texts("real"), adapter=_texts("gen"), distractor=_texts("other"),
-                  references=_texts("ref", 5), n_per_source=4, seed=17)
-    items1, key1 = build_panel(**kwargs)
-    items2, key2 = build_panel(**kwargs)
-    assert items1 == items2 and key1 == key2  # regenerable => auditable
-    assert len(items1) == 12
-    counts = {s: list(key1.values()).count(s) for s in ("real", "adapter", "distractor")}
-    assert counts == {"real": 4, "adapter": 4, "distractor": 4}
-    # Blinding: nothing in what the rater sees names a source.
-    for it in items1:
-        assert set(it) == {"item_id", "reference", "candidate"}
-    # A different seed draws a different panel.
-    _, key3 = build_panel(**{**kwargs, "seed": 18})
-    assert key3 != key1
-
-
-def test_build_panel_rejects_thin_pools():
-    with pytest.raises(ValueError):
-        build_panel(real=_texts("r", 2), adapter=_texts("g"), distractor=_texts("d"),
-                    references=_texts("ref", 3), n_per_source=4)
-
-
-def test_score_panel_zero_on_identical_ratings_larger_on_inflated():
-    _, key = build_panel(real=_texts("real"), adapter=_texts("gen"),
-                         distractor=_texts("other"), references=_texts("ref", 5),
-                         n_per_source=5, seed=17)
-    flat = score_panel(key, {i: 3.0 for i in key})
-    assert flat["adapter_minus_real"]["delta"] == 0.0
-    assert not flat["adapter_minus_real"]["ci_excludes_zero"]
-
-    inflated = score_panel(
-        key, {i: 5.0 if s == "adapter" else 2.0 for i, s in key.items()})
-    assert inflated["adapter_minus_real"]["delta"] > 0.0
-    assert inflated["adapter_minus_real"]["ci_excludes_zero"]
-    assert inflated["real_minus_distractor"]["delta"] == 0.0
-
-
-def test_score_panel_counts_unmatched_items():
-    out = score_panel({"P001": "real", "P002": "adapter"},
-                      {"P001": 4, "P002": 2, "P999": 5})
-    assert out["n_unmatched"] == 1
-    assert out["n_rated"] == 2
 
 
 # --------------------------------------------------------------------- driver + WLM_ROOT
@@ -199,19 +147,6 @@ def test_second_instrument_config_knob_exists():
     cfg = Config.load(REPO / "configs" / "stage_a.yaml")
     assert cfg.eval.second_style_embedder == "StyleDistance/styledistance"
     assert cfg.eval.second_style_embedder != cfg.eval.style_embedder
-
-
-def test_panel_key_json_shape_roundtrips(tmp_path):
-    # score_panel.py expands key.json across raters; lock the file contract it reads.
-    _, key = build_panel(real=_texts("r"), adapter=_texts("g"), distractor=_texts("d"),
-                         references=_texts("ref", 3), n_per_source=3, seed=17)
-    blob = {"seed": 17, "gen": "runs/x/gen.jsonl", "key": key}
-    p = tmp_path / "key.json"
-    p.write_text(json.dumps(blob))
-    loaded = json.loads(p.read_text())
-    expanded = {f"{i}#{r}": s for i, s in loaded["key"].items() for r in range(2)}
-    out = score_panel(expanded, {i: 3.0 for i in expanded})
-    assert out["n_rated"] == len(key) * 2
 
 
 # --------------------------------------------------------------------- gutenberg extraction

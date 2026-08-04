@@ -9,8 +9,8 @@ synthetic parallel examples — a genuinely different training signal from the p
 same-author/same-topic Reddit contrastive) turns that from a gloss into a measurement:
 
   - agreement (Spearman over run rankings) means the orderings are instrument-independent;
-  - per-run disagreements are the cells to hand-inspect and to sample the human panel from
-    (scripts/make_panel_sheets.py);
+  - per-run disagreements are the cells to hand-inspect (read the flagged runs' gen.jsonl
+    next to real held-out text);
   - the real-text calibration row shows whether "adapter above real Chesterton" replicates
     under a ruler the adapter was never scored against during development.
 
@@ -167,7 +167,7 @@ def main() -> int:
                   f"{calibration['score_mean']:.4f}). Compare adapter rows against this the "
                   "same way the primary is compared against 0.714.")
     if agreement.get("flagged_runs"):
-        md.append("\nRuns the two instruments disagree on (sample the human panel here):")
+        md.append("\nRuns the two instruments disagree on (hand-inspect these first):")
         for f in agreement["flagged_runs"]:
             md.append(f"- `{f['run']}`: primary {f['av_primary']:.4f} vs "
                       f"second {f['av_second']:.4f}")

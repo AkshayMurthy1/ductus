@@ -30,13 +30,9 @@ verifier once (`runs/av2`, same protocol, different embedder), re-scores every e
 primary-vs-second attribution, Spearman rank agreement, a real-text calibration row, and a
 flagged list of disagreeing runs. Existing `report.json` records are never modified.
 
-**Human panel.** `python scripts/make_panel_sheets.py --gen <run>/gen.jsonl --out
-runs/human_panel` builds blinded anchored-comparison sheets (reference + candidate, 1-5
-same-author rating; equal thirds real/adapter/distractor). Collect ≥10 raters, then
-`python scripts/score_panel.py --ratings <filled csvs> --key runs/human_panel/key.json`.
-Sample the 50k arm (the 0.825 > 0.714 anomaly) plus any runs `instruments.md` flags. The
-decision table lives in `score_panel.py`'s docstring; `real_minus_distractor` is the power
-check.
+**Human panel — descoped (2026-08-04).** A blind anchored-comparison panel was planned and
+removed; the 0.825 > 0.714 anomaly's adjudication rests on the second instrument replicating
+it (STATUS R7), and the paper's limitations section says no human check exists.
 
 **Cliff shape (Mirage defense).** Two intermediate arms resolve the transition:
 `python scripts/make_size_sweep.py --sizes 2000 5000 10000 15000 20000 25000 50000 100000`
@@ -84,12 +80,12 @@ attention result survives its strongest published counterexample. Run
 ## Sequencing to Aug 31
 
 1. **Week 1 (now):** finish Tier 0 on the SCC; run `second_instrument.py` over everything that
-   exists (CPU, immediate); generate panel sheets and send to raters.
+   exists (CPU, immediate).
 2. **Week 2:** write + submit the 4-page MPLR-FM abstract from Tier-0-complete results
    (deadline **Aug 29**); start the 15k/20k arms and `--only models` on the GPU box.
 3. **Weeks 3-4:** scaffold both public extra authors (`new_author.py`), run their phase-0 +
-   decisive arms; score the panel as ratings return. Private-author corpus lands whenever
-   available — the runbook makes it a fill-in-the-directory task.
+   decisive arms. Private-author corpus lands whenever available — the runbook makes it a
+   fill-in-the-directory task.
 4. **September:** assemble, then target ARR Oct 12 / TMLR / COLM 2027 per the venue analysis.
 
 ## Status (2026-08-03)
@@ -99,14 +95,13 @@ Everything CPU-side is done; the whole remaining GPU workload is one resumable s
 models → Twain arms → assembly).
 
 - **Done:** a14 (see STATUS R6), seed 43, second instrument over all 29 runs (STATUS R7,
-  `runs/results/instruments.md`), human-panel sheets (`runs/human_panel/` — send to raters),
+  `runs/results/instruments.md`), the checkpoint-trajectory evals (L-shaped in training time),
   15k/20k arms built (existing arms verified byte-identical), Twain corpus built + phase-0
   CPU pipeline run (`~/authors/twain`, via `scripts/build_author_corpus.py twain`).
-- **Needs GPU:** trajectory eval resume (1/6 checkpoints done), rq2x, a17/a18, `--only models`
-  (a16 needs an accepted Llama license + HF login on the box), 15k/20k rq1, Twain floor+rq1.
-- **Needs humans:** panel ratings (≥10 raters), then `scripts/score_panel.py`.
+- **Needs GPU:** rq2x, a17/a18, `--only models` (a16 needs an accepted Llama license + HF
+  login on the box), 15k/20k rq1, Twain floor+rq1.
 - **Needs data:** the private control author — `scripts/new_author.py <root> --private` then
-  its RUNBOOK.
+  its RUNBOOK; and the Twain backtranslation (paid) before its GPU arms.
 
 ## What this branch deliberately does NOT change
 

@@ -136,8 +136,8 @@ instrument-independent. Sharper: the 50k adapter scores **0.952** under the seco
 against real held-out Chesterton's **0.738** — the "adapter above the real author" anomaly
 **replicates on an instrument the adapter was never developed against**, which argues against
 verifier-gaming and for the hyper-typicality reading. The second ruler systematically rates
-adapters *higher* than the primary (Δ up to −0.15); the human blind panel
-(`runs/human_panel/`, sheets generated, ratings pending) is the remaining adjudicator.
+adapters *higher* than the primary (Δ up to −0.15). A human blind panel was considered and
+descoped (2026-08-04); the anomaly's interpretation rests on this two-instrument replication.
 
 ### Supporting measurements
 
@@ -189,8 +189,8 @@ adapters *higher* than the primary (Δ up to −0.15); the human blind panel
   exists; a Llama-3.2-3B config would test family-dependence.)
 - **Serving path**: merge adapter for inference (DoRA unmerged costs ~10× generation latency —
   measured), strip/ban placeholder tokens at decode time, per-user adapter storage (Phase 5).
-- **Verifier hardening**: second embedder **done** (R7); human blind panel sheets generated
-  (`runs/human_panel/`), ratings pending — the last open piece of the single-ruler threat.
+- **Verifier hardening**: second embedder **done** (R7). A human blind study was descoped
+  (2026-08-04) and remains available as future work if a reviewer asks for a non-neural check.
 
 ## 6. Threats to validity (say them before a reviewer does)
 
@@ -198,8 +198,8 @@ adapters *higher* than the primary (Δ up to −0.15); the human blind panel
    is likely Chesterton-specific; the *shape* (cliff + L-frontier) is the claim.
 2. **One verifier** → largely closed by R7: a second, independently-trained instrument ranks
    the runs the same way (Spearman 0.897) and replicates the above-real-text anomaly. Residual:
-   both instruments are neural embedders; the human panel (sheets ready) is the non-neural
-   check.
+   both instruments are neural embedders; no human check exists (a blind panel was descoped),
+   and the paper should say so in limitations.
 3. **Chesterton is in pretraining.** Familiarity ratio 0.90 bounds the concern and the floor is
    0.000, but the private-author control is the real answer and hasn't run.
 4. **Two seeds at the decisive cell** (third queued). Every ordering claim is labeled against

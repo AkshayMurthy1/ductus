@@ -3,8 +3,8 @@
 How to execute every arm the brief requires, resume after failures, and assemble the
 deliverables (Tables 1–4, Figure 1) without ever transcribing a number by hand. Read
 `docs/BRIEF_AUDIT.md` for how each brief requirement maps onto the code, and
-`docs/EXPANSION.md` for the beyond-the-brief sections (`rq2x`, `models`, extra authors, the
-second instrument, and the human panel).
+`docs/EXPANSION.md` for the beyond-the-brief sections (`rq2x`, `models`, extra authors, and
+the second instrument).
 
 ## 0. One-time setup (CPU, then rsync to the GPU box)
 

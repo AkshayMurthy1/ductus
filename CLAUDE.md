@@ -48,7 +48,7 @@ deliberately does **not** learn their facts. Full design: `docs/PLAN.md`.
 | `scripts/assemble_results.py` | Tables 1–4 + Figure 1 (frontier) from run records — never hand-transcribe |
 | `scripts/adapter_anatomy.py` | per-layer/module LoRA update-norm decomposition (RQ2's mechanistic companion) |
 | `docs/BRIEF_AUDIT.md` / `docs/RUN_MATRIX.md` | brief-to-code audit; how to run and assemble everything |
-| `docs/EXPANSION.md` | venue-readiness expansion: extra authors (`scripts/new_author.py`), second base model (`run_matrix --only models`), second verifier (`scripts/second_instrument.py`), human panel (`scripts/make_panel_sheets.py` / `score_panel.py`) |
+| `docs/EXPANSION.md` | venue-readiness expansion: extra authors (`scripts/new_author.py`, `scripts/build_author_corpus.py`), second base model (`run_matrix --only models`), second verifier (`scripts/second_instrument.py`) |
 | `docs/STATUS.md` | **the living record of results and open work — read this for where the research stands** |
 
 ## Four traps this codebase has already been bitten by

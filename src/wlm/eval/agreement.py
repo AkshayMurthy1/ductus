@@ -62,8 +62,7 @@ def instrument_agreement(
     """Summary block for a set of runs scored under two instruments.
 
     Each run dict needs key_a and key_b (attribution rates). Flags the runs whose absolute
-    disagreement exceeds twice the mean — those are the cells to hand-inspect (and the ones a
-    human panel should sample from).
+    disagreement exceeds twice the mean — those are the cells to hand-inspect first.
     """
     pairs = [(r[key_a], r[key_b]) for r in runs if r.get(key_a) is not None
              and r.get(key_b) is not None]
