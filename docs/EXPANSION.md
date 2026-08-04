@@ -51,9 +51,13 @@ evidence, citing Schaeffer et al. 2023 explicitly.
     python scripts/new_author.py ~/authors/<name> --register informal [--private]
 
 It writes a `RUNBOOK.md` with the corpus checklist and the exact per-author command sequence
-(phase-0, both verifier fits, matched sweep arms, `run_matrix`, per-root assembly). Planned
-arms: **2 extra public authors (≥1 informal register) + the private control author** — the
-control is the highest-priority cell because it kills the pretraining-recall objection.
+(phase-0, both verifier fits, matched sweep arms, `run_matrix`, per-root assembly). Public
+expansion authors are built reproducibly from pinned, title-verified Gutenberg IDs by
+`scripts/build_author_corpus.py` (registry in the script; first entry: **Mark Twain**,
+informal first-person American prose — autobiography + speeches — against 17 era- and
+register-matched memoirists). Planned arms: **2 extra public authors (≥1 informal register)
++ the private control author** — the control is the highest-priority cell because it kills
+the pretraining-recall objection.
 Cross-author claims compare within-author deltas and cliff *shapes*, never raw AV numbers
 (each corpus has its own ruler). `make_size_sweep.py` is now `WLM_ROOT`-aware (it previously
 ignored it — fixed on this branch), so the documented `WLM_ROOT=...` protocol works end to end.
@@ -87,6 +91,22 @@ attention result survives its strongest published counterexample. Run
    decisive arms; score the panel as ratings return. Private-author corpus lands whenever
    available — the runbook makes it a fill-in-the-directory task.
 4. **September:** assemble, then target ARR Oct 12 / TMLR / COLM 2027 per the venue analysis.
+
+## Status (2026-08-03)
+
+Everything CPU-side is done; the whole remaining GPU workload is one resumable script:
+`scripts/06_expansion_gpu.sh` (priority-ordered: Tier-0 leftovers → 15k/20k arms → a17/a18 →
+models → Twain arms → assembly).
+
+- **Done:** a14 (see STATUS R6), seed 43, second instrument over all 29 runs (STATUS R7,
+  `runs/results/instruments.md`), human-panel sheets (`runs/human_panel/` — send to raters),
+  15k/20k arms built (existing arms verified byte-identical), Twain corpus built + phase-0
+  CPU pipeline run (`~/authors/twain`, via `scripts/build_author_corpus.py twain`).
+- **Needs GPU:** trajectory eval resume (1/6 checkpoints done), rq2x, a17/a18, `--only models`
+  (a16 needs an accepted Llama license + HF login on the box), 15k/20k rq1, Twain floor+rq1.
+- **Needs humans:** panel ratings (≥10 raters), then `scripts/score_panel.py`.
+- **Needs data:** the private control author — `scripts/new_author.py <root> --private` then
+  its RUNBOOK.
 
 ## What this branch deliberately does NOT change
 

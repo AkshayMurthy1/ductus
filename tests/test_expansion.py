@@ -212,3 +212,48 @@ def test_panel_key_json_shape_roundtrips(tmp_path):
     expanded = {f"{i}#{r}": s for i, s in loaded["key"].items() for r in range(2)}
     out = score_panel(expanded, {i: 3.0 for i in expanded})
     assert out["n_rated"] == len(key) * 2
+
+
+# --------------------------------------------------------------------- gutenberg extraction
+def test_split_sections_drops_toc_and_editorial_preambles():
+    from wlm.ingest.gutenberg import split_sections
+
+    body_para = ("It was a bright morning and I walked out early. " * 40).strip()
+    editorial = ("          Mr. Clemens was introduced by the president of the club.\n"
+                 "          He spoke as follows that evening.")
+    text = "\n\n".join([
+        "CHAPTER I.", "CHAPTER II.",          # table of contents copies
+        "CHAPTER I.", editorial, body_para,   # body: preamble + prose
+        "CHAPTER II.", body_para + " " + body_para,
+    ])
+    import re
+    secs = split_sections(text, min_words=100,
+                          drop_indented_matching=re.compile(r"Mr\. Clemens"))
+    assert [t for t, _ in secs] == ["CHAPTER I.", "CHAPTER II."]
+    assert all("Clemens" not in body for _, body in secs)
+    # TOC dedup kept the later (body) occurrence: section I holds prose, not the TOC gap.
+    assert "bright morning" in secs[0][1]
+
+
+def test_segment_fallback_covers_headingless_prose():
+    from wlm.ingest.gutenberg import segment_fallback
+
+    para = ("The river was quiet that year and we watched it from the porch every "
+            "single evening without fail. " * 12).strip()
+    text = "\n\n".join([para] * 12)
+    segs = segment_fallback(text, target_words=400)
+    assert len(segs) >= 3
+    joined = " ".join(b for _, b in segs)
+    assert "porch" in joined
+
+
+def test_is_prose_rejects_verse_and_editorial():
+    from wlm.ingest.gutenberg import is_prose
+
+    prose = ("I remember the day well, because it rained and the roads were deep in mud. "
+             "We argued about it for an hour and settled nothing at all. " * 5)
+    verse = "\n".join(["the road goes on", "past the mill", "into the dark", "and on"] * 6)
+    editorial = "This volume contains the collected speeches, proofread by the editor. " * 8
+    assert is_prose(prose)
+    assert not is_prose(verse)
+    assert not is_prose(editorial)

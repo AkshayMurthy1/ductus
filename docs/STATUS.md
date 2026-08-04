@@ -115,6 +115,30 @@ less compute." The obvious best-of-both cell — **attention-only + DPO** — wa
 matrix (RQ2 and RQ3 each varied against the reference); it is queued, with the hypothesis it
 lands 0.87–0.91 at 7.5M params.
 
+### R6 — The scrubbing diagnostic: entity hygiene is the pipeline's, verbatim hygiene is the LoRA's *(single run; gates pass)*
+
+a14 (identical recipe, **unscrubbed** targets, identical splits, full corpus): AV **0.8532**,
+verbatim **0.0%** (longest run 0 tokens), semantic echo −0.035, fluency PASS — but entity
+emission **4.27/generation**, roughly double the base model's 2.0 background rate and above
+every scrubbed run (1.8–3.3). Reading: when entities are present in training targets, the
+adapter *does* absorb and emit them — so the scrubbed runs' entity-flatness is substantially
+**the scrubbing working** (an engineering property), while the zero-verbatim result survives
+unscrubbed training and is a property of the recipe itself. The paper must state the entity
+claim as "pipeline + adapter", not "adapter alone". (One seed; no measured noise floor for
+entity emission yet.)
+
+### R7 — A second instrument agrees with the ruler — including about the anomaly *(established)*
+
+Every run re-scored under an independently-trained embedder (StyleDistance, fit on the same
+train/distractor protocol, held-out AUC 0.966; `runs/results/instruments.md`): Spearman rank
+agreement **0.897** over 29 runs, mean |Δ| 0.046. The run orderings behind R1–R5 are
+instrument-independent. Sharper: the 50k adapter scores **0.952** under the second ruler
+against real held-out Chesterton's **0.738** — the "adapter above the real author" anomaly
+**replicates on an instrument the adapter was never developed against**, which argues against
+verifier-gaming and for the hyper-typicality reading. The second ruler systematically rates
+adapters *higher* than the primary (Δ up to −0.15); the human blind panel
+(`runs/human_panel/`, sheets generated, ratings pending) is the remaining adjudicator.
+
 ### Supporting measurements
 
 - **Noise floor** (brief §3): 2k adapter ±0.004 over 3 seeds; full adapter range 0.012 over 2
@@ -147,10 +171,11 @@ lands 0.87–0.91 at 7.5M params.
 
 | item | purpose | state |
 |---|---|---|
-| full-arm seed 43 | completes the 3-seed noise floor at the high-AV cell | interrupted at 68% |
-| a14 no-scrub diagnostic | does the recipe absorb entities when scrubbing is *off*? Separates "LoRA learns form over content" (intrinsic) from "scrubbing prevents content" (pipeline). Dataset built (`scripts/make_a14_noscrub.py` — reuses paid questions, unscrubbed targets, identical splits) | queued |
-| checkpoint trajectory | AV + leakage at every checkpoint of one run — localizes the phase transition in *training time*; the primary question is about rates, and this measures the rate | queued |
-| attention-only + DPO | the untested interaction cell; likely headline configuration (R5) | queued |
+| full-arm seed 43 | completes the 3-seed noise floor at the high-AV cell | **done** (report local, AV 0.790; commit with the next record batch) |
+| a14 no-scrub diagnostic | separates "LoRA learns form over content" from "scrubbing prevents content" | **done** — see R6 |
+| checkpoint trajectory | AV + leakage per checkpoint — the phase transition in *training time* | 1/6 checkpoints evaluated (step-100: AV 0.814, verbatim 0, entities 2.0); resume via `scripts/06_expansion_gpu.sh` |
+| attention-only + DPO | the untested interaction cell; likely headline configuration (R5) | queued — `run_matrix.py --only rq2x` |
+| 15k/20k arms, per-matrix a17/a18, second model (a13/a16), Twain author root | the expansion matrix (docs/EXPANSION.md) | CPU halves done; GPU workload scripted in `scripts/06_expansion_gpu.sh` |
 
 ## 5. Future work (beyond the current matrix)
 
@@ -164,16 +189,17 @@ lands 0.87–0.91 at 7.5M params.
   exists; a Llama-3.2-3B config would test family-dependence.)
 - **Serving path**: merge adapter for inference (DoRA unmerged costs ~10× generation latency —
   measured), strip/ban placeholder tokens at decode time, per-user adapter storage (Phase 5).
-- **Verifier hardening**: second embedder + human blind test before publication; single-ruler
-  dependence is the main threat to validity (below).
+- **Verifier hardening**: second embedder **done** (R7); human blind panel sheets generated
+  (`runs/human_panel/`), ratings pending — the last open piece of the single-ruler threat.
 
 ## 6. Threats to validity (say them before a reviewer does)
 
 1. **One author, one register, one base model** so far. The phase-transition *location* (25k)
    is likely Chesterton-specific; the *shape* (cliff + L-frontier) is the claim.
-2. **One verifier.** All style numbers read through a single embedder + logistic head. Its AUC
-   (0.896) and real-text calibration are healthy, but publication needs a second instrument and
-   a human panel.
+2. **One verifier** → largely closed by R7: a second, independently-trained instrument ranks
+   the runs the same way (Spearman 0.897) and replicates the above-real-text anomaly. Residual:
+   both instruments are neural embedders; the human panel (sheets ready) is the non-neural
+   check.
 3. **Chesterton is in pretraining.** Familiarity ratio 0.90 bounds the concern and the floor is
    0.000, but the private-author control is the real answer and hasn't run.
 4. **Two seeds at the decisive cell** (third queued). Every ordering claim is labeled against
