@@ -8,6 +8,7 @@ genuinely different ones.
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -273,3 +274,43 @@ def test_snapshot_refuses_private_roots_and_unlisted_names(tmp_path):
         [sys.executable, str(REPO / "scripts" / "snapshot_author.py"), str(pub), "nobody"],
         capture_output=True, text=True, check=False)
     assert out.returncode == 1 and ".gitignore" in out.stdout
+
+
+# --------------------------------------------------------------------- backtranslate resume
+def test_backtranslate_checkpoints_and_resumes(tmp_path):
+    from wlm.cli import main as cli_main
+    from wlm.paths import read_jsonl as read
+
+    chunks = tmp_path / "chunks.jsonl"
+    body = ("I walked into town today and thought about the harvest for a long while. "
+            * 12).strip()
+    with chunks.open("w") as f:
+        for i in range(4):
+            f.write(json.dumps({"chunk_id": f"c{i}", "doc_id": f"d{i}", "text": body,
+                                "register": "informal", "chunk_index": 0}) + "\n")
+    out = tmp_path / "pairs.jsonl"
+
+    assert cli_main(["backtranslate", "--in", str(chunks), "--out", str(out),
+                     "--offline", "-n", "2"]) == 0
+    first = read(out)
+    assert len(first) == 8  # 4 chunks x 2 template questions, appended incrementally
+
+    # Resume: everything is already present, so nothing is re-generated or duplicated.
+    assert cli_main(["backtranslate", "--in", str(chunks), "--out", str(out),
+                     "--offline", "-n", "2", "--resume"]) == 0
+    assert read(out) == first
+
+    # Simulate a killed run: drop the last chunk's rows; resume regenerates only those.
+    with out.open("w") as f:
+        for r in first[:-2]:
+            f.write(json.dumps(r) + "\n")
+    assert cli_main(["backtranslate", "--in", str(chunks), "--out", str(out),
+                     "--offline", "-n", "2", "--resume"]) == 0
+    resumed = read(out)
+    assert len(resumed) == 8
+    assert {r["pair_id"] for r in resumed} == {r["pair_id"] for r in first}
+
+    # Without --resume, a fresh run truncates rather than appending duplicates.
+    assert cli_main(["backtranslate", "--in", str(chunks), "--out", str(out),
+                     "--offline", "-n", "2"]) == 0
+    assert len(read(out)) == 8

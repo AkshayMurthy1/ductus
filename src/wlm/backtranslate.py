@@ -20,6 +20,7 @@ from __future__ import annotations
 import json
 import os
 import re
+from pathlib import Path
 from typing import Any
 
 from tqdm import tqdm
@@ -154,6 +155,8 @@ def build_pairs(
     audit: bool = False,
     use_supplied_prompts: bool = True,
     supplied_prompt_scope: str = "first_chunk",
+    checkpoint_path: str | Path | None = None,
+    skip_chunk_ids: set[str] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """chunks -> (question, chunk) pairs. Multiple questions per chunk augments scarce data.
 
@@ -162,15 +165,28 @@ def build_pairs(
     that are important to you" from the answer. Continuation chunks fall back to generation:
     pairing the prompt with a mid-passage fragment would teach the model to answer by starting
     in the middle of an argument.
+
+    `checkpoint_path` appends each chunk's pairs the moment they exist, so a killed run keeps
+    every paid call it made; `skip_chunk_ids` (from a previous run's checkpoint) resumes it.
+    A run is an hour of API calls — losing it to a dropped process twice is why this exists.
+    Chunks that yielded zero pairs (audit-dropped, no question) leave no checkpoint row and are
+    re-tried on resume; that re-spends a call or two, which beats a sentinel format.
     """
     if supplied_prompt_scope not in {"first_chunk", "all_chunks"}:
         raise ValueError("supplied_prompt_scope must be 'first_chunk' or 'all_chunks'")
+    from wlm.paths import append_jsonl
+
     bt = Backtranslator(model=model, offline=offline)
+    skip = skip_chunk_ids or set()
     pairs: list[dict[str, Any]] = []
     stats = {"chunks": len(chunks), "dropped_by_audit": 0, "rewritten": 0, "no_question": 0,
-             "supplied_prompt": 0, "generated": 0}
+             "supplied_prompt": 0, "generated": 0, "resumed_skip": 0}
 
     for c in tqdm(chunks, desc="backtranslate"):
+        if c["chunk_id"] in skip:
+            stats["resumed_skip"] += 1
+            continue
+        chunk_pairs: list[dict[str, Any]] = []
         supplied = (
             use_supplied_prompts
             and bool(c.get("prompt"))
@@ -200,7 +216,7 @@ def build_pairs(
                 if a.get("verdict") == "rewrite" and a.get("rewritten"):
                     q = a["rewritten"]
                     stats["rewritten"] += 1
-            pairs.append(
+            chunk_pairs.append(
                 {
                     "pair_id": f"{c['chunk_id']}-q{j}",
                     "chunk_id": c["chunk_id"],
@@ -215,5 +231,8 @@ def build_pairs(
                     ),
                 }
             )
+        if chunk_pairs and checkpoint_path is not None:
+            append_jsonl(checkpoint_path, chunk_pairs)  # completed chunks survive a kill
+        pairs.extend(chunk_pairs)
     stats["pairs"] = len(pairs)
     return pairs, stats

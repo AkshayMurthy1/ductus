@@ -137,6 +137,20 @@ def cmd_backtranslate(a) -> int:
 
     cfg = Config.load(a.config) if a.config else Config()
     chunks = read_jsonl(a.input)
+    # The output file IS the checkpoint: every finished chunk's pairs are appended as they are
+    # made, so a killed run keeps what it paid for. --resume skips chunks already in the file;
+    # without it a fresh run truncates first (the old overwrite semantics, made kill-safe).
+    out = Path(a.out)
+    skip: set[str] = set()
+    n_existing = 0
+    if a.resume and out.exists():
+        existing = read_jsonl(out)
+        skip = {r["chunk_id"] for r in existing}
+        n_existing = len(existing)
+        _p(f"[resume] {n_existing} pair(s) from {len(skip)} chunk(s) already in {out}")
+    elif out.exists():
+        out.unlink()
+    out.parent.mkdir(parents=True, exist_ok=True)
     pairs, stats = build_pairs(
         chunks,
         n_per_chunk=a.n or cfg.data.questions_per_chunk,
@@ -145,10 +159,11 @@ def cmd_backtranslate(a) -> int:
         audit=a.audit,
         use_supplied_prompts=cfg.data.use_supplied_prompts,
         supplied_prompt_scope=cfg.data.supplied_prompt_scope,
+        checkpoint_path=out,
+        skip_chunk_ids=skip,
     )
-    write_jsonl(a.out, pairs)
     _dump("backtranslation stats", stats)
-    _p(f"wrote {len(pairs)} pair(s) -> {a.out}")
+    _p(f"wrote {len(pairs)} new pair(s) ({n_existing + len(pairs)} total) -> {a.out}")
     return 0
 
 
@@ -587,6 +602,8 @@ def build_parser() -> argparse.ArgumentParser:
     b.add_argument("--model", default=None)
     b.add_argument("--offline", action="store_true", help="template questions; smoke tests only")
     b.add_argument("--audit", action="store_true", help="back-and-forth rewrite/filter pass")
+    b.add_argument("--resume", action="store_true",
+                   help="skip chunks already present in --out (continue a killed run)")
     b.set_defaults(func=cmd_backtranslate)
 
     sp = sub.add_parser("split")
