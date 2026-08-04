@@ -192,3 +192,62 @@ def test_is_prose_rejects_verse_and_editorial():
     assert is_prose(prose)
     assert not is_prose(verse)
     assert not is_prose(editorial)
+
+
+# --------------------------------------------------------------------- BAC loader
+def _bac_fixture_zip(path: Path) -> None:
+    """Four synthetic bloggers: two adult diarists, one minor, one quote-blog."""
+    import zipfile
+
+    diary = " ".join("I went to the market today and I thought my plans were "
+                     "finally coming together for once." for _ in range(9))
+    quotes = " ".join("The angels sing upon the ancient hill and the golden light "
+                      "descends softly over the quiet valley below." for _ in range(9))
+    def xml(post: str, n: int = 60) -> str:
+        return "".join(f"<date>01,January,2004</date>\n<post>{post}</post>\n"
+                       for _ in range(n))
+    with zipfile.ZipFile(path, "w") as zf:
+        zf.writestr("blogs/10.male.30.indUnk.Leo.xml", xml(diary))
+        zf.writestr("blogs/20.female.28.Law.Aries.xml", xml(diary, 55))
+        zf.writestr("blogs/30.female.16.Student.Gemini.xml", xml(diary))   # minor
+        zf.writestr("blogs/40.male.40.indUnk.Virgo.xml", xml(quotes))      # quote-blog
+
+
+def test_bac_loader_excludes_minors_and_quote_blogs(tmp_path):
+    root = tmp_path / "root"
+    scaffold = subprocess.run(
+        [sys.executable, str(REPO / "scripts" / "new_author.py"), str(root),
+         "--register", "informal", "--private"], capture_output=True, text=True, check=False)
+    assert scaffold.returncode == 0, scaffold.stdout
+    cache = root / "data" / "interim" / "_bac_cache"
+    cache.mkdir(parents=True)
+    _bac_fixture_zip(cache / "blogs.zip")
+
+    listing = subprocess.run(
+        [sys.executable, str(REPO / "scripts" / "build_bac_corpus.py"),
+         "--root", str(root), "--list"], capture_output=True, text=True, check=False)
+    assert listing.returncode == 0, listing.stdout + listing.stderr
+    assert "30" not in [ln.split()[0] for ln in listing.stdout.splitlines() if ln.strip()]
+    assert "quote-blog" in listing.stdout  # blogger 40 flagged
+
+    build = subprocess.run(
+        [sys.executable, str(REPO / "scripts" / "build_bac_corpus.py"), "--root", str(root)],
+        capture_output=True, text=True, check=False)
+    assert build.returncode == 0, build.stdout + build.stderr
+    # Auto-pick takes the most prolific diary adult (10); quote-blog never wins.
+    assert "blogger 10" in build.stdout
+    posts = list((root / "data" / "raw" / "author" / "informal").glob("*.md"))
+    assert len(posts) > 40
+    # Distractors: only the other adult diarist qualifies; author, minor, quote-blog excluded.
+    slugs = {p.name.split("_")[1].rsplit("-", 1)[0]
+             for p in (root / "data" / "raw" / "distractor").glob("*.txt")}
+    assert slugs == {"b20.txt".split(".")[0]} or slugs == {"b20"}
+    assert (root / "PROVENANCE.md").exists()
+
+
+def test_bac_loader_refuses_roots_inside_repo(tmp_path):
+    out = subprocess.run(
+        [sys.executable, str(REPO / "scripts" / "build_bac_corpus.py"),
+         "--root", str(REPO / "data" / "bac")], capture_output=True, text=True, check=False)
+    assert out.returncode == 1
+    assert "outside the repo" in out.stdout

@@ -47,13 +47,23 @@ evidence, citing Schaeffer et al. 2023 explicitly.
     python scripts/new_author.py ~/authors/<name> --register informal [--private]
 
 It writes a `RUNBOOK.md` with the corpus checklist and the exact per-author command sequence
-(phase-0, both verifier fits, matched sweep arms, `run_matrix`, per-root assembly). Public
-expansion authors are built reproducibly from pinned, title-verified Gutenberg IDs by
-`scripts/build_author_corpus.py` (registry in the script; first entry: **Mark Twain**,
-informal first-person American prose — autobiography + speeches — against 17 era- and
-register-matched memoirists). Planned arms: **2 extra public authors (≥1 informal register)
-+ the private control author** — the control is the highest-priority cell because it kills
-the pretraining-recall objection.
+(phase-0, both verifier fits, matched sweep arms, `run_matrix`, per-root assembly). Two
+loaders exist, with different rules:
+
+- **Gutenberg authors** (`scripts/build_author_corpus.py`): pinned, title-verified IDs,
+  committed-reproducible. First entry: **Mark Twain** — conversational first-person American
+  prose (autobiography + speeches) vs 17 era/register-matched memoirists. Twain varies era,
+  nationality, and mode; it is *not* the informal-register cell.
+- **Blog Authorship Corpus** (`scripts/build_bac_corpus.py`): the true informal cell — real
+  casual first-person prose, the register the closest accepted style-imitation work used.
+  NOT public domain and the bloggers are real people, so: the root is scaffolded `--private`,
+  outside the repo, never committed; minors are excluded outright; authors stay anonymous
+  corpus IDs; and quote-blogs (posts that are mostly copied hymns/lyrics/news — they would
+  teach the *quoted* authors' voices) are screened out by a first-person-pronoun-rate floor.
+  Reproducibility is by recipe: archive checksum + blogger ID + this script.
+
+Planned arms: **Twain + one BAC blogger + the private control author** — the control is the
+highest-priority cell because it kills the pretraining-recall objection.
 Cross-author claims compare within-author deltas and cliff *shapes*, never raw AV numbers
 (each corpus has its own ruler). `make_size_sweep.py` is now `WLM_ROOT`-aware (it previously
 ignored it — fixed on this branch), so the documented `WLM_ROOT=...` protocol works end to end.
@@ -96,12 +106,17 @@ models → Twain arms → assembly).
 
 - **Done:** a14 (see STATUS R6), seed 43, second instrument over all 29 runs (STATUS R7,
   `runs/results/instruments.md`), the checkpoint-trajectory evals (L-shaped in training time),
-  15k/20k arms built (existing arms verified byte-identical), Twain corpus built + phase-0
-  CPU pipeline run (`~/authors/twain`, via `scripts/build_author_corpus.py twain`).
+  15k/20k arms built (existing arms verified byte-identical), Twain corpus built + CPU
+  pipeline through scrub (`~/authors/twain`), BAC informal author built + CPU pipeline
+  through scrub (`~/authors/blogger`, blogger 1417798: 480 posts / 150k words, 20 blogger
+  distractors — note 2,754 scrubbed PERSON entities, the PII-dense hard case).
+- **In flight:** Twain backtranslation (claude-haiku-4-5, ~$2).
+- **Needs a decision (paid, ~$2):** BAC blogger backtranslation, then both roots'
+  split + verifier fits + sweep arms (free) and their GPU arms.
 - **Needs GPU:** rq2x, a17/a18, `--only models` (a16 needs an accepted Llama license + HF
-  login on the box), 15k/20k rq1, Twain floor+rq1.
+  login on the box), 15k/20k rq1, Twain + blogger floor+rq1.
 - **Needs data:** the private control author — `scripts/new_author.py <root> --private` then
-  its RUNBOOK; and the Twain backtranslation (paid) before its GPU arms.
+  its RUNBOOK.
 
 ## What this branch deliberately does NOT change
 
