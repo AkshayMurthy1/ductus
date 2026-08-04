@@ -20,6 +20,14 @@ private writing is about to be committed.
 
 **Total ≈ 22 MB.** Under GitHub's limits with room to spare; no Git LFS required.
 
+## Expansion authors (`data/authors/`)
+
+Public-domain expansion authors (docs/EXPANSION.md) are snapshotted here with the same
+provenance rules as the fixture — corpus, distractors, and paid `pairs.jsonl` per author,
+one explicit `.gitignore` allow-list line each. See `data/authors/README.md`. Research-use-only
+corpora (the Blog Authorship Corpus blogger) and private authors are never snapshotted;
+`scripts/snapshot_author.py` enforces both guards mechanically.
+
 ## Not committed
 
 **Weights and checkpoints** — `runs/` is ~14 GB on disk. Individual `adapter_model.safetensors`

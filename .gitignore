@@ -22,6 +22,12 @@ runs/**
 # deterministic functions of raw + seed, so they regenerate exactly and stay out.
 !data/interim/pairs.jsonl
 
+# --- Expansion authors (docs/EXPANSION.md): snapshots via scripts/snapshot_author.py ---------
+# Allow-listed PER AUTHOR and never by wildcard: research-use-only corpora (the Blog
+# Authorship Corpus root) and private authors must never gain a committable path by default.
+# Each line here asserts "this author's corpus is public domain" — add one deliberately.
+!data/authors/twain/**
+
 # --- Run records: the science, never the weights ---------------------------------------------
 # report.json is the one record of a run (resolved config + metrics + wall-clock); gen.jsonl
 # cannot be reproduced without the adapter that made it. Adapters, checkpoints, optimizer states

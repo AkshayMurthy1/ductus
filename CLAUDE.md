@@ -88,6 +88,9 @@ Undoing any of these looks like a simplification and is not one.
   verifiability; weights, checkpoints, and deterministic intermediates never are. Run
   `make check-data` before any commit touching `data/` or `runs/` — and if `data/raw/author`
   ever holds a real person's writing, it must not ship regardless of the allow-list.
+  **Public-domain expansion authors** get the same treatment via `data/authors/<name>/`
+  (`scripts/snapshot_author.py`, per-author `.gitignore` allow-list — see
+  `data/authors/README.md`); private and research-use-only corpora (the BAC blogger) never do.
 
 ## Testing
 

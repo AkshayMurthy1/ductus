@@ -251,3 +251,25 @@ def test_bac_loader_refuses_roots_inside_repo(tmp_path):
          "--root", str(REPO / "data" / "bac")], capture_output=True, text=True, check=False)
     assert out.returncode == 1
     assert "outside the repo" in out.stdout
+
+
+# --------------------------------------------------------------------- author snapshots
+def test_snapshot_refuses_private_roots_and_unlisted_names(tmp_path):
+    # A --private root must never be snapshottable, whatever name is passed.
+    priv = tmp_path / "priv"
+    subprocess.run([sys.executable, str(REPO / "scripts" / "new_author.py"), str(priv),
+                    "--private"], capture_output=True, check=False)
+    out = subprocess.run(
+        [sys.executable, str(REPO / "scripts" / "snapshot_author.py"), str(priv), "twain"],
+        capture_output=True, text=True, check=False)
+    assert out.returncode == 1 and "PRIVATE AUTHOR" in out.stdout
+
+    # A public root with a name that has no .gitignore allow-list line is refused too:
+    # committing a new author must be a deliberate two-step, never a script side effect.
+    pub = tmp_path / "pub"
+    subprocess.run([sys.executable, str(REPO / "scripts" / "new_author.py"), str(pub)],
+                   capture_output=True, check=False)
+    out = subprocess.run(
+        [sys.executable, str(REPO / "scripts" / "snapshot_author.py"), str(pub), "nobody"],
+        capture_output=True, text=True, check=False)
+    assert out.returncode == 1 and ".gitignore" in out.stdout
