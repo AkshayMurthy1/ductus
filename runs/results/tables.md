@@ -4,40 +4,42 @@ _35 record(s) under `/Users/akshaymurthy/Developer/ductus/runs`. Regenerate with
 
 Verifier held-out AUC (the gate on everything below): 0.8957
 
+AV₂ = second instrument (StyleDistance/styledistance, held-out AUC 0.9659); rank agreement with the primary: Spearman 0.8968 over 29 runs. AV₂ reads adapters systematically higher, so compare *orderings* across instruments, not absolute values — details in `results/instruments.md`.
+
 ## Table 1 — scaling (RQ1)
 
-| corpus (words) | docs | few-shot AV | adapter AV | Δ | verbatim leak | entity/gen | sem. echo | stylometry ↓ | fluency Δ | gates |
-|---|---|---|---|---|---|---|---|---|---|---|
-| 3,156 | 3 | 0.0040 | 0.0000 | -0.0040 | 0.0000 | 3.1430 | -0.1011 | 0.0623 | -0.0008 | PASS |
-| 5,909 | 5 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 3.2980 | -0.0869 | 0.0591 | 0.0006 | PASS |
-| 10,226 **← crossover** | 8 | 0.0000 | 0.0040 | 0.0040 | 0.0000 | 2.4760 | -0.1009 | 0.0724 | -0.0035 | PASS |
-| 15,905 | 12 | — | — | — | — | — | — | — | — | — |
-| 20,257 | 15 | — | — | — | — | — | — | — | — | — |
-| 27,729 | 19 | 0.0000 | 0.7183 | 0.7183 | 0.0000 | 2.6940 | -0.0540 | 0.0732 | -0.0128 | PASS |
-| 50,020 | 32 | 0.0000 | 0.8254 | 0.8254 | 0.0000 | 2.0520 | -0.0402 | 0.0666 | -0.0014 | PASS |
-| 100,411 | 60 | 0.0000 | 0.7976 | 0.7976 | 0.0000 | 1.8060 | -0.0370 | 0.0733 | 0.0057 | PASS |
-| 178,708 | 105 | 0.0040 | 0.7897 | 0.7857 | 0.0000 | 1.8730 | -0.0338 | 0.0635 | 0.0185 | PASS |
+| corpus (words) | docs | few-shot AV | adapter AV | AV₂ | Δ | verbatim leak | entity/gen | sem. echo | stylometry ↓ | fluency Δ | gates |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 3,156 | 3 | 0.0040 | 0.0000 | 0.0000 | -0.0040 | 0.0000 | 3.1430 | -0.1011 | 0.0623 | -0.0008 | PASS |
+| 5,909 | 5 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 3.2980 | -0.0869 | 0.0591 | 0.0006 | PASS |
+| 10,226 **← crossover** | 8 | 0.0000 | 0.0040 | 0.0119 | 0.0040 | 0.0000 | 2.4760 | -0.1009 | 0.0724 | -0.0035 | PASS |
+| 15,905 | 12 | — | — | — | — | — | — | — | — | — | — |
+| 20,257 | 15 | — | — | — | — | — | — | — | — | — | — |
+| 27,729 | 19 | 0.0000 | 0.7183 | 0.8016 | 0.7183 | 0.0000 | 2.6940 | -0.0540 | 0.0732 | -0.0128 | PASS |
+| 50,020 | 32 | 0.0000 | 0.8254 | 0.9524 | 0.8254 | 0.0000 | 2.0520 | -0.0402 | 0.0666 | -0.0014 | PASS |
+| 100,411 | 60 | 0.0000 | 0.7976 | 0.9246 | 0.7976 | 0.0000 | 1.8060 | -0.0370 | 0.0733 | 0.0057 | PASS |
+| 178,708 | 105 | 0.0040 | 0.7897 | 0.9365 | 0.7857 | 0.0000 | 1.8730 | -0.0338 | 0.0635 | 0.0185 | PASS |
 Crossover (first arm where the adapter beats its own few-shot baseline with both gates passing): **10k**.
 
 ## Table 2 — adaptation locus (RQ2)
 
 SPL = (AV − base floor 0.0000) / (verbatim rate + 0.01); higher = more style per unit of leakage.
 
-| locus | trainable params | AV | verbatim leak | sem. echo | stylometry ↓ | fluency Δ | SPL ↑ | wall-clock (s) |
-|---|---|---|---|---|---|---|---|---|
-| both (reference, full arm) | 30,965,760 | 0.7897 | 0.0000 | -0.0338 | 0.0635 | 0.0185 | 78.97 | 1670 |
-| attention only | 7,538,688 | 0.8571 | 0.0000 | -0.0397 | 0.0715 | -0.0053 | 85.71 | 611 |
-| MLP only | 23,427,072 | 0.7937 | 0.0000 | -0.0323 | 0.0666 | 0.0254 | 79.37 | 1534 |
-| both, MLP r8 | 19,685,376 | 0.8095 | 0.0000 | -0.0256 | 0.0706 | 0.0201 | 80.95 | 1941 |
+| locus | trainable params | AV | AV₂ | verbatim leak | sem. echo | stylometry ↓ | fluency Δ | SPL ↑ | wall-clock (s) |
+|---|---|---|---|---|---|---|---|---|---|
+| both (reference, full arm) | 30,965,760 | 0.7897 | 0.9365 | 0.0000 | -0.0338 | 0.0635 | 0.0185 | 78.97 | 1670 |
+| attention only | 7,538,688 | 0.8571 | 0.9325 | 0.0000 | -0.0397 | 0.0715 | -0.0053 | 85.71 | 611 |
+| MLP only | 23,427,072 | 0.7937 | 0.9484 | 0.0000 | -0.0323 | 0.0666 | 0.0254 | 79.37 | 1534 |
+| both, MLP r8 | 19,685,376 | 0.8095 | 0.9286 | 0.0000 | -0.0256 | 0.0706 | 0.0201 | 80.95 | 1941 |
 
 ## Table 3 — stage (RQ3)
 
-| corpus | stage | AV | verbatim leak | sem. echo | stylometry ↓ | fluency Δ | gates |
-|---|---|---|---|---|---|---|---|
-| 10,226 | A | 0.0040 | 0.0000 | -0.1009 | 0.0724 | -0.0035 | PASS |
-| 10,226 | A+B | 0.1667 | 0.0000 | -0.0891 | 0.0834 | -0.0021 | PASS |
-| 178,708 | A | 0.7897 | 0.0000 | -0.0338 | 0.0635 | 0.0185 | PASS |
-| 178,708 | A+B | 0.8452 | 0.0000 | -0.0231 | 0.0549 | 0.0154 | PASS |
+| corpus | stage | AV | AV₂ | verbatim leak | sem. echo | stylometry ↓ | fluency Δ | gates |
+|---|---|---|---|---|---|---|---|---|
+| 10,226 | A | 0.0040 | 0.0119 | 0.0000 | -0.1009 | 0.0724 | -0.0035 | PASS |
+| 10,226 | A+B | 0.1667 | 0.1984 | 0.0000 | -0.0891 | 0.0834 | -0.0021 | PASS |
+| 178,708 | A | 0.7897 | 0.9365 | 0.0000 | -0.0338 | 0.0635 | 0.0185 | PASS |
+| 178,708 | A+B | 0.8452 | 0.9206 | 0.0000 | -0.0231 | 0.0549 | 0.0154 | PASS |
 
 ## Table 4 — contamination control
 

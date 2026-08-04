@@ -74,6 +74,23 @@ def load_records(runs_dir: Path) -> list[dict[str, Any]]:
     return recs
 
 
+def attach_second_instrument(recs: list[dict], runs_dir: Path) -> dict | None:
+    """Fold the dual-instrument scores (scripts/second_instrument.py) into the records.
+
+    The second verifier lives in its own record (results/instruments.json) because it is fit
+    and scored after the fact; the tables should still show it wherever the primary AV appears,
+    or the cross-instrument check is invisible exactly where readers look.
+    """
+    path = runs_dir / "results" / "instruments.json"
+    if not path.exists():
+        return None
+    inst = json.loads(path.read_text(encoding="utf-8"))
+    second = {row["run"]: row.get("av_second") for row in inst.get("runs", [])}
+    for r in recs:
+        r["av2"] = second.get(r["rel"])
+    return inst
+
+
 def by_rel(recs: list[dict], rel: str) -> dict | None:
     return next((r for r in recs if r["rel"] == rel), None)
 
@@ -95,9 +112,9 @@ def fmt(x, nd=4):
 
 # ------------------------------------------------------------------ tables
 def table1(recs, manifest) -> str:
-    rows = ["| corpus (words) | docs | few-shot AV | adapter AV | Δ | verbatim leak | "
+    rows = ["| corpus (words) | docs | few-shot AV | adapter AV | AV₂ | Δ | verbatim leak | "
             "entity/gen | sem. echo | stylometry ↓ | fluency Δ | gates |",
-            "|---|---|---|---|---|---|---|---|---|---|---|"]
+            "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     crossover = None
     for m in manifest:
         arm = m["arm"]
@@ -111,7 +128,8 @@ def table1(recs, manifest) -> str:
         mark = " **← crossover**" if crossover == arm else ""
         rows.append(
             f"| {m['actual_words']:,}{mark} | {m['documents']} | {fmt(b and b['av'])} | "
-            f"{fmt(s and s['av'])} | {fmt(delta)} | {fmt(s and s['leak'])} | "
+            f"{fmt(s and s['av'])} | {fmt(s and s.get('av2'))} | {fmt(delta)} | "
+            f"{fmt(s and s['leak'])} | "
             f"{fmt(s and s['entities'])} | {fmt(s and s['echo'])} | {fmt(s and s['sty'])} | "
             f"{fmt(s and s['flu'])} | {'PASS' if ok else ('FAIL' if s else '—')} |")
     tail = (f"\nCrossover (first arm where the adapter beats its own few-shot baseline with "
@@ -135,15 +153,16 @@ def table2(recs, floor_av, rq2_arm) -> str:
              ("matrix/rq2/a01_attention_only", "attention only"),
              ("matrix/rq2/a02_mlp_only", "MLP only"),
              ("matrix/rq2/a05_split_rank_low_mlp", "both, MLP r8")]
-    rows = ["| locus | trainable params | AV | verbatim leak | sem. echo | stylometry ↓ | "
+    rows = ["| locus | trainable params | AV | AV₂ | verbatim leak | sem. echo | stylometry ↓ | "
             "fluency Δ | SPL ↑ | wall-clock (s) |",
-            "|---|---|---|---|---|---|---|---|---|"]
+            "|---|---|---|---|---|---|---|---|---|---|"]
     for rel, label in cells:
         r = by_rel(recs, rel)
         spl = None
         if r and r["av"] is not None and r["leak"] is not None:
             spl = (r["av"] - (floor_av or 0.0)) / (r["leak"] + 0.01)
         rows.append(f"| {label} | {fmt(r and r['trainable'])} | {fmt(r and r['av'])} | "
+                    f"{fmt(r and r.get('av2'))} | "
                     f"{fmt(r and r['leak'])} | {fmt(r and r['echo'])} | {fmt(r and r['sty'])} | "
                     f"{fmt(r and r['flu'])} | {fmt(spl, 2)} | {fmt(r and r['wallclock'], 0)} |")
     return ("## Table 2 — adaptation locus (RQ2)\n\n"
@@ -152,8 +171,9 @@ def table2(recs, floor_av, rq2_arm) -> str:
 
 
 def table3(recs, manifest) -> str:
-    rows = ["| corpus | stage | AV | verbatim leak | sem. echo | stylometry ↓ | fluency Δ | gates |",
-            "|---|---|---|---|---|---|---|---|"]
+    rows = ["| corpus | stage | AV | AV₂ | verbatim leak | sem. echo | stylometry ↓ | "
+            "fluency Δ | gates |",
+            "|---|---|---|---|---|---|---|---|---|"]
     any_b = False
     for m in manifest:
         arm = m["arm"]
@@ -165,7 +185,8 @@ def table3(recs, manifest) -> str:
             if r is None:
                 continue
             any_b = True
-            rows.append(f"| {m['actual_words']:,} | {stage} | {fmt(r['av'])} | {fmt(r['leak'])} | "
+            rows.append(f"| {m['actual_words']:,} | {stage} | {fmt(r['av'])} | "
+                        f"{fmt(r.get('av2'))} | {fmt(r['leak'])} | "
                         f"{fmt(r['echo'])} | {fmt(r['sty'])} | {fmt(r['flu'])} | "
                         f"{'PASS' if gates_ok(r) else 'FAIL'} |")
     if not any_b:
@@ -404,6 +425,15 @@ def main() -> int:
                 f"{', '.join(f'{a:.4f}' for a in sorted(aucs))}"
                 + (" — **multiple AUCs means the ruler moved between runs; "
                    "re-check before comparing.**" if len(aucs) > 1 else "") + "\n")
+    inst = attach_second_instrument(recs, runs_dir)
+    if inst:
+        ag = inst.get("agreement") or {}
+        gate += (
+            f"\nAV₂ = second instrument ({inst.get('second_embedder')}, held-out AUC "
+            f"{inst.get('second_verifier_auc')}); rank agreement with the primary: Spearman "
+            f"{ag.get('spearman')} over {ag.get('n')} runs. AV₂ reads adapters systematically "
+            "higher, so compare *orderings* across instruments, not absolute values — details "
+            "in `results/instruments.md`.\n")
 
     sections = [
         "# Results — assembled from run records\n",
