@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ductus — trajectory-step-25</title><style>
+:root { color-scheme: light dark; }
+.viz-root {
+  --surface-1: #fcfcfb; --surface-2: #f4f3f0; --border: #dedcd6;
+  --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7c7a74;
+  --series-1: #2a78d6; --series-2: #eb6834;
+  --good: #008300; --bad: #e34948; --warn: #eda100;
+  --grid: #e7e5e0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) .viz-root {
+    --surface-1: #1a1a19; --surface-2: #232322; --border: #3a3a37;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #93918a;
+    --series-1: #3987e5; --series-2: #d95926;
+    --good: #4caf50; --bad: #e66767; --warn: #c98500;
+    --grid: #2e2e2c;
+  }
+}
+:root[data-theme="dark"] .viz-root {
+  --surface-1: #1a1a19; --surface-2: #232322; --border: #3a3a37;
+  --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #93918a;
+  --series-1: #3987e5; --series-2: #d95926;
+  --good: #4caf50; --bad: #e66767; --warn: #c98500; --grid: #2e2e2c;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--surface-1); }
+.viz-root {
+  background: var(--surface-1); color: var(--text-primary); min-height: 100vh;
+  font: 15px/1.55 ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  padding: 40px 28px 72px; max-width: 1080px; margin: 0 auto;
+}
+h1 { font-size: 25px; font-weight: 620; letter-spacing: -0.015em; margin: 0 0 4px; }
+h2 { font-size: 15px; font-weight: 600; margin: 44px 0 6px; letter-spacing: -0.005em; }
+.sub { color: var(--text-secondary); font-size: 13.5px; margin: 0 0 6px; }
+.muted { color: var(--text-muted); font-size: 12.5px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+         gap: 12px; margin: 22px 0 0; }
+.tile { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+        background: var(--surface-2); }
+.tile .label { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em;
+               color: var(--text-muted); font-weight: 600; }
+.tile .value { font-size: 27px; font-weight: 640; letter-spacing: -0.02em; margin-top: 5px;
+               font-variant-numeric: tabular-nums; }
+.tile .note { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600;
+        border-radius: 999px; padding: 2px 9px; border: 1px solid currentColor; }
+.pass { color: var(--good); } .fail { color: var(--bad); } .unk { color: var(--warn); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin-top: 10px; }
+th, td { text-align: right; padding: 6px 10px; border-bottom: 1px solid var(--grid); }
+th:first-child, td:first-child { text-align: left; }
+th { color: var(--text-secondary); font-weight: 600; font-size: 12px;
+     text-transform: uppercase; letter-spacing: .05em; }
+td { font-variant-numeric: tabular-nums; }
+.legend { display: flex; gap: 16px; align-items: center; margin: 4px 0 10px;
+          font-size: 12.5px; color: var(--text-secondary); }
+.swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block;
+          margin-right: 6px; vertical-align: -1px; }
+.samples { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+.card { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+        background: var(--surface-2); font-size: 13.5px; white-space: pre-wrap; }
+.card .who { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em;
+             font-weight: 600; margin-bottom: 8px; }
+pre.cfg { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+          padding: 14px 16px; font-size: 12px; overflow-x: auto; color: var(--text-secondary); }
+svg text { font: 11.5px ui-sans-serif, -apple-system, sans-serif; }
+.bar:hover rect { opacity: .82; }
+details { margin-top: 8px; } summary { cursor: pointer; color: var(--text-secondary);
+          font-size: 13px; }
+.toggle { position: fixed; top: 14px; right: 16px; font-size: 12px; padding: 5px 11px;
+          border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2);
+          color: var(--text-secondary); cursor: pointer; }
+</style></head>
+<body><div class="viz-root">
+<button class="toggle" onclick="document.documentElement.dataset.theme =
+  document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'">theme</button>
+
+<h1>trajectory-step-25</h1>
+<p class="sub">2026-08-03T21:21:10 · 252
+generations on the <strong>blind</strong> split ·
+model </p>
+<p class="sub">fluency <span class="pill pass">PASS</span> &nbsp; leakage <span class="pill pass">PASS</span> &nbsp; verifier <span class="pill pass">PASS</span></p>
+<div class="tiles"><div class="tile"><div class="label">AV attribution rate</div><div class="value">86%</div><div class="note">verifier AUC 0.896 · threshold 0.585</div></div><div class="tile"><div class="label">Stylometry distance</div><div class="value">0.0800</div><div class="note">95% CI [0.076, 0.091] · lower is better</div></div><div class="tile"><div class="label">Fluency</div><div class="value">0.025</div><div class="note">ppl on 3.37 vs off 3.29</div></div><div class="tile"><div class="label">Content leakage</div><div class="value">0.000</div><div class="note">longest verbatim run 0 tokens</div></div></div>
+
+
+
+<h2>Where the voice is still off</h2>
+<p class="sub">Largest normalized gaps between the model's output and the author's real text.
+This is the to-do list: the top item is what the next ablation should target.</p>
+<svg viewBox="0 0 660 234" width="100%" height="234" role="img" aria-label="stylometry gaps"><line x1="308.5" y1="14" x2="308.5" y2="216" stroke="var(--grid)" stroke-width="1"/><text x="308.5" y="230" fill="var(--text-muted)" text-anchor="middle">0.20</text><line x1="407.0" y1="14" x2="407.0" y2="216" stroke="var(--grid)" stroke-width="1"/><text x="407.0" y="230" fill="var(--text-muted)" text-anchor="middle">0.40</text><line x1="505.5" y1="14" x2="505.5" y2="216" stroke="var(--grid)" stroke-width="1"/><text x="505.5" y="230" fill="var(--text-muted)" text-anchor="middle">0.61</text><line x1="604.0" y1="14" x2="604.0" y2="216" stroke="var(--grid)" stroke-width="1"/><text x="604.0" y="230" fill="var(--text-muted)" text-anchor="middle">0.81</text><g class="bar"><title>para len sents: 0.8080</title><text x="200" y="25" text-anchor="end" fill="var(--text-secondary)">para len sents</text><rect x="210" y="16" width="394.0" height="14" rx="4" fill="var(--series-1)"/><text x="611.0" y="27" fill="var(--text-primary)">0.808</text></g><g class="bar"><title>msttr: 0.6720</title><text x="200" y="51" text-anchor="end" fill="var(--text-secondary)">msttr</text><rect x="210" y="42" width="327.7" height="14" rx="4" fill="var(--series-1)"/><text x="544.7" y="53" fill="var(--text-primary)">0.672</text></g><g class="bar"><title>semicolon per 100: 0.6523</title><text x="200" y="77" text-anchor="end" fill="var(--text-secondary)">semicolon per 100</text><rect x="210" y="68" width="318.1" height="14" rx="4" fill="var(--series-1)"/><text x="535.1" y="79" fill="var(--text-primary)">0.652</text></g><g class="bar"><title>word len mean: 0.5494</title><text x="200" y="103" text-anchor="end" fill="var(--text-secondary)">word len mean</text><rect x="210" y="94" width="267.9" height="14" rx="4" fill="var(--series-1)"/><text x="484.9" y="105" fill="var(--text-primary)">0.549</text></g><g class="bar"><title>intensifier rate: 0.4158</title><text x="200" y="129" text-anchor="end" fill="var(--text-secondary)">intensifier rate</text><rect x="210" y="120" width="202.8" height="14" rx="4" fill="var(--series-1)"/><text x="419.8" y="131" fill="var(--text-primary)">0.416</text></g><g class="bar"><title>sent len mean: 0.3497</title><text x="200" y="155" text-anchor="end" fill="var(--text-secondary)">sent len mean</text><rect x="210" y="146" width="170.5" height="14" rx="4" fill="var(--series-1)"/><text x="387.5" y="157" fill="var(--text-primary)">0.350</text></g><g class="bar"><title>sent len sd: 0.2303</title><text x="200" y="181" text-anchor="end" fill="var(--text-secondary)">sent len sd</text><rect x="210" y="172" width="112.3" height="14" rx="4" fill="var(--series-1)"/><text x="329.3" y="183" fill="var(--text-primary)">0.230</text></g><g class="bar"><title>hedge rate: 0.2013</title><text x="200" y="207" text-anchor="end" fill="var(--text-secondary)">hedge rate</text><rect x="210" y="198" width="98.2" height="14" rx="4" fill="var(--series-1)"/><text x="315.2" y="209" fill="var(--text-primary)">0.201</text></g></svg>
+
+<h2>Sentence-length rhythm</h2>
+<p class="sub">Distribution shape, not just the mean. Matching the mean while missing the
+spread is the classic signature of generic AI cadence.</p>
+<div class="legend"><span><span class="swatch" style="background:var(--series-1)"></span>author (real)</span><span><span class="swatch" style="background:var(--series-2)"></span>model</span></div><svg viewBox="0 0 660 220" width="100%" height="220" role="img" aria-label="share of sentences by bucket"><line x1="44" y1="186.0" x2="646" y2="186.0" stroke="var(--grid)" stroke-width="1"/><text x="36" y="190.0" text-anchor="end" fill="var(--text-muted)">0.00</text><line x1="44" y1="99.0" x2="646" y2="99.0" stroke="var(--grid)" stroke-width="1"/><text x="36" y="103.0" text-anchor="end" fill="var(--text-muted)">0.11</text><line x1="44" y1="12.0" x2="646" y2="12.0" stroke="var(--grid)" stroke-width="1"/><text x="36" y="16.0" text-anchor="end" fill="var(--text-muted)">0.22</text><g class="bar"><title>author (real) · 0-5: 0.011</title><rect x="48.0" y="177.0" width="27.4" height="9.0" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 0-5: 0.005</title><rect x="77.4" y="182.0" width="27.4" height="4.0" rx="4" fill="var(--series-2)"/></g><text x="77.4" y="208" text-anchor="middle" fill="var(--text-muted)">0-5</text><g class="bar"><title>author (real) · 5-10: 0.066</title><rect x="114.9" y="133.1" width="27.4" height="52.9" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 5-10: 0.112</title><rect x="144.3" y="96.8" width="27.4" height="89.2" rx="4" fill="var(--series-2)"/></g><text x="144.3" y="208" text-anchor="middle" fill="var(--text-muted)">5-10</text><g class="bar"><title>author (real) · 10-15: 0.140</title><rect x="181.8" y="74.4" width="27.4" height="111.6" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 10-15: 0.174</title><rect x="211.2" y="47.0" width="27.4" height="139.0" rx="4" fill="var(--series-2)"/></g><text x="211.2" y="208" text-anchor="middle" fill="var(--text-muted)">10-15</text><g class="bar"><title>author (real) · 15-20: 0.181</title><rect x="248.7" y="41.0" width="27.4" height="145.0" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 15-20: 0.194</title><rect x="278.1" y="30.6" width="27.4" height="155.4" rx="4" fill="var(--series-2)"/></g><text x="278.1" y="208" text-anchor="middle" fill="var(--text-muted)">15-20</text><g class="bar"><title>author (real) · 20-25: 0.160</title><rect x="315.6" y="58.2" width="27.4" height="127.8" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 20-25: 0.160</title><rect x="345.0" y="57.9" width="27.4" height="128.1" rx="4" fill="var(--series-2)"/></g><text x="345.0" y="208" text-anchor="middle" fill="var(--text-muted)">20-25</text><g class="bar"><title>author (real) · 25-30: 0.130</title><rect x="382.4" y="81.8" width="27.4" height="104.2" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 25-30: 0.115</title><rect x="411.9" y="93.9" width="27.4" height="92.1" rx="4" fill="var(--series-2)"/></g><text x="411.9" y="208" text-anchor="middle" fill="var(--text-muted)">25-30</text><g class="bar"><title>author (real) · 30-40: 0.178</title><rect x="449.3" y="43.9" width="27.4" height="142.1" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 30-40: 0.133</title><rect x="478.8" y="79.5" width="27.4" height="106.5" rx="4" fill="var(--series-2)"/></g><text x="478.8" y="208" text-anchor="middle" fill="var(--text-muted)">30-40</text><g class="bar"><title>author (real) · 40-60: 0.101</title><rect x="516.2" y="105.4" width="27.4" height="80.6" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 40-60: 0.088</title><rect x="545.7" y="115.2" width="27.4" height="70.8" rx="4" fill="var(--series-2)"/></g><text x="545.7" y="208" text-anchor="middle" fill="var(--text-muted)">40-60</text><g class="bar"><title>author (real) · 60+: 0.033</title><rect x="583.1" y="159.5" width="27.4" height="26.5" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 60+: 0.018</title><rect x="612.6" y="171.3" width="27.4" height="14.7" rx="4" fill="var(--series-2)"/></g><text x="612.6" y="208" text-anchor="middle" fill="var(--text-muted)">60+</text></svg>
+
+<h2>Stylometry detail</h2>
+<table><thead><tr><th>feature</th><th>author</th><th>model</th><th>normalized gap</th></tr>
+</thead><tbody><tr><td>sent len mean</td><td>25.745</td><td>22.948</td><td>0.350</td></tr><tr><td>sent len sd</td><td>15.351</td><td>13.969</td><td>0.230</td></tr><tr><td>burstiness</td><td>-0.253</td><td>-0.243</td><td>0.039</td></tr><tr><td>word len mean</td><td>4.357</td><td>3.918</td><td>0.549</td></tr><tr><td>msttr</td><td>0.765</td><td>0.684</td><td>0.672</td></tr><tr><td>contraction rate</td><td>0.168</td><td>0.157</td><td>0.005</td></tr><tr><td>hedge rate</td><td>0.731</td><td>1.033</td><td>0.201</td></tr><tr><td>intensifier rate</td><td>0.858</td><td>1.274</td><td>0.416</td></tr><tr><td>first person rate</td><td>2.421</td><td>2.983</td><td>0.187</td></tr><tr><td>second person rate</td><td>0.389</td><td>0.561</td><td>0.086</td></tr><tr><td>em dash per 100</td><td>0.087</td><td>0.004</td><td>0.103</td></tr><tr><td>semicolon per 100</td><td>1.021</td><td>1.347</td><td>0.652</td></tr><tr><td>paren per 100</td><td>0.183</td><td>0.044</td><td>0.174</td></tr><tr><td>question per 100</td><td>0.151</td><td>0.080</td><td>0.071</td></tr><tr><td>exclaim per 100</td><td>0.041</td><td>0.016</td><td>0.025</td></tr><tr><td>para len sents</td><td>5.927</td><td>7.947</td><td>0.808</td></tr><tr><td>sent len hist</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.011</td></tr><tr><td>word len hist</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.009</td></tr><tr><td>function words</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.023</td></tr><tr><td>punctuation</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.033</td></tr><tr><td>openers</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.131</td></tr><tr><td>pos trigrams</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.068</td></tr></tbody></table>
+
+<h2>Side by side</h2>
+<p class="sub">Read these. The human blind test is the real bar; the numbers above are proxies
+for it.</p>
+<div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>While she looked at the ivy I opened for the first time for many weeks
+an &lt;GROUP&gt; newspaper, and I read a speech of Mr. &lt;PERSON&gt; in which
+he said that &lt;ORG&gt; ought to be preserved because it
+represented something in the nature of permanent public opinion of
+&lt;PLACE&gt;, above the ebb and flow of the parties. Now Mr. &lt;PERSON&gt; is a
+perfectly sincere patriot, a man who, from his own point of view, thinks
+long and seriously about the public needs, and he is, moreover, a man
+of entirely exceptionable intellectual power. But alas, in spite of
+all this, when I had read that speech I thought with a heavy heart that
+there was one more thing that I had to add to the list of the specially
+&lt;THING&gt; things, such as kippers and cricket; I had to add the specially
+&lt;THING&gt; kind of humbug. In &lt;PLACE&gt; things are attacked and defended for
+what they are. &lt;ORG&gt; is attacked because it is &lt;GROUP&gt;,
+and defended because it is &lt;GROUP&gt;. The Republic is defended because
+it is &lt;GROUP&gt;, and attacked because it is &lt;GROUP&gt;. But here is the
+ablest of &lt;GROUP&gt; politicians consoling everybody by telling them that
+&lt;ORG&gt; is not really &lt;ORG&gt;, but something quite
+different, that the foolish accidental peers whom he meets every night
+are in some mysterious way experts upon the psychology of the democracy;
+that if you want to know what the very poor want you must ask the very
+rich, and that if you want the truth about &lt;ORG&gt;,</div><div class="card"><div class="who" style="color:var(--series-2)">model</div>The first thing that strikes me as very peculiar about the defence of the &lt;ORG&gt; by &lt;PERSON&gt; is the way in which he
+defends the institution rather than the men. If he were defending the
+men he would be saying something like this: “I have been for years
+talking to you, my dear fellow citizens, about the evil of the
+&lt;THING&gt;. I have pointed out the dangers of letting our men go on
+living in a state of perpetual childhood; I have called for a manly
+manhood; I have denounced the effeminate spirit of &lt;PLACE&gt;; I have
+warned you of the danger to your liberty from &lt;PERSON&gt;. But now that
+the &lt;PERSON&gt; has come in, with all the horrors that follow him, I ask
+you, for the sake of your liberty and your manhood, to give him the
+very best time he can get. For if he gets only half his time he will
+be a worse thing than he was before. He will be worse than anything
+else. It is not enough to say that he has brought a great number of
+good things with him. I do not mean that at all. But if he brings
+only a good part of his good things with him, then he is a far
+worse thing than when he comes in with only bad ones.” That is the
+reason why I think that this man’s real point of view must be the
+point of view of the man who is arguing that we should let him play a
+bad game because he may win some good points. And that is why I think
+that it is so difficult to understand what he is actually doing. He is
+</div></div><div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>I remembered how I had walked up this new one-sided street all those
+years ago; and I remembered what I had thought. I thought that this
+red and white glaring terrace at noon was really more &lt;GROUP&gt; and more
+lonesome than a glimmering churchyard at midnight. The churchyard could
+only be full of the ghosts of the dead; but these houses were full of
+the ghosts of the unborn. And a man can never find a home in the future
+as he can find it in the past. I was always fascinated by that mediæval
+notion of erecting a rudely carpentered stage in the street, and acting
+on it a miracle play of &lt;TITLE&gt; or the Last Judgment. And I
+thought to myself that each of these glaring, gaping, new jerry-built
+boxes was indeed a rickety stage erected for the acting of a real
+miracle play; that human family that is almost the holy one, and that
+human death that is near to the last judgment.
+
+For some foolish reason the last house but one in that imperfect row
+especially haunted me with its hollow grin and empty window-eyes.
+Something in the shape of this brick-and-mortar skeleton was attractive;
+and there being no workmen about, I strolled into it for curiosity and
+solitude. I gave, with all the sky-deep gravity of youth, a benediction
+upon the man who was going to live there. I even remember that for the
+convenience of meditation I called him &lt;PERSON&gt;.
+
+As I reflected it crawled back into my memory th</div><div class="card"><div class="who" style="color:var(--series-2)">model</div>I went back to the &lt;GROUP&gt; &lt;ORG&gt; which had been under construction for so
+many years. I had always thought it a fine thing that I was born in the
+place, but now I see with a clearer vision of reality why I had not
+enjoyed the idea; now, when I look again upon the ruins of the palace,
+they seem to me more like a ruin of some other place. For, if I were
+to take a house in this town, there would be no reason to suppose that
+I should ever have a house built in the shape of a palace. The house I
+live in is a modern house, but it is very much like a house like any
+other. It is a kind of house which we can all imagine, and build, and
+live in, without knowing that it belongs to any particular nation. But
+if I were to go down to &lt;PLACE&gt; and take a house, and were told that the
+house was going to be exactly like a &lt;PERSON&gt;, or a &lt;PERSON&gt;, or an
+&lt;PERSON&gt;, I should feel that it belonged to them. And yet I do not
+think the fact of its being like a palace will make me think of them
+more than I do now, because I have no feeling for palaces. For this
+was what happened to me on seeing the palace of &lt;PERSON&gt;: I saw it, and
+then I thought of something else.</div></div><div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>Now all this may sound very fanciful and mystical, but it is the right
+view of pokers, and no one who takes it will ever go in for any wrong
+view of pokers, such as using them to beat one&#x27;s wife or torture one&#x27;s
+children, or even (though that is more excusable) to make a policeman
+jump, as the clown does in the pantomime. He who has thus gone back to
+the beginning, and seen everything as quaint and new, will always see
+things in their right order, the one depending on the other in degree of
+purpose and importance: the poker for the fire and the fire for the man
+and the man for the glory of God.
+
+This is thinking forwards. Now our modern discussions about everything,
+&lt;GROUP&gt;, &lt;PERSON&gt;, or &lt;ORG&gt;, are all entangled in
+an opposite train of thought, which runs as follows:--A modern
+intellectual comes in and sees a poker. He is a positivist; he will not
+begin with any dogmas about the nature of man, or any day-dreams about
+the mystery of fire. He will begin with what he can see, the poker; and
+the first thing he sees about the poker is that it is crooked. He says,
+“Poor poker; it&#x27;s crooked.” Then he asks how it came to be crooked; and
+is told that there is a thing in the world (with which his temperament
+has hitherto left him unacquainted)--a thing called fire. He points
+out, very kindly and clearly, how silly it is of people, if they want
+a straight poker, to put it into a chemical </div><div class="card"><div class="who" style="color:var(--series-2)">model</div>The two methods which I have named are quite distinct in spirit; they are
+quite distinct in character, and yet they may be brought into direct
+comparison. They may both be seen at work in the same instance, even
+in the same act. In both cases it is really the very same thing, the
+same kind of thing, that is happening. But in one case it is happening
+from the top downwards; in the other from the bottom upwards. Let us
+say, for example, that we are going to see something called a &lt;GROUP&gt;. We
+may either begin by finding out what a &lt;GROUP&gt; is; or we may begin by
+seeing what a &lt;GROUP&gt; is like. The former method would be like looking
+at the sky from a great height, and then tracing the clouds to their
+source. The latter would be like standing on the &lt;PLACE&gt; itself and seeing
+the clouds floating up. I am not quite sure whether this is the right
+word, but certainly I remember that some people who were going through
+the &lt;PLACE&gt; once said, when they came to a hill, &quot;This must be
+called a hill, because if you stand on it you can look down at the
+valley.&quot; And indeed that is true. If you stand on the top of a hill,
+you look down at the valley; but if you stand on the bottom of the
+valley, you look up at the hill. It is only by starting from the
+bottom and working up that you can see why the mountain-top looks so
+high; it is only by starting from the top and working down that you can
+see why</div></div><div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>“A little common sense impresses &lt;GROUP&gt; working-men more than
+high-flown argument. A speaker who, as he made his points, pulled
+buttons off his waistcoat, won thousands of votes for his side.” Or,
+“Sound common sense tells better in &lt;PLACE&gt; than high-flown argument.
+Thus Senator &lt;PERSON&gt;, who threw his false teeth in the air every time he
+made an epigram, won the solid approval of &lt;GROUP&gt; working-men.” Or
+again, “The sound common sense of a gentleman from &lt;ORG&gt;, who stuck
+straws in his hair during the progress of his speech, assured the
+victory of Mr. &lt;PERSON&gt;.”</div><div class="card"><div class="who" style="color:var(--series-2)">model</div>It is not necessary to go very far back in history to find an
+example of this. The story goes that in ancient times a man named
+Phocion was asked by his fellow-citizens to take upon himself the
+burden of defending Athens against Macedon. The city would not hear of
+a speech. Phocion went to them and said, “If you will permit me to
+come into your assembly with a club on my shoulder, I shall save you
+from all danger.” And this simple threat was sufficient to silence all
+the talkers who were in favour of war with Macedonia.</div></div><div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>Thus their obscenity is the expression of their passionate love of
+dragging all things into the light. The avarice of their peasants means
+the independence of their peasants. What the &lt;GROUP&gt; call their
+rudeness in the streets is a phase of their social equality. The
+worried look of their women is connected with the responsibility of
+their women; and a certain unconscious brutality of hurry and gesture
+in the men is related to their inexhaustible and extraordinary military
+courage. Of all countries, therefore, &lt;PLACE&gt; is the worst country for a
+superficial fool to admire. Let a fool hate &lt;PLACE&gt;: if the fool loves
+it he will soon be a knave. He will certainly admire it, not only for
+the things that are not creditable, but actually for the things that
+are not there. He will admire the grace and indolence of the most
+industrious people in the world. He will admire the romance and fantasy
+of the most determinedly respectable and commonplace people in the
+world. This mistake the Englishman will make if he admires &lt;PLACE&gt; too
+hastily; but the mistake that he makes about &lt;PLACE&gt; will be slight
+compared with the mistake that he makes about himself. An Englishman
+who professes really to like &lt;GROUP&gt; realistic novels, really to be at
+home in a &lt;GROUP&gt; modern theatre, really to experience no shock on first
+seeing the savage &lt;GROUP&gt; caricatures, is making a mistake very
+dangerous for his </div><div class="card"><div class="who" style="color:var(--series-2)">model</div>This kind of superficial &lt;ORG&gt;ism does not mean that it is bad art.
+It means that it is not good art. The art of &lt;PLACE&gt; is not a mere
+art of &lt;GROUP&gt; beauty, but an art of spiritual beauty; and if the
+spiritual spirit were to be forgotten, then the &lt;TITLE&gt; would be a
+mere art of &lt;TITLE&gt;. But even in &lt;PLACE&gt; this spirit has not always been
+forgotten; and therefore the art of &lt;PLACE&gt; has not always been
+forgotten. When we see any artist who is really trying to express
+something more than the mere &lt;GROUP&gt; beauty of &lt;PLACE&gt;, we may feel quite
+sure that he is trying also to express something more than the mere &lt;GROUP&gt;
+beauty of his &lt;GROUP&gt;. And when we see any artist who has ceased to try
+to express anything more than the mere &lt;GROUP&gt; beauty of &lt;PLACE&gt;, we may feel quite
+sure that he has ceased also to try to express anything more than the
+mere &lt;GROUP&gt; beauty of his own &lt;GROUP&gt;.</div></div><div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>We have read of some celebrated philosopher who was so absent-minded
+that he paid a call at his own house. My own absent-mindedness is
+extreme, and my philosophy, of course, is the marvel of men and angels.
+But I never quite managed to be so absent-minded as that. Some yards at
+least from my own door, something vaguely familiar has always caught
+my eye; and thus the joke has been spoiled. Of course I have quite
+constantly walked into another man&#x27;s house, thinking it was my own
+house; my visits became almost monotonous. But walking into my own house
+and thinking it was another man&#x27;s house is a flight of poetic detachment
+still beyond me. Something of the sensations that such an absent-minded
+man must feel I really felt the other day; and very pleasant sensations
+they were. The best parts of every proper romance are the first chapter
+and the last chapter; and to knock at a strange door and find a nice
+wife would be to concentrate the beginning and end of all romance.
+
+Mine was a milder and slighter experience, but its thrill was of the
+same kind. For I strolled through a place I had imagined quite virgin
+and unvisited (as far as I was concerned), and I suddenly found I was
+treading in my own footprints, and the footprints were nearly twenty
+years old.
+
+It was one of those stretches of country which always suggests an almost
+unnatural decay; thickets and heaths that have grown out</div><div class="card"><div class="who" style="color:var(--series-2)">model</div>It was a very long time before I could bring myself to leave that
+place; but when I did, there came an odd sort of satisfaction, as if I
+had left a prison, or been released from some bondage. The &lt;PERSON&gt; were
+the last to be released, for they had been the first to enter the
+prison. For years we had been shut up in that place--we, the
+sickly, weak, sickly people of the North, the weak, sickly, sickly
+people of the North; and even now I feel that our imprisonment is not
+yet quite over. If we are free, it is only free from things which no
+longer trouble us. If we are free at all, it is only free from things
+which no longer trouble us. If we have any hope of freedom, it is only
+free from things which no longer trouble us.
+
+But I can understand why people are often reluctant to leave such a
+place. It is not only a place of refuge, but also a place of retreat.
+There is something in a place which is merely a place, in its very
+nature and in its own solitude, something that attracts the man who
+hates society. There is something in a place, whether it be a place of
+retreat or of refuge, that is always more like a prison than it is like
+a garden. A place is always something you leave behind you, not
+something you come towards. It is always something you flee from, not
+something you fly towards. For this reason a place will always have a
+tendency to become more like a prison the more it </div></div>
+
+<h2>Fluency smoke test</h2>
+<p class="sub">General questions, greedy decoding. Looping, dropped syntax, or answering a
+factual question in the author's voice all mean the adapter is bleeding into capability.</p>
+<p class="muted">not run</p>
+
+<h2>Run configuration</h2>
+<pre class="cfg">{
+  &quot;run_name&quot;: &quot;trajectory&quot;,
+  &quot;notes&quot;: &quot;reference recipe with all checkpoints kept for the training-time frontier&quot;,
+  &quot;model&quot;: {
+    &quot;name&quot;: &quot;Qwen/Qwen2.5-3B-Instruct&quot;,
+    &quot;dtype&quot;: &quot;bfloat16&quot;,
+    &quot;load_in_4bit&quot;: false,
+    &quot;attn_implementation&quot;: &quot;sdpa&quot;,
+    &quot;max_seq_len&quot;: 1024,
+    &quot;trust_remote_code&quot;: false
+  },
+  &quot;lora&quot;: {
+    &quot;target_modules&quot;: &quot;all-linear&quot;,
+    &quot;r&quot;: 16,
+    &quot;lora_alpha&quot;: 32,
+    &quot;lora_dropout&quot;: 0.05,
+    &quot;bias&quot;: &quot;none&quot;,
+    &quot;use_dora&quot;: true,
+    &quot;use_rslora&quot;: false,
+    &quot;rank_pattern&quot;: {},
+    &quot;alpha_pattern&quot;: {},
+    &quot;layers_to_transform&quot;: null,
+    &quot;modules_to_save&quot;: []
+  },
+  &quot;sft&quot;: {
+    &quot;epochs&quot;: 2.0,
+    &quot;lr&quot;: 0.00015,
+    &quot;lr_scheduler&quot;: &quot;cosine&quot;,
+    &quot;warmup_ratio&quot;: 0.05,
+    &quot;per_device_batch_size&quot;: 2,
+    &quot;grad_accum&quot;: 8,
+    &quot;weight_decay&quot;: 0.0,
+    &quot;max_grad_norm&quot;: 1.0,
+    &quot;gradient_checkpointing&quot;: true,
+    &quot;neftune_noise_alpha&quot;: 5.0,
+    &quot;loraplus_lr_ratio&quot;: 0.0,
+    &quot;train_on_completions_only&quot;: true,
+    &quot;raw_next_token_mix&quot;: 0.1,
+    &quot;eval_steps&quot;: 25,
+    &quot;save_steps&quot;: 25,
+    &quot;save_total_limit&quot;: 999,
+    &quot;logging_steps&quot;: 5,
+    &quot;early_stopping_patience&quot;: 3,
+    &quot;seed&quot;: 17
+  },
+  &quot;dpo&quot;: {
+    &quot;beta&quot;: 0.1,
+    &quot;epochs&quot;: 1.0,
+    &quot;lr&quot;: 5e-06,
+    &quot;lr_scheduler&quot;: &quot;cosine&quot;,
+    &quot;warmup_ratio&quot;: 0.1,
+    &quot;per_device_batch_size&quot;: 1,
+    &quot;grad_accum&quot;: 8,
+    &quot;gradient_checkpointing&quot;: true,
+    &quot;eval_steps&quot;: 25,
+    &quot;save_steps&quot;: 25,
+    &quot;logging_steps&quot;: 5,
+    &quot;max_prompt_len&quot;: 512,
+    &quot;max_len&quot;: 1024,
+    &quot;loss_type&quot;: &quot;sigmoid&quot;,
+    &quot;reference_policy&quot;: &quot;stage_a&quot;,
+    &quot;av_reward_filter&quot;: false,
+    &quot;av_margin&quot;: 0.05,
+    &quot;length_match_tolerance&quot;: 0.35,
+    &quot;seed&quot;: 17
+  },
+  &quot;gen&quot;: {
+    &quot;temperature&quot;: 0.8,
+    &quot;top_p&quot;: 0.95,
+    &quot;seed&quot;: 17,
+    &quot;max_new_tokens&quot;: 400,
+    &quot;n_per_prompt&quot;: 1,
+    &quot;max_prompt_tokens&quot;: 8192,
+    &quot;baseline_n_shots&quot;: 5,
+    &quot;system_prompt&quot;: &quot;You are writing as the author. Match the author&#x27;s grammatical structure, sentence rhythm, paragraph flow, and word choice. Do not imitate the author&#x27;s topics or invent facts about their life.&quot;
+  },
+  &quot;data&quot;: {
+    &quot;chunk_min_words&quot;: 60,
+    &quot;chunk_max_words&quot;: 320,
+    &quot;questions_per_chunk&quot;: 2,
+    &quot;use_supplied_prompts&quot;: true,
+    &quot;supplied_prompt_scope&quot;: &quot;first_chunk&quot;,
+    &quot;val_frac&quot;: 0.15,
+    &quot;blind_frac&quot;: 0.15,
+    &quot;group_near_duplicates&quot;: true,
+    &quot;near_dup_threshold&quot;: 0.15,
+    &quot;never_scrub&quot;: [],
+    &quot;split_by&quot;: &quot;document&quot;,
+    &quot;scrub_entities&quot;: true,
+    &quot;seed&quot;: 17
+  },
+  &quot;eval&quot;: {
+    &quot;style_embedder&quot;: &quot;AnnaWegmann/Style-Embedding&quot;,
+    &quot;av_classifier&quot;: &quot;logreg&quot;,
+    &quot;fluency_max_ppl_regression&quot;: 0.15,
+    &quot;informal_tag&quot;: &quot;informal&quot;
+  }
+}</pre>
+</div></body></html>

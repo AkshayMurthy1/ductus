@@ -1,6 +1,6 @@
 # Results — assembled from run records
 
-_27 record(s) under `/Users/akshaymurthy/Developer/ductus/runs`. Regenerate with `python scripts/assemble_results.py` — never edit by hand._
+_35 record(s) under `/Users/akshaymurthy/Developer/ductus/runs`. Regenerate with `python scripts/assemble_results.py` — never edit by hand._
 
 Verifier held-out AUC (the gate on everything below): 0.8957
 
@@ -11,6 +11,8 @@ Verifier held-out AUC (the gate on everything below): 0.8957
 | 3,156 | 3 | 0.0040 | 0.0000 | -0.0040 | 0.0000 | 3.1430 | -0.1011 | 0.0623 | -0.0008 | PASS |
 | 5,909 | 5 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 3.2980 | -0.0869 | 0.0591 | 0.0006 | PASS |
 | 10,226 **← crossover** | 8 | 0.0000 | 0.0040 | 0.0040 | 0.0000 | 2.4760 | -0.1009 | 0.0724 | -0.0035 | PASS |
+| 15,905 | 12 | — | — | — | — | — | — | — | — | — |
+| 20,257 | 15 | — | — | — | — | — | — | — | — | — |
 | 27,729 | 19 | 0.0000 | 0.7183 | 0.7183 | 0.0000 | 2.6940 | -0.0540 | 0.0732 | -0.0128 | PASS |
 | 50,020 | 32 | 0.0000 | 0.8254 | 0.8254 | 0.0000 | 2.0520 | -0.0402 | 0.0666 | -0.0014 | PASS |
 | 100,411 | 60 | 0.0000 | 0.7976 | 0.7976 | 0.0000 | 1.8060 | -0.0370 | 0.0733 | 0.0057 | PASS |
@@ -52,6 +54,7 @@ _Control column empty: run the identical protocol under a second WLM_ROOT and pa
 
 - **2k / stage_a** (3 seeds): AV mean 0.0013, sd 0.0023, range 0.0040
 - **2k / baseline** (3 seeds): AV mean 0.0066, sd 0.0083, range 0.0159
+- **full / stage_a** (3 seeds): AV mean 0.7857, sd 0.0069, range 0.0119
 - **full / baseline** (3 seeds): AV mean 0.0053, sd 0.0023, range 0.0039
 
 Any between-condition difference smaller than the ranges above is **within noise** and must be reported as a tie (brief §8).

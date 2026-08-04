@@ -102,4 +102,48 @@ th { background:var(--surface-2); }
 <text class="lbl" x="70.0" y="95.6">full</text>
 <g><path d="M62.0 73.8 L68.0 79.8 L62.0 85.8 L56.0 79.8 Z" fill="var(--series-3)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A+B · full — AV 0.845, leak 0.000</title></g>
 <text class="lbl" x="70.0" y="72.8">full</text>
+</svg><h1 style='margin-top:44px'>Training-time frontier</h1><p class='sub'>One point per checkpoint of a single Stage-A run: does style rise before memorization sets in?</p><svg viewBox="0 0 900 480" role="img" aria-label="Style vs leakage frontier: one point per run">
+<line class="grid" x1="62" x2="880" y1="428.0" y2="428.0"/>
+<text x="54" y="432.0" text-anchor="end">0.0</text>
+<line class="grid" x1="62" x2="880" y1="345.6" y2="345.6"/>
+<text x="54" y="349.6" text-anchor="end">0.2</text>
+<line class="grid" x1="62" x2="880" y1="263.2" y2="263.2"/>
+<text x="54" y="267.2" text-anchor="end">0.4</text>
+<line class="grid" x1="62" x2="880" y1="180.8" y2="180.8"/>
+<text x="54" y="184.8" text-anchor="end">0.6</text>
+<line class="grid" x1="62" x2="880" y1="98.4" y2="98.4"/>
+<text x="54" y="102.4" text-anchor="end">0.8</text>
+<line class="grid" x1="62" x2="880" y1="16.0" y2="16.0"/>
+<text x="54" y="20.0" text-anchor="end">1.0</text>
+<line class="grid" y1="16" y2="428" x1="62.0" x2="62.0"/>
+<text x="62.0" y="446" text-anchor="middle">0.000</text>
+<line class="grid" y1="16" y2="428" x1="198.3" x2="198.3"/>
+<text x="198.3" y="446" text-anchor="middle">0.010</text>
+<line class="grid" y1="16" y2="428" x1="334.7" x2="334.7"/>
+<text x="334.7" y="446" text-anchor="middle">0.020</text>
+<line class="grid" y1="16" y2="428" x1="471.0" x2="471.0"/>
+<text x="471.0" y="446" text-anchor="middle">0.030</text>
+<line class="grid" y1="16" y2="428" x1="607.3" x2="607.3"/>
+<text x="607.3" y="446" text-anchor="middle">0.040</text>
+<line class="grid" y1="16" y2="428" x1="743.7" x2="743.7"/>
+<text x="743.7" y="446" text-anchor="middle">0.050</text>
+<line class="grid" y1="16" y2="428" x1="880.0" x2="880.0"/>
+<text x="880.0" y="446" text-anchor="middle">0.060</text>
+<line class="axis" x1="62" x2="880" y1="428" y2="428"/>
+<line class="axis" x1="62" x2="62" y1="16" y2="428"/>
+<text x="471.0" y="470" text-anchor="middle">verbatim leakage rate → worse</text>
+<text transform="translate(16 222.0) rotate(-90)" text-anchor="middle">AV attribution rate → better</text>
+<path d="M62.0 73.2 L62.0 83.0 L62.0 104.3 L62.0 92.8 L62.0 102.6 L62.0 66.7" fill="none" stroke="var(--series-1)" stroke-width="1.5" opacity="0.45"/>
+<g><circle cx="62.0" cy="73.2" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · step 25 — AV 0.861, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="66.2">step 25</text>
+<g><circle cx="62.0" cy="83.0" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · step 50 — AV 0.837, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="76.0">step 50</text>
+<g><circle cx="62.0" cy="104.3" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · step 75 — AV 0.786, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="97.3">step 75</text>
+<g><circle cx="62.0" cy="92.8" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · step 100 — AV 0.814, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="85.8">step 100</text>
+<g><circle cx="62.0" cy="102.6" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · step 125 — AV 0.790, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="95.6">step 125</text>
+<g><circle cx="62.0" cy="66.7" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/><title>stage A · step 150 — AV 0.877, leak 0.000</title></g>
+<text class="lbl" x="70.0" y="59.7">step 150</text>
 </svg><table><tr><th>run</th><th>series</th><th>AV</th><th>leak</th></tr><tr><td>base</td><td>base floor</td><td>0.0000</td><td>0.0000</td></tr><tr><td>100k</td><td>few-shot</td><td>0.0000</td><td>0.1190</td></tr><tr><td>10k</td><td>few-shot</td><td>0.0000</td><td>0.1032</td></tr><tr><td>25k</td><td>few-shot</td><td>0.0000</td><td>0.0675</td></tr><tr><td>2k</td><td>few-shot</td><td>0.0040</td><td>0.1032</td></tr><tr><td>50k</td><td>few-shot</td><td>0.0000</td><td>0.0198</td></tr><tr><td>5k</td><td>few-shot</td><td>0.0000</td><td>0.0397</td></tr><tr><td>full</td><td>few-shot</td><td>0.0040</td><td>0.0357</td></tr><tr><td>100k</td><td>stage A</td><td>0.7976</td><td>0.0000</td></tr><tr><td>10k</td><td>stage A</td><td>0.0040</td><td>0.0000</td></tr><tr><td>25k</td><td>stage A</td><td>0.7183</td><td>0.0000</td></tr><tr><td>2k</td><td>stage A</td><td>0.0000</td><td>0.0000</td></tr><tr><td>50k</td><td>stage A</td><td>0.8254</td><td>0.0000</td></tr><tr><td>5k</td><td>stage A</td><td>0.0000</td><td>0.0000</td></tr><tr><td>a01</td><td>stage A</td><td>0.8571</td><td>0.0000</td></tr><tr><td>a02</td><td>stage A</td><td>0.7937</td><td>0.0000</td></tr><tr><td>a05</td><td>stage A</td><td>0.8095</td><td>0.0000</td></tr><tr><td>full</td><td>stage A</td><td>0.7897</td><td>0.0000</td></tr><tr><td>10k</td><td>stage A+B</td><td>0.1667</td><td>0.0000</td></tr><tr><td>full</td><td>stage A+B</td><td>0.8452</td><td>0.0000</td></tr></table></div>
