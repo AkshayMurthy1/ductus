@@ -151,6 +151,8 @@ def reference_arm(recs, manifest, rq2_arm) -> str:
 def table2(recs, floor_av, rq2_arm) -> str:
     cells = [(f"sweep/{rq2_arm}/stage_a", f"both (reference, {rq2_arm} arm)"),
              ("matrix/rq2/a01_attention_only", "attention only"),
+             ("matrix/rq2/a17_qk_only", "q,k only"),
+             ("matrix/rq2/a18_vo_only", "v,o only"),
              ("matrix/rq2/a02_mlp_only", "MLP only"),
              ("matrix/rq2/a05_split_rank_low_mlp", "both, MLP r8")]
     rows = ["| locus | trainable params | AV | AV₂ | verbatim leak | sem. echo | stylometry ↓ | "
@@ -189,9 +191,17 @@ def table3(recs, manifest) -> str:
                         f"{fmt(r.get('av2'))} | {fmt(r['leak'])} | "
                         f"{fmt(r['echo'])} | {fmt(r['sty'])} | {fmt(r['flu'])} | "
                         f"{'PASS' if gates_ok(r) else 'FAIL'} |")
+    a15 = by_rel(recs, "matrix/rq2x/a15_attn_dpo")
+    if a15 is not None:
+        rows.append(f"| full | attn-only A + B (a15) | {fmt(a15['av'])} | "
+                    f"{fmt(a15.get('av2'))} | {fmt(a15['leak'])} | {fmt(a15['echo'])} | "
+                    f"{fmt(a15['sty'])} | {fmt(a15['flu'])} | "
+                    f"{'PASS' if gates_ok(a15) else 'FAIL'} |")
     if not any_b:
         return "## Table 3 — stage (RQ3)\n\n_No Stage-B runs recorded yet._\n"
-    return "## Table 3 — stage (RQ3)\n\n" + "\n".join(rows) + "\n"
+    return ("## Table 3 — stage (RQ3)\n\n" + "\n".join(rows)
+            + "\n\nThe a15 interaction cell reads against attention-only Stage A (0.857): "
+            "DPO's gain does **not** stack on the attention-only adapter.\n")
 
 
 def table4(recs, runs_dir, control_dir, manifest) -> str:
@@ -220,6 +230,40 @@ def table4(recs, runs_dir, control_dir, manifest) -> str:
     note = ("" if b else "\n_Control column empty: run the identical protocol under a second "
             "WLM_ROOT and pass --control-runs._\n")
     return "## Table 4 — contamination control\n\n" + "\n".join(rows) + note
+
+
+def table5_models(recs, runs_dir) -> str:
+    """Cross-model replication: per base model, the cliff cells + that model's own floor."""
+    model_dirs = sorted((runs_dir / "matrix" / "models").glob("*")) \
+        if (runs_dir / "matrix" / "models").exists() else []
+    if not model_dirs:
+        return ""
+    rows = ["| model | arm | few-shot AV | few-shot leak | adapter AV | AV₂ | adapter leak | "
+            "fluency Δ | contamination ratio |",
+            "|---|---|---|---|---|---|---|---|---|"]
+    # Qwen2.5-3B reference rows come from the main sweep so the table is self-contained.
+    for arm in ("10k", "25k", "full"):
+        b = by_rel(recs, f"sweep/{arm}/baseline")
+        s = by_rel(recs, f"sweep/{arm}/stage_a")
+        rows.append(f"| Qwen2.5-3B (reference) | {arm} | {fmt(b and b['av'])} | "
+                    f"{fmt(b and b['leak'])} | {fmt(s and s['av'])} | {fmt(s and s.get('av2'))} | "
+                    f"{fmt(s and s['leak'])} | {fmt(s and s['flu'])} | 0.8996 |")
+    for md in model_dirs:
+        cont = md / "contamination.json"
+        ratio = (json.loads(cont.read_text()).get("familiarity_ratio")
+                 if cont.exists() else None)
+        for arm_dir in sorted(md.glob("*/")):
+            arm = arm_dir.name
+            if not (arm_dir / "stage_a" / "report.json").exists():
+                continue
+            b = by_rel(recs, f"matrix/models/{md.name}/{arm}/baseline")
+            s = by_rel(recs, f"matrix/models/{md.name}/{arm}/stage_a")
+            rows.append(f"| {md.name} | {arm} | {fmt(b and b['av'])} | {fmt(b and b['leak'])} | "
+                        f"{fmt(s and s['av'])} | {fmt(s and s.get('av2'))} | "
+                        f"{fmt(s and s['leak'])} | {fmt(s and s['flu'])} | {fmt(ratio)} |")
+    return ("## Table 5 — cross-model replication\n\n"
+            "Same corpus, splits, verifier and recipe; only the base model changes. Each model "
+            "gets its own few-shot floor and contamination probe.\n\n" + "\n".join(rows) + "\n")
 
 
 def noise_floor(recs, manifest) -> str:
@@ -445,6 +489,7 @@ def main() -> int:
         table3(recs, manifest),
         table4(recs, runs_dir, Path(args.control_runs) if args.control_runs else None,
                manifest),
+        table5_models(recs, runs_dir),
         noise_floor(recs, manifest),
     ]
     (out_dir / "tables.md").write_text("\n".join(sections), encoding="utf-8")

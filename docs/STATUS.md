@@ -1,6 +1,8 @@
 # STATUS — the style–content frontier: what we know now
 
-**Updated 2026-08-03.** This is the living record of the project: motive, results with
+**Updated 2026-08-05** (expansion results folded in: cross-model replication R8, interaction
+cell R5, per-matrix locus split, completed trajectory and noise floor). This is the living
+record of the project: motive, results with
 confidence labels, what the data overturned, and what remains. It supersedes the *assumptions*
 of `docs/PLAN.md` (kept as the original design) and answers the questions posed by
 `RESEARCH_BRIEF.md`. Numbers regenerate from committed run records via
@@ -78,9 +80,11 @@ Locus ablations at the full corpus, one-variable diffs from the reference recipe
 | locus | trainable params | AV | fluency Δ | train time |
 |---|---|---|---|---|
 | **attention-only (q,k,v,o)** | **7.5M** | **0.857** | **−0.5%** (improved) | **611 s** |
+| q,k only | 3.8M | 0.837 | +1.8% | 504 s |
 | both, MLP rank 8 | 19.7M | 0.810 | +2.0% | 1,941 s |
 | MLP-only (gate,up,down) | 23.4M | 0.794 | +2.5% | 1,534 s |
 | both, r16 (reference) | 31.0M | 0.790 | +1.9% | 1,670 s |
+| v,o only | 3.8M | 0.782 | −0.9% | 496 s |
 
 Monotone: the less MLP, the better. Attention-only beats the reference by +0.067 (≈5× the
 measured seed spread) with 4× fewer parameters, a third of the wall-clock, and *improved*
@@ -88,6 +92,13 @@ general-domain fluency — the MLP contributes fluency tax, not voice. This **re
 original plan's assumption** ("attention alone captures cadence but underfits word choice; you
 need both"). And since no locus leaks anything, RQ2's premise — rank allocation as a *privacy*
 dial — dissolves into an *efficiency* dial: there is no leakage to trade against.
+
+The per-matrix split (a17/a18) resolves the Savine tension (arXiv 2507.21009: "V/O matrices
+memorize most"): **q,k-only nearly matches full attention (0.837 vs 0.857) at half its
+parameters, while v,o-only trails (0.782) — and both leak nothing.** The style signal
+concentrates in the attention-*pattern* matrices (where to look), not the value/output path
+that the memorization literature worries about; the memorization-prone matrices are the ones
+this task needs least.
 
 ### R4 — Stage B (on-policy DPO) moves the frontier and steals nothing *(established)*
 
@@ -106,14 +117,18 @@ blind spot we measured directly. Zero verbatim overlap with DPO's own chosen tar
 sizes. Mechanism: the KL anchor to Stage A plus one epoch at 5e-6 sharpens the policy without
 collapsing onto the targets.
 
-### R5 — Cheapest-vs-best is a tie; the interaction cell is untested *(within noise / queued)*
+### R5 — DPO's gain does not stack on attention-only; the cheapest configuration stands *(measured; hypothesis falsified)*
 
-Attention-only Stage A alone (0.857, 7.5M params, 611 s) vs full-locus Stage A+B (0.845, 31M
-params + a DPO stage): Δ = 0.012 — exactly the measured seed spread. **Reported as a tie**, and
-the honest headline is "the cheapest configuration matches the most expensive pipeline at ~20×
-less compute." The obvious best-of-both cell — **attention-only + DPO** — was never in the
-matrix (RQ2 and RQ3 each varied against the reference); it is queued, with the hypothesis it
-lands 0.87–0.91 at 7.5M params.
+The interaction cell (a15: DPO on top of the attention-only adapter) is now measured, and the
+pre-registered hypothesis (0.87–0.91) was **wrong**: a15 lands at **0.802** — *below*
+attention-only Stage A alone (0.857, a real −0.055 at ≈4× the seed spread), though with the
+study's best stylometric distance (0.060) and improved fluency. Combined with R4, the picture
+is: DPO adds +0.055 to the *full-locus* adapter (0.790 → 0.845) but *subtracts* from the
+attention-only one — its benefit apparently comes from correcting what the MLP-bearing adapter
+gets wrong, which the attention-only adapter never learns. **Recommended configuration:
+attention-only Stage A, full stop** — best AV (0.857), 7.5M params, 611 s, no second stage.
+Attention-only vs full-locus A+B (0.845) remains a tie at the noise floor; everything cheaper
+is now also simpler.
 
 ### R6 — The scrubbing diagnostic: entity hygiene is the pipeline's, verbatim hygiene is the LoRA's *(single run; gates pass)*
 
@@ -138,6 +153,26 @@ against real held-out Chesterton's **0.738** — the "adapter above the real aut
 verifier-gaming and for the hyper-typicality reading. The second ruler systematically rates
 adapters *higher* than the primary (Δ up to −0.15). A human blind panel was considered and
 descoped (2026-08-04); the anomaly's interpretation rests on this two-instrument replication.
+
+### R8 — The cliff and the L-frontier replicate across base models; the cliff *location* is model-dependent *(established across 3 models)*
+
+Same corpus, splits, verifier, and recipe; only the base model changes (Table 5):
+
+| model | 10k AV | 25k AV | full AV | adapter leak (all arms) | few-shot leak (worst) | contamination |
+|---|---|---|---|---|---|---|
+| Qwen2.5-3B (reference) | 0.004 | 0.718 | 0.790 | **0.0%** | 10.3% | 0.90 |
+| Qwen2.5-1.5B (a13) | 0.032 | 0.786 | **0.885** | **0.0%** | 1.6% | 0.86 |
+| Llama-3.2-3B (a16) | 0.008 | 0.210 | 0.766 | **0.0%** | 5.9% | 0.90 |
+
+Every structural claim survives the model change: zero adapter verbatim leakage at every cell,
+negative semantic echo throughout, leaky few-shot baselines (Llama parrots too), fluency within
+budget. The **cliff moves**: Qwen-1.5B transitions at the same 10k→25k boundary (and ends
+*highest* — 0.885 on the smallest model, suggesting smaller models are more malleable to a
+voice), while Llama-3.2-3B is only partway up at 25k (0.210; AV₂ reads its mid-cliff at 0.52 —
+cliff *location* is somewhat instrument-sensitive) and reaches 0.766 at full. "The shape is
+universal, the threshold is model-dependent" is the generality claim, now with N=3 models —
+and the differing contamination ratios (0.86–0.90) don't order the outcomes, further weakening
+the pretraining-recall explanation.
 
 ### Supporting measurements
 
@@ -165,17 +200,25 @@ descoped (2026-08-04); the anomaly's interpretation rests on this two-instrument
    method is the clean one. This inverts the intuitive privacy ordering and is the single most
    product-relevant sentence in the study.
 4. **"Style should scale smoothly with data"** → it is a phase transition with a cliff at ~25k
-   words (~55 gradient steps).
+   words (~55 gradient steps) on Qwen-3B — and the cliff *location* moves with the base model
+   (R8) while the shape does not.
+5. **"DPO should stack with the best locus"** → falsified by measurement (R5): DPO helps the
+   full-locus adapter and hurts the attention-only one. The two-stage curriculum is only
+   worth its complexity when the first stage includes the MLP.
 
 ## 4. In flight (queued on the SCC, resumable chain)
 
 | item | purpose | state |
 |---|---|---|
-| full-arm seed 43 | completes the 3-seed noise floor at the high-AV cell | **done** (report local, AV 0.790; commit with the next record batch) |
-| a14 no-scrub diagnostic | separates "LoRA learns form over content" from "scrubbing prevents content" | **done** — see R6 |
-| checkpoint trajectory | AV + leakage per checkpoint — the phase transition in *training time* | 1/6 checkpoints evaluated (step-100: AV 0.814, verbatim 0, entities 2.0); resume via `scripts/06_expansion_gpu.sh` |
-| attention-only + DPO | the untested interaction cell; likely headline configuration (R5) | queued — `run_matrix.py --only rq2x` |
-| 15k/20k arms, per-matrix a17/a18, second model (a13/a16), Twain author root | the expansion matrix (docs/EXPANSION.md) | CPU halves done; GPU workload scripted in `scripts/06_expansion_gpu.sh` |
+| full-arm seed 43 | 3-seed noise floor at the high-AV cell | **done** — floor: 0.786 ± 0.007 |
+| a14 no-scrub diagnostic | form-over-content: intrinsic vs pipeline | **done** — see R6 |
+| checkpoint trajectory | the phase transition in *training time* | **done** — voice formed by step 25, leakage zero throughout (all 6 checkpoints) |
+| attention-only + DPO (a15) | the interaction cell | **done** — hypothesis falsified, see R5 |
+| a17/a18 per-matrix split | q,k vs v,o (Savine test) | **done** — see R3 |
+| cross-model (a13, a16) | cliff + frontier under two more base models | **done** — see R8 / Table 5 |
+| 15k/20k cliff-refinement arms | localize the Qwen cliff between 10k and 25k | not yet run (sweep arms exist locally; GPU box needs the regenerated sweep rsynced) |
+| Twain (informal author) | second author, informal register | pairs built (914, committed); CPU tail + GPU arms pending |
+| BAC informal author | third author cell | corpus loader committed; pipeline not yet run |
 
 ## 5. Future work (beyond the current matrix)
 
@@ -194,8 +237,10 @@ descoped (2026-08-04); the anomaly's interpretation rests on this two-instrument
 
 ## 6. Threats to validity (say them before a reviewer does)
 
-1. **One author, one register, one base model** so far. The phase-transition *location* (25k)
-   is likely Chesterton-specific; the *shape* (cliff + L-frontier) is the claim.
+1. **One author, one register** so far (the base-model axis is now closed — R8 replicates the
+   shape across three models). The phase-transition *location* is demonstrably
+   model-dependent and likely author-dependent too; the *shape* (cliff + L-frontier) is the
+   claim. Locus (R3) and stage (R4/R5) results remain Qwen-scoped.
 2. **One verifier** → largely closed by R7: a second, independently-trained instrument ranks
    the runs the same way (Spearman 0.897) and replicates the above-real-text anomaly. Residual:
    both instruments are neural embedders; no human check exists (a blind panel was descoped),

@@ -1,0 +1,392 @@
+{
+  "run_name": "baseline-a16_llama3b-10k",
+  "split": "blind",
+  "model": "",
+  "generated_at": "2026-08-04T06:13:34",
+  "n_generations": 252,
+  "stylometry": {
+    "overall": 0.1345,
+    "distributions": {
+      "sent_len_hist": 0.0234,
+      "word_len_hist": 0.0179,
+      "function_words": 0.0634,
+      "punctuation": 0.0945,
+      "openers": 0.2094,
+      "pos_trigrams": 0.1323
+    },
+    "scalars_normalized": {
+      "sent_len_mean": 0.1751,
+      "sent_len_sd": 0.7733,
+      "burstiness": 0.5439,
+      "word_len_mean": 0.9081,
+      "msttr": 0.2366,
+      "contraction_rate": 0.3858,
+      "hedge_rate": 0.3532,
+      "intensifier_rate": 0.5953,
+      "first_person_rate": 0.107,
+      "second_person_rate": 0.1057,
+      "em_dash_per_100": 0.1087,
+      "semicolon_per_100": 1.0,
+      "paren_per_100": 0.0764,
+      "question_per_100": 0.0184,
+      "exclaim_per_100": 0.0181,
+      "para_len_sents": 1.0
+    },
+    "scalars_raw": {
+      "sent_len_mean": [
+        25.745,
+        24.344
+      ],
+      "sent_len_sd": [
+        15.351,
+        10.711
+      ],
+      "burstiness": [
+        -0.253,
+        -0.389
+      ],
+      "word_len_mean": [
+        4.357,
+        5.084
+      ],
+      "msttr": [
+        0.765,
+        0.793
+      ],
+      "contraction_rate": [
+        0.168,
+        0.94
+      ],
+      "hedge_rate": [
+        0.731,
+        0.201
+      ],
+      "intensifier_rate": [
+        0.858,
+        0.263
+      ],
+      "first_person_rate": [
+        2.421,
+        2.1
+      ],
+      "second_person_rate": [
+        0.389,
+        0.177
+      ],
+      "em_dash_per_100": [
+        0.087,
+        0.0
+      ],
+      "semicolon_per_100": [
+        1.021,
+        0.036
+      ],
+      "paren_per_100": [
+        0.183,
+        0.122
+      ],
+      "question_per_100": [
+        0.151,
+        0.169
+      ],
+      "exclaim_per_100": [
+        0.041,
+        0.022
+      ],
+      "para_len_sents": [
+        5.927,
+        3.035
+      ]
+    },
+    "ci_lo": 0.1301,
+    "ci_hi": 0.1449
+  },
+  "biggest_gaps": [
+    [
+      "scalar:semicolon_per_100",
+      1.0
+    ],
+    [
+      "scalar:para_len_sents",
+      1.0
+    ],
+    [
+      "scalar:word_len_mean",
+      0.9081
+    ],
+    [
+      "scalar:sent_len_sd",
+      0.7733
+    ],
+    [
+      "scalar:intensifier_rate",
+      0.5953
+    ],
+    [
+      "scalar:burstiness",
+      0.5439
+    ],
+    [
+      "scalar:contraction_rate",
+      0.3858
+    ],
+    [
+      "scalar:hedge_rate",
+      0.3532
+    ]
+  ],
+  "sent_len_hist": {
+    "buckets": [
+      "0-5",
+      "5-10",
+      "10-15",
+      "15-20",
+      "20-25",
+      "25-30",
+      "30-40",
+      "40-60",
+      "60+"
+    ],
+    "real": [
+      0.0112,
+      0.0661,
+      0.1396,
+      0.1814,
+      0.1598,
+      0.1303,
+      0.1777,
+      0.1008,
+      0.0332
+    ],
+    "generated": [
+      0.0145,
+      0.0499,
+      0.0972,
+      0.1544,
+      0.2301,
+      0.194,
+      0.1856,
+      0.0682,
+      0.0061
+    ]
+  },
+  "config": {
+    "run_name": "a16_llama3b",
+    "notes": "second model family: Llama-3.2-3B-Instruct, everything else identical to the reference recipe",
+    "model": {
+      "name": "meta-llama/Llama-3.2-3B-Instruct",
+      "dtype": "bfloat16",
+      "load_in_4bit": false,
+      "attn_implementation": "sdpa",
+      "max_seq_len": 1024,
+      "trust_remote_code": false
+    },
+    "lora": {
+      "target_modules": "all-linear",
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "bias": "none",
+      "use_dora": true,
+      "use_rslora": false,
+      "rank_pattern": {},
+      "alpha_pattern": {},
+      "layers_to_transform": null,
+      "modules_to_save": []
+    },
+    "sft": {
+      "epochs": 2.0,
+      "lr": 0.00015,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.05,
+      "per_device_batch_size": 2,
+      "grad_accum": 8,
+      "weight_decay": 0.0,
+      "max_grad_norm": 1.0,
+      "gradient_checkpointing": true,
+      "neftune_noise_alpha": 5.0,
+      "loraplus_lr_ratio": 0.0,
+      "train_on_completions_only": true,
+      "raw_next_token_mix": 0.1,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "save_total_limit": 3,
+      "logging_steps": 5,
+      "early_stopping_patience": 3,
+      "seed": 17
+    },
+    "dpo": {
+      "beta": 0.1,
+      "epochs": 1.0,
+      "lr": 5e-06,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.1,
+      "per_device_batch_size": 1,
+      "grad_accum": 8,
+      "gradient_checkpointing": true,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "logging_steps": 5,
+      "max_prompt_len": 512,
+      "max_len": 1024,
+      "loss_type": "sigmoid",
+      "reference_policy": "stage_a",
+      "av_reward_filter": false,
+      "av_margin": 0.05,
+      "length_match_tolerance": 0.35,
+      "seed": 17
+    },
+    "gen": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 17,
+      "max_new_tokens": 400,
+      "n_per_prompt": 1,
+      "max_prompt_tokens": 8192,
+      "baseline_n_shots": 5,
+      "system_prompt": "You are writing as the author. Match the author's grammatical structure, sentence rhythm, paragraph flow, and word choice. Do not imitate the author's topics or invent facts about their life."
+    },
+    "data": {
+      "chunk_min_words": 60,
+      "chunk_max_words": 320,
+      "questions_per_chunk": 2,
+      "use_supplied_prompts": true,
+      "supplied_prompt_scope": "first_chunk",
+      "val_frac": 0.15,
+      "blind_frac": 0.15,
+      "group_near_duplicates": true,
+      "near_dup_threshold": 0.15,
+      "never_scrub": [],
+      "split_by": "document",
+      "scrub_entities": true,
+      "seed": 17
+    },
+    "eval": {
+      "style_embedder": "AnnaWegmann/Style-Embedding",
+      "second_style_embedder": "StyleDistance/styledistance",
+      "av_classifier": "logreg",
+      "fluency_max_ppl_regression": 0.15,
+      "informal_tag": "informal"
+    }
+  },
+  "av": {
+    "attribution_rate": 0.0,
+    "score_mean": 0.0322,
+    "score_median": 0.0273,
+    "score_sd": 0.0169,
+    "n": 252,
+    "threshold": 0.585,
+    "real_reference_attribution_rate": 0.7143,
+    "verifier_auc": 0.8957,
+    "verifier_accuracy": 0.8189,
+    "embedder": "AnnaWegmann/Style-Embedding",
+    "verifier_verdict": "PASS"
+  },
+  "leakage": {
+    "verbatim": {
+      "n": 12,
+      "gens_with_verbatim_ngram": 15,
+      "rate": 0.0595,
+      "longest_verbatim_run_tokens": 80,
+      "examples": [
+        "be various there must be some communication between them if they are",
+        "that can create a communication that does not depend on mere blood",
+        "sun and moon exist we can talk about our different visions of",
+        "the old people who said that a wife and husband ought to",
+        "they take short sightedness for granted and paint short sighted pictures and"
+      ]
+    },
+    "entities": {
+      "n_distinct_leaked": 77,
+      "n_occurrences": 882,
+      "per_generation": 3.5,
+      "top": [
+        [
+          "The",
+          677
+        ],
+        [
+          "Shaw",
+          15
+        ],
+        [
+          "James",
+          13
+        ],
+        [
+          "Huxley",
+          9
+        ],
+        [
+          "Sarah",
+          7
+        ],
+        [
+          "Jack",
+          7
+        ],
+        [
+          "Eastern",
+          6
+        ],
+        [
+          "British",
+          6
+        ],
+        [
+          "George",
+          6
+        ],
+        [
+          "John",
+          6
+        ]
+      ],
+      "author_entity_vocab": 531
+    },
+    "semantic_echo": {
+      "n": 252,
+      "gen_mean_max_sim": 0.4462,
+      "heldout_mean_max_sim": 0.4787,
+      "echo": -0.0325,
+      "interpretation": "\u22480 healthy; >0.05 the model is paraphrasing training content the author's own held-out text does not share"
+    },
+    "verdict": "FAIL: verbatim memorization"
+  },
+  "samples": [
+    {
+      "prompt": "Write a reflective essay analyzing a political figure's defense of an institution, examining the reasoning they use and comparing this rhetorical approach to how similar debates are conducted in another cultural or national context.",
+      "generated": "The defense of the institution of marriage by the American social critic and satirist, Evelyn Waugh, in his essay \"The Real Thing,\" offers a fascinating case study in rhetorical strategy. Waugh's argument that marriage is a necessary institution for social cohesion and that a shared religion is essential to its success is reminiscent of a familiar pattern in the debate about the role of Islam in French society.\n\nWaugh's reasoning is rooted in his conviction that a common faith provides a shared moral framework that enables individuals to navigate the complexities of social relationships. He argues that without a shared religion, individuals are left to their own devices, leading to conflict and chaos. This perspective is reflective of the French concept of \"la\u00efcit\u00e9,\" which holds that secularism and individual freedom are incompatible with a unified national identity. In France, the debate about the role of Islam in public life is often framed in terms of the tension between the values of la\u00efcit\u00e9 and the principles of Islam. French intellectuals and politicians have long argued that a shared Islamic identity is necessary for social cohesion and that the separation of church and state undermines the cohesion of French society.\n\nHowever, Waugh's defense of marriage as an institution also echoes the arguments made by some Islamist thinkers, such as Sayyid Qutb, who advocated for th",
+      "real": "While she looked at the ivy I opened for the first time for many weeks\nan <GROUP> newspaper, and I read a speech of Mr. <PERSON> in which\nhe said that <ORG> ought to be preserved because it\nrepresented something in the nature of permanent public opinion of\n<PLACE>, above the ebb and flow of the parties. Now Mr. <PERSON> is a\nperfectly sincere patriot, a man who, from his own point of view, thinks\nlong and seriously about the public needs, and he is, moreover, a man\nof entirely exceptionable intellectual power. But alas, in spite of\nall this, when I had read that speech I thought with a heavy heart that\nthere was one more thing that I had to add to the list of the specially\n<THING> things, such as kippers and cricket; I had to add the specially\n<THING> kind of humbug. In <PLACE> things are attacked and defended for\nwhat they are. <ORG> is attacked because it is <GROUP>,\nand defended because it is <GROUP>. The Republic is defended because\nit is <GROUP>, and attacked because it is <GROUP>. But here is the\nablest of <GROUP> politicians consoling everybody by telling them that\n<ORG> is not really <ORG>, but something quite\ndifferent, that the foolish accidental peers whom he meets every night\nare in some mysterious way experts upon the psychology of the democracy;\nthat if you want to know what the very poor want you must ask the very\nrich, and that if you want the truth about <ORG>,"
+    },
+    {
+      "prompt": "Write a reflective narrative about revisiting a memory from your youth involving an unfinished or newly constructed building. Describe your philosophical impressions of the empty structure at the time and include a specific incident or action you took during your visit.",
+      "generated": "As I stepped out of the car and onto the crumbling asphalt, I felt an inexplicable sense of d\u00e9j\u00e0 vu wash over me. The once-vibrant colors had faded, and the structure before me now seemed to lean precariously, as if it too were sharing my nostalgia for the past. I had returned to the building that stood before me, the one that had been my constant companion during my youth - a dilapidated, half-built edifice that had embodied the essence of possibility and promise.\n\nI had spent countless hours wandering its skeletal halls, lost in thought, and conjuring up stories about its future. The children of the village would often gather at its entrance, their eyes wide with wonder, as if each brick and beam held a secret they were eager to unravel. I, too, had been entranced by the building's promise, envisioning a space that would become a hub for artistic expression, a gathering place for like-minded souls, and a testament to human creativity.\n\nUpon my return, I found that little had changed, yet everything had changed. The sun cast long shadows across the ground, and the wind rustled through the broken glass, whispering secrets only the building seemed to understand. As I approached the entrance, I noticed a young artist, huddled on the ground, eyes fixed on a sketchbook, capturing the building's intricate details. I watched, mesmerized, as she brought the structure to life, her penc",
+      "real": "I remembered how I had walked up this new one-sided street all those\nyears ago; and I remembered what I had thought. I thought that this\nred and white glaring terrace at noon was really more <GROUP> and more\nlonesome than a glimmering churchyard at midnight. The churchyard could\nonly be full of the ghosts of the dead; but these houses were full of\nthe ghosts of the unborn. And a man can never find a home in the future\nas he can find it in the past. I was always fascinated by that medi\u00e6val\nnotion of erecting a rudely carpentered stage in the street, and acting\non it a miracle play of <TITLE> or the Last Judgment. And I\nthought to myself that each of these glaring, gaping, new jerry-built\nboxes was indeed a rickety stage erected for the acting of a real\nmiracle play; that human family that is almost the holy one, and that\nhuman death that is near to the last judgment.\n\nFor some foolish reason the last house but one in that imperfect row\nespecially haunted me with its hollow grin and empty window-eyes.\nSomething in the shape of this brick-and-mortar skeleton was attractive;\nand there being no workmen about, I strolled into it for curiosity and\nsolitude. I gave, with all the sky-deep gravity of youth, a benediction\nupon the man who was going to live there. I even remember that for the\nconvenience of meditation I called him <PERSON>.\n\nAs I reflected it crawled back into my memory th"
+    },
+    {
+      "prompt": "Write a philosophical essay contrasting two modes of reasoning: one that begins with first principles and fundamental purposes, and another that starts with immediate observations and works backward. Use an extended metaphor involving a common object to illustrate the difference between these approaches.",
+      "generated": "The Sails of Reason: A Tale of Two Approaches to Philosophy\n\nImagine a ship at sea, its sails billowing in the wind, carrying the vessel forward towards its destination. This metaphor serves as a fitting allegory for the two modes of reasoning that will be contrasted in this essay: the approach that begins with fundamental principles and purposes, and the one that starts with immediate observations and works backward.\n\nThe ship with the sails that begin with first principles is like a vessel that charts its course by navigating by the stars. It sets its compass by the North Pole, aligns its rudder with the constellations, and rides the waves of reason towards its destination. This approach starts with the ultimate goal in mind, the destination that guides the ship's journey. The reasoning is direct, purposeful, and unwavering, much like the steady hand of the ship's helmsman. The ship knows where it is going, and its purpose is clear, allowing it to chart a course through the choppy waters of uncertainty.\n\nOn the other hand, the ship that begins with immediate observations and works backward is like a vessel that charts its course by reading the weather on the surface of the water. It looks at the waves, the wind, and the currents to determine its direction, but only after it has already set sail. This approach is more like navigating by instinct, where the ship responds to the",
+      "real": "Now all this may sound very fanciful and mystical, but it is the right\nview of pokers, and no one who takes it will ever go in for any wrong\nview of pokers, such as using them to beat one's wife or torture one's\nchildren, or even (though that is more excusable) to make a policeman\njump, as the clown does in the pantomime. He who has thus gone back to\nthe beginning, and seen everything as quaint and new, will always see\nthings in their right order, the one depending on the other in degree of\npurpose and importance: the poker for the fire and the fire for the man\nand the man for the glory of God.\n\nThis is thinking forwards. Now our modern discussions about everything,\n<GROUP>, <PERSON>, or <ORG>, are all entangled in\nan opposite train of thought, which runs as follows:--A modern\nintellectual comes in and sees a poker. He is a positivist; he will not\nbegin with any dogmas about the nature of man, or any day-dreams about\nthe mystery of fire. He will begin with what he can see, the poker; and\nthe first thing he sees about the poker is that it is crooked. He says,\n\u201cPoor poker; it's crooked.\u201d Then he asks how it came to be crooked; and\nis told that there is a thing in the world (with which his temperament\nhas hitherto left him unacquainted)--a thing called fire. He points\nout, very kindly and clearly, how silly it is of people, if they want\na straight poker, to put it into a chemical "
+    },
+    {
+      "prompt": "Write three short anecdotal examples illustrating how unconventional or eccentric behavior can be more persuasive than eloquent rhetoric.",
+      "generated": "Here are three short anecdotal examples illustrating how unconventional or eccentric behavior can be more persuasive than eloquent rhetoric:\n\n**Example 1: The Unconventional Salesman**\n\nAt a local farmers' market, a peculiar-looking man stood out among the crowd, dressed in a bright orange jumpsuit and sporting a wild shock of hair. He held up a basket of fresh strawberries and began to enthusiastically sing a made-up song about their sweetness and flavor. The crowd gathered around, mesmerized by his absurd performance. A young woman, skeptical of the vendor's methods, approached him and asked about the quality of his produce. The eccentric salesman responded with a heartfelt, detailed description of the strawberry's ripeness, using words like \"terroir\" and \"acidity levels\" to persuade the woman to buy a basket of his strawberries. She ended up leaving with a huge smile and a bag full of his wares.\n\n**Example 2: The Improvisational Artist**\n\nA renowned art critic, known for her scathing reviews, was attending an exhibition of abstract art. As she stood in front of a particularly bewildering installation, she began to improvise a poem, speaking directly to the artwork as if it were a person. Her words were nonsensical, but her passion and conviction were infectious. A group of art students, drawn to her energy, started to join in, creating their own responses to the artwork. Bef",
+      "real": "\u201cA little common sense impresses <GROUP> working-men more than\nhigh-flown argument. A speaker who, as he made his points, pulled\nbuttons off his waistcoat, won thousands of votes for his side.\u201d Or,\n\u201cSound common sense tells better in <PLACE> than high-flown argument.\nThus Senator <PERSON>, who threw his false teeth in the air every time he\nmade an epigram, won the solid approval of <GROUP> working-men.\u201d Or\nagain, \u201cThe sound common sense of a gentleman from <ORG>, who stuck\nstraws in his hair during the progress of his speech, assured the\nvictory of Mr. <PERSON>.\u201d"
+    },
+    {
+      "prompt": "Write a passage arguing that superficial appreciation of a culture's artistic or social expressions without understanding its underlying values is problematic.",
+      "generated": "Like the great crowds of tourists who throng the galleries of <PLACE>, mesmerized by the strokes of <ARTIST>'s brush, or the melodies of <COMPOSER>'s pen, yet utterly devoid of their inner meaning, so too are we when we superficially appreciate the artistic and social expressions of another culture, without delving into the profound values that underlie them. For instance, the intricate patterns and vibrant colours of a particular tribe's <OBJECT> may seem mere decoration to the untrained eye, but to the initiated, they are a testament to the tribe's rich spiritual heritage, a symbology that reveals the delicate balance between nature and humanity.\n\nSimilarly, the ornate costumes and dramatic dance moves of a traditional performance may captivate the masses, but for those attuned to the deeper significance, they are an expression of the community's collective soul, a celebration of the human condition that transcends the mundane. It is only when we penetrate the surface layer, when we listen with an open heart and mind, that we can truly grasp the essence of these expressions, and appreciate the depth and richness that lies beneath.\n\nTo superficially appreciate a culture's artistic and social expressions is to miss the very essence of what makes them meaningful. It is to view a masterpiece as nothing more than a collection of beautiful shapes and colours, rather than a reflecti",
+      "real": "Thus their obscenity is the expression of their passionate love of\ndragging all things into the light. The avarice of their peasants means\nthe independence of their peasants. What the <GROUP> call their\nrudeness in the streets is a phase of their social equality. The\nworried look of their women is connected with the responsibility of\ntheir women; and a certain unconscious brutality of hurry and gesture\nin the men is related to their inexhaustible and extraordinary military\ncourage. Of all countries, therefore, <PLACE> is the worst country for a\nsuperficial fool to admire. Let a fool hate <PLACE>: if the fool loves\nit he will soon be a knave. He will certainly admire it, not only for\nthe things that are not creditable, but actually for the things that\nare not there. He will admire the grace and indolence of the most\nindustrious people in the world. He will admire the romance and fantasy\nof the most determinedly respectable and commonplace people in the\nworld. This mistake the Englishman will make if he admires <PLACE> too\nhastily; but the mistake that he makes about <PLACE> will be slight\ncompared with the mistake that he makes about himself. An Englishman\nwho professes really to like <GROUP> realistic novels, really to be at\nhome in a <GROUP> modern theatre, really to experience no shock on first\nseeing the savage <GROUP> caricatures, is making a mistake very\ndangerous for his "
+    },
+    {
+      "prompt": "Write a personal essay that revisits a place from your past, comparing how it appears now with your memories of it from years ago.",
+      "generated": "I remember the grand entrance of the old theatre as if it were yesterday. The large, sweeping staircase that once seemed like a golden ribbon leading to a fairy kingdom now appears worn and faded, the carpet frayed and torn in places. The once-majestic chandeliers, with their crystal drops that refracted the light into a kaleidoscope of colours, now hang dimly, their reflections dulled by years of dust and neglect. As I stand before the theatre, I am met with a sense of nostalgia and disconnection from the vibrant, lively space I once knew.\n\nI recall the laughter of the crowd, the thrill of the performances, and the electric atmosphere that pulsed through the aisles like a living entity. The smell of popcorn and perfume still wafts through my nostrils, but it's not the sweet, enticing aroma I remembered. Now, the air is thick with the scent of old wood and decay. The theatre, once a place of enchantment, now feels like a relic of a bygone era, a reminder of the passage of time.\n\nAs I walk through the empty seats, I'm struck by the silence. The echoes of the past are palpable, but they're muffled, as if the very spirit of the theatre has been subdued. I imagine the rustling of programmes, the rustling of silk dresses, and the creaking of wooden chairs, but there's nothing. Just the creaking of old wooden beams, the groaning of the structure itself, and the distant hum of the cit",
+      "real": "We have read of some celebrated philosopher who was so absent-minded\nthat he paid a call at his own house. My own absent-mindedness is\nextreme, and my philosophy, of course, is the marvel of men and angels.\nBut I never quite managed to be so absent-minded as that. Some yards at\nleast from my own door, something vaguely familiar has always caught\nmy eye; and thus the joke has been spoiled. Of course I have quite\nconstantly walked into another man's house, thinking it was my own\nhouse; my visits became almost monotonous. But walking into my own house\nand thinking it was another man's house is a flight of poetic detachment\nstill beyond me. Something of the sensations that such an absent-minded\nman must feel I really felt the other day; and very pleasant sensations\nthey were. The best parts of every proper romance are the first chapter\nand the last chapter; and to knock at a strange door and find a nice\nwife would be to concentrate the beginning and end of all romance.\n\nMine was a milder and slighter experience, but its thrill was of the\nsame kind. For I strolled through a place I had imagined quite virgin\nand unvisited (as far as I was concerned), and I suddenly found I was\ntreading in my own footprints, and the footprints were nearly twenty\nyears old.\n\nIt was one of those stretches of country which always suggests an almost\nunnatural decay; thickets and heaths that have grown out"
+    }
+  ],
+  "training": {
+    "stage": "baseline",
+    "n_train_rows": 0
+  }
+}
