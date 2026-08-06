@@ -2,7 +2,7 @@
 
 Second instrument: `StyleDistance/styledistance` (held-out AUC 0.9659)
 
-Rank agreement over 44 runs: Spearman **0.9124** (disagreement 0.0438, mean |Δ| 0.0554)
+Rank agreement over 48 runs: Spearman **0.9274** (disagreement 0.0363, mean |Δ| 0.0512)
 
 | run | primary AV | second AV | Δ |
 |---|---|---|---|
@@ -31,6 +31,10 @@ Rank agreement over 44 runs: Spearman **0.9124** (disagreement 0.0438, mean |Δ|
 | sweep/10k/baseline | 0.0000 | 0.0040 | -0.0040 |
 | sweep/10k/stage_a | 0.0040 | 0.0119 | -0.0079 |
 | sweep/10k/stage_b | 0.1667 | 0.1984 | -0.0317 |
+| sweep/15k/baseline | 0.0000 | 0.0000 | +0.0000 |
+| sweep/15k/stage_a | 0.5238 | 0.5040 | +0.0198 |
+| sweep/20k/baseline | 0.0000 | 0.0000 | +0.0000 |
+| sweep/20k/stage_a | 0.5675 | 0.5714 | -0.0039 |
 | sweep/25k/baseline | 0.0000 | 0.0000 | +0.0000 |
 | sweep/25k/stage_a | 0.7183 | 0.8016 | -0.0833 |
 | sweep/2k/baseline | 0.0040 | 0.0635 | -0.0595 |

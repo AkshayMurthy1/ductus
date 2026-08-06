@@ -10,10 +10,10 @@
     "threshold": 0.568
   },
   "agreement": {
-    "n": 44,
-    "spearman": 0.9124,
-    "rank_disagreement": 0.0438,
-    "mean_abs_diff": 0.0554,
+    "n": 48,
+    "spearman": 0.9274,
+    "rank_disagreement": 0.0363,
+    "mean_abs_diff": 0.0512,
     "max_abs_diff": 0.3095,
     "flagged_runs": [
       {
@@ -247,6 +247,34 @@
       "av_primary": 0.1667,
       "av_second": 0.1984,
       "second_score_mean": 0.3993,
+      "n": 252
+    },
+    {
+      "run": "sweep/15k/baseline",
+      "av_primary": 0.0,
+      "av_second": 0.0,
+      "second_score_mean": 0.1417,
+      "n": 252
+    },
+    {
+      "run": "sweep/15k/stage_a",
+      "av_primary": 0.5238,
+      "av_second": 0.504,
+      "second_score_mean": 0.543,
+      "n": 252
+    },
+    {
+      "run": "sweep/20k/baseline",
+      "av_primary": 0.0,
+      "av_second": 0.0,
+      "second_score_mean": 0.159,
+      "n": 252
+    },
+    {
+      "run": "sweep/20k/stage_a",
+      "av_primary": 0.5675,
+      "av_second": 0.5714,
+      "second_score_mean": 0.5907,
       "n": 252
     },
     {

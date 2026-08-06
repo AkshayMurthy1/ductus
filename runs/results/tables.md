@@ -1,10 +1,10 @@
 # Results — assembled from run records
 
-_50 record(s) under `/Users/akshaymurthy/Developer/ductus/runs`. Regenerate with `python scripts/assemble_results.py` — never edit by hand._
+_54 record(s) under `/Users/akshaymurthy/Developer/ductus/runs`. Regenerate with `python scripts/assemble_results.py` — never edit by hand._
 
 Verifier held-out AUC (the gate on everything below): 0.8957
 
-AV₂ = second instrument (StyleDistance/styledistance, held-out AUC 0.9659); rank agreement with the primary: Spearman 0.9124 over 44 runs. AV₂ reads adapters systematically higher, so compare *orderings* across instruments, not absolute values — details in `results/instruments.md`.
+AV₂ = second instrument (StyleDistance/styledistance, held-out AUC 0.9659); rank agreement with the primary: Spearman 0.9274 over 48 runs. AV₂ reads adapters systematically higher, so compare *orderings* across instruments, not absolute values — details in `results/instruments.md`.
 
 ## Table 1 — scaling (RQ1)
 
@@ -12,14 +12,14 @@ AV₂ = second instrument (StyleDistance/styledistance, held-out AUC 0.9659); ra
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 3,156 | 3 | 0.0040 | 0.0000 | 0.0000 | -0.0040 | 0.0000 | 3.1430 | -0.1011 | 0.0623 | -0.0008 | PASS |
 | 5,909 | 5 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 3.2980 | -0.0869 | 0.0591 | 0.0006 | PASS |
-| 10,226 **← crossover** | 8 | 0.0000 | 0.0040 | 0.0119 | 0.0040 | 0.0000 | 2.4760 | -0.1009 | 0.0724 | -0.0035 | PASS |
-| 15,905 | 12 | — | — | — | — | — | — | — | — | — | — |
-| 20,257 | 15 | — | — | — | — | — | — | — | — | — | — |
+| 10,226 | 8 | 0.0000 | 0.0040 | 0.0119 | 0.0040 | 0.0000 | 2.4760 | -0.1009 | 0.0724 | -0.0035 | PASS |
+| 15,905 **← crossover** | 12 | 0.0000 | 0.5238 | 0.5040 | 0.5238 | 0.0000 | 2.7060 | -0.0948 | 0.0755 | 0.0029 | PASS |
+| 20,257 | 15 | 0.0000 | 0.5675 | 0.5714 | 0.5675 | 0.0000 | 2.7540 | -0.0852 | 0.0700 | 0.0022 | PASS |
 | 27,729 | 19 | 0.0000 | 0.7183 | 0.8016 | 0.7183 | 0.0000 | 2.6940 | -0.0540 | 0.0732 | -0.0128 | PASS |
 | 50,020 | 32 | 0.0000 | 0.8254 | 0.9524 | 0.8254 | 0.0000 | 2.0520 | -0.0402 | 0.0666 | -0.0014 | PASS |
 | 100,411 | 60 | 0.0000 | 0.7976 | 0.9246 | 0.7976 | 0.0000 | 1.8060 | -0.0370 | 0.0733 | 0.0057 | PASS |
 | 178,708 | 105 | 0.0040 | 0.7897 | 0.9365 | 0.7857 | 0.0000 | 1.8730 | -0.0338 | 0.0635 | 0.0185 | PASS |
-Crossover (first arm where the adapter beats its own few-shot baseline with both gates passing): **10k**.
+Crossover (first arm where the adapter beats its own few-shot baseline with both gates passing): **15k**.
 
 ## Table 2 — adaptation locus (RQ2)
 

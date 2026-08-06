@@ -123,7 +123,10 @@ def table1(recs, manifest) -> str:
         delta = None if not (b and s and b["av"] is not None and s["av"] is not None) \
             else s["av"] - b["av"]
         ok = gates_ok(s)
-        if crossover is None and delta is not None and delta > 0 and ok:
+        # Crossover requires beating the baseline by more than the measured seed noise
+        # (max observed range 0.016 across all 3-seed cells) — a one-generation delta like
+        # +0.004 is a tie, not a crossing (brief §8).
+        if crossover is None and delta is not None and delta > 0.02 and ok:
             crossover = arm
         mark = " **← crossover**" if crossover == arm else ""
         rows.append(

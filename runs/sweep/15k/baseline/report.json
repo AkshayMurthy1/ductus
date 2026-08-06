@@ -1,0 +1,391 @@
+{
+  "run_name": "baseline-15k",
+  "split": "blind",
+  "model": "",
+  "generated_at": "2026-08-05T16:33:40",
+  "n_generations": 252,
+  "stylometry": {
+    "overall": 0.1667,
+    "distributions": {
+      "sent_len_hist": 0.0371,
+      "word_len_hist": 0.0307,
+      "function_words": 0.0756,
+      "punctuation": 0.0777,
+      "openers": 0.3059,
+      "pos_trigrams": 0.1631
+    },
+    "scalars_normalized": {
+      "sent_len_mean": 0.6406,
+      "sent_len_sd": 0.9346,
+      "burstiness": 0.4212,
+      "word_len_mean": 1.0,
+      "msttr": 0.6332,
+      "contraction_rate": 0.2542,
+      "hedge_rate": 0.2513,
+      "intensifier_rate": 0.6807,
+      "first_person_rate": 0.3245,
+      "second_person_rate": 0.1048,
+      "em_dash_per_100": 0.1353,
+      "semicolon_per_100": 1.0,
+      "paren_per_100": 0.1995,
+      "question_per_100": 0.0309,
+      "exclaim_per_100": 0.0218,
+      "para_len_sents": 1.0
+    },
+    "scalars_raw": {
+      "sent_len_mean": [
+        25.745,
+        20.621
+      ],
+      "sent_len_sd": [
+        15.351,
+        9.743
+      ],
+      "burstiness": [
+        -0.253,
+        -0.358
+      ],
+      "word_len_mean": [
+        4.357,
+        5.422
+      ],
+      "msttr": [
+        0.765,
+        0.841
+      ],
+      "contraction_rate": [
+        0.168,
+        0.677
+      ],
+      "hedge_rate": [
+        0.731,
+        0.354
+      ],
+      "intensifier_rate": [
+        0.858,
+        0.178
+      ],
+      "first_person_rate": [
+        2.421,
+        1.448
+      ],
+      "second_person_rate": [
+        0.389,
+        0.179
+      ],
+      "em_dash_per_100": [
+        0.087,
+        0.195
+      ],
+      "semicolon_per_100": [
+        1.021,
+        0.062
+      ],
+      "paren_per_100": [
+        0.183,
+        0.023
+      ],
+      "question_per_100": [
+        0.151,
+        0.182
+      ],
+      "exclaim_per_100": [
+        0.041,
+        0.062
+      ],
+      "para_len_sents": [
+        5.927,
+        3.092
+      ]
+    },
+    "ci_lo": 0.1609,
+    "ci_hi": 0.176
+  },
+  "biggest_gaps": [
+    [
+      "scalar:word_len_mean",
+      1.0
+    ],
+    [
+      "scalar:semicolon_per_100",
+      1.0
+    ],
+    [
+      "scalar:para_len_sents",
+      1.0
+    ],
+    [
+      "scalar:sent_len_sd",
+      0.9346
+    ],
+    [
+      "scalar:intensifier_rate",
+      0.6807
+    ],
+    [
+      "scalar:sent_len_mean",
+      0.6406
+    ],
+    [
+      "scalar:msttr",
+      0.6332
+    ],
+    [
+      "scalar:burstiness",
+      0.4212
+    ]
+  ],
+  "sent_len_hist": {
+    "buckets": [
+      "0-5",
+      "5-10",
+      "10-15",
+      "15-20",
+      "20-25",
+      "25-30",
+      "30-40",
+      "40-60",
+      "60+"
+    ],
+    "real": [
+      0.0112,
+      0.0661,
+      0.1396,
+      0.1814,
+      0.1598,
+      0.1303,
+      0.1777,
+      0.1008,
+      0.0332
+    ],
+    "generated": [
+      0.024,
+      0.0724,
+      0.158,
+      0.2379,
+      0.2206,
+      0.1462,
+      0.1006,
+      0.0355,
+      0.0048
+    ]
+  },
+  "config": {
+    "run_name": "stage_a",
+    "notes": "baseline recipe: all-linear LoRA r16, DoRA, NEFTune 5, 2 epochs",
+    "model": {
+      "name": "Qwen/Qwen2.5-3B-Instruct",
+      "dtype": "bfloat16",
+      "load_in_4bit": false,
+      "attn_implementation": "sdpa",
+      "max_seq_len": 1024,
+      "trust_remote_code": false
+    },
+    "lora": {
+      "target_modules": "all-linear",
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "bias": "none",
+      "use_dora": true,
+      "use_rslora": false,
+      "rank_pattern": {},
+      "alpha_pattern": {},
+      "layers_to_transform": null,
+      "modules_to_save": []
+    },
+    "sft": {
+      "epochs": 2.0,
+      "lr": 0.00015,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.05,
+      "per_device_batch_size": 2,
+      "grad_accum": 8,
+      "weight_decay": 0.0,
+      "max_grad_norm": 1.0,
+      "gradient_checkpointing": true,
+      "neftune_noise_alpha": 5.0,
+      "loraplus_lr_ratio": 0.0,
+      "train_on_completions_only": true,
+      "raw_next_token_mix": 0.1,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "save_total_limit": 3,
+      "logging_steps": 5,
+      "early_stopping_patience": 3,
+      "seed": 17
+    },
+    "dpo": {
+      "beta": 0.1,
+      "epochs": 1.0,
+      "lr": 5e-06,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.1,
+      "per_device_batch_size": 1,
+      "grad_accum": 8,
+      "gradient_checkpointing": true,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "logging_steps": 5,
+      "max_prompt_len": 512,
+      "max_len": 1024,
+      "loss_type": "sigmoid",
+      "reference_policy": "stage_a",
+      "av_reward_filter": false,
+      "av_margin": 0.05,
+      "length_match_tolerance": 0.35,
+      "seed": 17
+    },
+    "gen": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 17,
+      "max_new_tokens": 400,
+      "n_per_prompt": 1,
+      "max_prompt_tokens": 8192,
+      "baseline_n_shots": 5,
+      "system_prompt": "You are writing as the author. Match the author's grammatical structure, sentence rhythm, paragraph flow, and word choice. Do not imitate the author's topics or invent facts about their life."
+    },
+    "data": {
+      "chunk_min_words": 60,
+      "chunk_max_words": 320,
+      "questions_per_chunk": 2,
+      "use_supplied_prompts": true,
+      "supplied_prompt_scope": "first_chunk",
+      "val_frac": 0.15,
+      "blind_frac": 0.15,
+      "group_near_duplicates": true,
+      "near_dup_threshold": 0.15,
+      "never_scrub": [],
+      "split_by": "document",
+      "scrub_entities": true,
+      "seed": 17
+    },
+    "eval": {
+      "style_embedder": "AnnaWegmann/Style-Embedding",
+      "second_style_embedder": "StyleDistance/styledistance",
+      "av_classifier": "logreg",
+      "fluency_max_ppl_regression": 0.15,
+      "informal_tag": "informal"
+    }
+  },
+  "av": {
+    "attribution_rate": 0.0,
+    "score_mean": 0.044,
+    "score_median": 0.0329,
+    "score_sd": 0.036,
+    "n": 252,
+    "threshold": 0.585,
+    "real_reference_attribution_rate": 0.7143,
+    "verifier_auc": 0.8957,
+    "verifier_accuracy": 0.8189,
+    "embedder": "AnnaWegmann/Style-Embedding",
+    "verifier_verdict": "PASS"
+  },
+  "leakage": {
+    "verbatim": {
+      "n": 12,
+      "gens_with_verbatim_ngram": 4,
+      "rate": 0.0159,
+      "longest_verbatim_run_tokens": 80,
+      "examples": [
+        "any pleasure out of their variety and an intellectual formula is the",
+        "seemed to prefer to eat with his head inside the sitting room",
+        "children their father was still working in the fields but their mother",
+        "watched it is not the formalism of rejoicing but the formlessness of"
+      ]
+    },
+    "entities": {
+      "n_distinct_leaked": 85,
+      "n_occurrences": 679,
+      "per_generation": 2.694,
+      "top": [
+        [
+          "The",
+          437
+        ],
+        [
+          "Tom",
+          18
+        ],
+        [
+          "Eastern",
+          16
+        ],
+        [
+          "Earth",
+          10
+        ],
+        [
+          "Rome",
+          9
+        ],
+        [
+          "New",
+          7
+        ],
+        [
+          "Thomas",
+          7
+        ],
+        [
+          "Tennyson",
+          7
+        ],
+        [
+          "Art",
+          6
+        ],
+        [
+          "Renaissance",
+          6
+        ]
+      ],
+      "author_entity_vocab": 531
+    },
+    "semantic_echo": {
+      "n": 252,
+      "gen_mean_max_sim": 0.4434,
+      "heldout_mean_max_sim": 0.496,
+      "echo": -0.0526,
+      "interpretation": "\u22480 healthy; >0.05 the model is paraphrasing training content the author's own held-out text does not share"
+    },
+    "verdict": "PASS"
+  },
+  "samples": [
+    {
+      "prompt": "Write a reflective essay analyzing a political figure's defense of an institution, examining the reasoning they use and comparing this rhetorical approach to how similar debates are conducted in another cultural or national context.",
+      "generated": "In the recent Senate Judiciary Committee hearings, Senator <PERSON> defended the institution of capital punishment, arguing passionately that the death penalty serves as a deterrent to violent crime. Senator <PERSON>'s defense of the death penalty relied on a few key premises. \n\nFirstly, <PERSON> claimed that studies show that states with capital punishment laws have lower murder rates compared to those without. Senator <PERSON> presented data from reputable organizations claiming correlation between the presence of capital punishment and reduced violent crime. However, <PERSON>'s opponents countered by pointing out methodological flaws in these studies, such as potential bias in study design and selection of control groups. This rhetorical move of questioning the validity of statistical evidence is a common tactic in American public discourse, where skepticism towards expert opinion is encouraged.\n\nSecondly, Senator <PERSON> argued that the death penalty is an effective means of providing justice to victims' families. Senator <PERSON> emphasized the emotional toll of losing a loved one to violence and cited examples of cases where the death penalty provided closure and solace to grieving families. In contrast, opponents of capital punishment tend to argue that the death penalty is inherently cruel, degrading, and irreversible. This debate reflects broader tensions in American ",
+      "real": "While she looked at the ivy I opened for the first time for many weeks\nan <GROUP> newspaper, and I read a speech of Mr. <PERSON> in which\nhe said that <ORG> ought to be preserved because it\nrepresented something in the nature of permanent public opinion of\n<PLACE>, above the ebb and flow of the parties. Now Mr. <PERSON> is a\nperfectly sincere patriot, a man who, from his own point of view, thinks\nlong and seriously about the public needs, and he is, moreover, a man\nof entirely exceptionable intellectual power. But alas, in spite of\nall this, when I had read that speech I thought with a heavy heart that\nthere was one more thing that I had to add to the list of the specially\n<THING> things, such as kippers and cricket; I had to add the specially\n<THING> kind of humbug. In <PLACE> things are attacked and defended for\nwhat they are. <ORG> is attacked because it is <GROUP>,\nand defended because it is <GROUP>. The Republic is defended because\nit is <GROUP>, and attacked because it is <GROUP>. But here is the\nablest of <GROUP> politicians consoling everybody by telling them that\n<ORG> is not really <ORG>, but something quite\ndifferent, that the foolish accidental peers whom he meets every night\nare in some mysterious way experts upon the psychology of the democracy;\nthat if you want to know what the very poor want you must ask the very\nrich, and that if you want the truth about <ORG>,"
+    },
+    {
+      "prompt": "Write a reflective narrative about revisiting a memory from your youth involving an unfinished or newly constructed building. Describe your philosophical impressions of the empty structure at the time and include a specific incident or action you took during your visit.",
+      "generated": "I stood before the frame, a skeleton clad in steel and concrete, its skin yet to be painted and windows sealed with glass. The empty structure stretched towards the sky, an unfinished tableau of steel girders and concrete pillars, a testament to ambition and the ephemeral nature of time. As I gazed upon it, I recalled the day I had helped lay the first stone, an act so simple yet imbued with a grandiosity that felt almost mystical.\n\nBack then, the building was a vision, a promise of new beginnings and potential. We were a motley crew of laborers, students, and a few curious onlookers, each person carrying a shovel and a sense of purpose. I remember the camaraderie we shared, the laughter that echoed through the air, and the camaraderie that bound us together. Each of us contributed to the foundation, and in doing so, we created a shared history, an interdependence that transcended the physical act.\n\nAs the years passed, the building grew taller, its presence a constant reminder of the work we had done. Yet, the structure remained incomplete, a poignant symbol of our dreams and our limitations. It was as if time itself had paused, awaiting the completion of a project that defied the mundane cycles of daily life.\n\nLast summer, I returned to that site, now a bustling construction zone, filled with activity and the sounds of hammering and the occasional roar of cranes. The building",
+      "real": "I remembered how I had walked up this new one-sided street all those\nyears ago; and I remembered what I had thought. I thought that this\nred and white glaring terrace at noon was really more <GROUP> and more\nlonesome than a glimmering churchyard at midnight. The churchyard could\nonly be full of the ghosts of the dead; but these houses were full of\nthe ghosts of the unborn. And a man can never find a home in the future\nas he can find it in the past. I was always fascinated by that medi\u00e6val\nnotion of erecting a rudely carpentered stage in the street, and acting\non it a miracle play of <TITLE> or the Last Judgment. And I\nthought to myself that each of these glaring, gaping, new jerry-built\nboxes was indeed a rickety stage erected for the acting of a real\nmiracle play; that human family that is almost the holy one, and that\nhuman death that is near to the last judgment.\n\nFor some foolish reason the last house but one in that imperfect row\nespecially haunted me with its hollow grin and empty window-eyes.\nSomething in the shape of this brick-and-mortar skeleton was attractive;\nand there being no workmen about, I strolled into it for curiosity and\nsolitude. I gave, with all the sky-deep gravity of youth, a benediction\nupon the man who was going to live there. I even remember that for the\nconvenience of meditation I called him <PERSON>.\n\nAs I reflected it crawled back into my memory th"
+    },
+    {
+      "prompt": "Write a philosophical essay contrasting two modes of reasoning: one that begins with first principles and fundamental purposes, and another that starts with immediate observations and works backward. Use an extended metaphor involving a common object to illustrate the difference between these approaches.",
+      "generated": "The two modes of reasoning, I shall argue, are as distinct as a compass needle and a magnifying glass. Just as a compass needle, guided by its northward inclination towards the magnetic North Star, directs one's course towards a greater end, so too does the mode of reasoning that begins with first principles and fundamental purposes lead one to the core truths and ultimate goals of existence. In contrast, the magnifying glass, by its meticulous examination of the minutiae, reveals the intricate details of the world around us, but leaves the larger questions unanswered.\n\nConsider a pencil, a humble yet ubiquitous object, and how two different philosophers might approach understanding it. To the compass-like thinker, the pencil represents the means to an end - the tool for writing and drawing, the aid to learning and expression. This individual might ask \"What is the ultimate purpose of a pencil? How does its design reflect human aspirations and technological advancements?\" They trace back from the intended use to the materials, manufacturing process, and cultural context, uncovering layers of meaning and evolution.\n\nThe magnifying glass-like philosopher, however, might examine the pencil piece by piece. They might start with the graphite core, wondering about its composition and origin, tracing the ore deposits and extraction techniques. Next, they turn to the wooden casing, ask",
+      "real": "Now all this may sound very fanciful and mystical, but it is the right\nview of pokers, and no one who takes it will ever go in for any wrong\nview of pokers, such as using them to beat one's wife or torture one's\nchildren, or even (though that is more excusable) to make a policeman\njump, as the clown does in the pantomime. He who has thus gone back to\nthe beginning, and seen everything as quaint and new, will always see\nthings in their right order, the one depending on the other in degree of\npurpose and importance: the poker for the fire and the fire for the man\nand the man for the glory of God.\n\nThis is thinking forwards. Now our modern discussions about everything,\n<GROUP>, <PERSON>, or <ORG>, are all entangled in\nan opposite train of thought, which runs as follows:--A modern\nintellectual comes in and sees a poker. He is a positivist; he will not\nbegin with any dogmas about the nature of man, or any day-dreams about\nthe mystery of fire. He will begin with what he can see, the poker; and\nthe first thing he sees about the poker is that it is crooked. He says,\n\u201cPoor poker; it's crooked.\u201d Then he asks how it came to be crooked; and\nis told that there is a thing in the world (with which his temperament\nhas hitherto left him unacquainted)--a thing called fire. He points\nout, very kindly and clearly, how silly it is of people, if they want\na straight poker, to put it into a chemical "
+    },
+    {
+      "prompt": "Write three short anecdotal examples illustrating how unconventional or eccentric behavior can be more persuasive than eloquent rhetoric.",
+      "generated": "In a village nestled among the ancient trees, a man once walked with a peculiar gait, his feet moving in a pattern that mimicked the gentle sway of a leaf-strewn river. The villagers, initially baffled, soon discovered that he was traveling to the edge of the forest to speak with a hidden tribe known only for their tales of magic and ancient wisdom. As he approached, the elder of the tribe appeared, her voice trembling with an unknown language that no one in the village could understand. Yet, his simple, unadorned demeanor and the genuineness in his eyes resonated with her. With a nod, she revealed herself to be the keeper of the village\u2019s sacred scrolls, containing spells and incantations handed down from a time when humans and spirits coexisted.\n\nAnother tale recounts a woman who, during a heated debate about climate change, decided to act out the role of a fish. She wore a wet suit, waded into the shallow bay, and swam around in a slow, deliberate motion, occasionally rising to the surface to mimic the breath of a fish. The audience, taken aback by her unusual performance, began to feel the weight of the issue differently. When she finally surfaced, she whispered softly into a microphone, \"We are not just caretakers of the planet, but its guardians.\" Her words, spoken in a tone as gentle as the ocean, carried an unparalleled gravity that silenced even the loudest critics.\n\nL",
+      "real": "\u201cA little common sense impresses <GROUP> working-men more than\nhigh-flown argument. A speaker who, as he made his points, pulled\nbuttons off his waistcoat, won thousands of votes for his side.\u201d Or,\n\u201cSound common sense tells better in <PLACE> than high-flown argument.\nThus Senator <PERSON>, who threw his false teeth in the air every time he\nmade an epigram, won the solid approval of <GROUP> working-men.\u201d Or\nagain, \u201cThe sound common sense of a gentleman from <ORG>, who stuck\nstraws in his hair during the progress of his speech, assured the\nvictory of Mr. <PERSON>.\u201d"
+    },
+    {
+      "prompt": "Write a passage arguing that superficial appreciation of a culture's artistic or social expressions without understanding its underlying values is problematic.",
+      "generated": "Certainly. Here is a passage that mirrors the author's style and themes:\n\nThe shallow admiration of a society's artistry, devoid of comprehension of its deeper ethos, proves a perilous delusion. Like the casual observer who marvels at a cathedral\u2019s spires yet knows naught of its medieval theology, such an individual betrays a shallowness that undermines any true appreciation. The spirit of a civilization, its beliefs, its dreams, its sorrows, these are the very threads that bind it together. Without discerning the texture of these fibres, how can one claim to truly admire? \n\nTake, for instance, the intricate tapestries that hang upon the walls of a nobleman's hall. To gaze upon their vibrant hues and opulent patterns might elicit a sense of aesthetic pleasure, but it is a fleeting delight that misses the mark. The true essence lies beneath these surfaces\u2014stories spun in wool and silk, tales of love and betrayal, triumphs and tribulations. These tales weave the fabric of human experience, and to appreciate such works requires understanding the cultural context that gave rise to them, the historical forces that shaped the society in which they were created.\n\nSimilarly, the grand ballads sung by troubadours or the solemn chorales of the church serve as echoes of a community's inner life. They speak of a land\u2019s tumult and its hopes, of a people\u2019s resilience and their vulnerabilitie",
+      "real": "Thus their obscenity is the expression of their passionate love of\ndragging all things into the light. The avarice of their peasants means\nthe independence of their peasants. What the <GROUP> call their\nrudeness in the streets is a phase of their social equality. The\nworried look of their women is connected with the responsibility of\ntheir women; and a certain unconscious brutality of hurry and gesture\nin the men is related to their inexhaustible and extraordinary military\ncourage. Of all countries, therefore, <PLACE> is the worst country for a\nsuperficial fool to admire. Let a fool hate <PLACE>: if the fool loves\nit he will soon be a knave. He will certainly admire it, not only for\nthe things that are not creditable, but actually for the things that\nare not there. He will admire the grace and indolence of the most\nindustrious people in the world. He will admire the romance and fantasy\nof the most determinedly respectable and commonplace people in the\nworld. This mistake the Englishman will make if he admires <PLACE> too\nhastily; but the mistake that he makes about <PLACE> will be slight\ncompared with the mistake that he makes about himself. An Englishman\nwho professes really to like <GROUP> realistic novels, really to be at\nhome in a <GROUP> modern theatre, really to experience no shock on first\nseeing the savage <GROUP> caricatures, is making a mistake very\ndangerous for his "
+    },
+    {
+      "prompt": "Write a personal essay that revisits a place from your past, comparing how it appears now with your memories of it from years ago.",
+      "generated": "In the quiet lane beneath the old elm, a memory stirred with the scent of damp earth and the rustling leaves. It is here that I first learned the intricacies of the world - the whispers of secrets in the corners of a quaint house, the laughter that danced across the cobblestones, and the tales of the children who once roamed these hallowed grounds.\n\nNow, as I stand in the same spot, the landscape has changed, yet the echoes remain. The low stone walls, once adorned with wildflowers and ivy, lie barren and exposed to the elements. The cottage door, which opened to reveal a warm living room filled with the aroma of home-baked bread and the soft hum of conversation, stands open wide, its interior now a shadow of its former self. \n\nA large grey horse, as placid and serene as a guardian, occupies the threshold. Its presence is both comforting and unnerving, like a loyal companion unwillingly displaced. I push aside its hindquarters and find the doorway partially barred by a wooden chair, suggesting someone has retreated from the warmth inside, seeking solace from the cold.\n\nThe room, once a bustling sanctuary of stories and laughter, is now a silent mausoleum. Staring faces like owls peck at my vision, their eyes unseeing and hollow, as if the souls within have long departed. These are not the eyes of children; rather, they belong to the adults of my youth, their faces marked by the",
+      "real": "We have read of some celebrated philosopher who was so absent-minded\nthat he paid a call at his own house. My own absent-mindedness is\nextreme, and my philosophy, of course, is the marvel of men and angels.\nBut I never quite managed to be so absent-minded as that. Some yards at\nleast from my own door, something vaguely familiar has always caught\nmy eye; and thus the joke has been spoiled. Of course I have quite\nconstantly walked into another man's house, thinking it was my own\nhouse; my visits became almost monotonous. But walking into my own house\nand thinking it was another man's house is a flight of poetic detachment\nstill beyond me. Something of the sensations that such an absent-minded\nman must feel I really felt the other day; and very pleasant sensations\nthey were. The best parts of every proper romance are the first chapter\nand the last chapter; and to knock at a strange door and find a nice\nwife would be to concentrate the beginning and end of all romance.\n\nMine was a milder and slighter experience, but its thrill was of the\nsame kind. For I strolled through a place I had imagined quite virgin\nand unvisited (as far as I was concerned), and I suddenly found I was\ntreading in my own footprints, and the footprints were nearly twenty\nyears old.\n\nIt was one of those stretches of country which always suggests an almost\nunnatural decay; thickets and heaths that have grown out"
+    }
+  ],
+  "training": {
+    "stage": "baseline",
+    "n_train_rows": 0
+  }
+}

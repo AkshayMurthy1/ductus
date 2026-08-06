@@ -43,17 +43,23 @@ Attribution vs the frozen verifier, identical recipe per arm, nested corpora:
 | 2k (3,156) | 0.004 | 0.000 | 0.072 | 0.0% | PASS |
 | 5k (5,909) | 0.000 | 0.000 | 0.102 | 0.0% | PASS |
 | 10k (10,226) | 0.000 | 0.004 | 0.146 | 0.0% | PASS |
-| **25k (27,729)** | 0.000 | **0.718** | 0.634 | 0.0% | PASS |
+| **15k (15,905)** | 0.000 | **0.524** | 0.488 | 0.0% | PASS |
+| 20k (20,257) | 0.000 | 0.568 | 0.538 | 0.0% | PASS |
+| 25k (27,729) | 0.000 | 0.718 | 0.634 | 0.0% | PASS |
 | 50k (50,020) | 0.000 | 0.825 | 0.693 | 0.0% | PASS |
 | 100k (100,411) | 0.000 | 0.798 | 0.685 | 0.0% | PASS |
 | full (178,708) | 0.004 | 0.790 | 0.683 | 0.0% | PASS |
 
-The voice snaps in between ~10 and ~55 gradient steps (10k → 25k words): 0.004 → 0.718, then a
-plateau at 0.79–0.83. Real held-out Chesterton attributes at **0.714**, so from 25k words on,
+The cliff-refinement arms localize the transition: **onset between 10k and 15k words** (roughly
+10 vs 16 gradient steps) — 0.004 → 0.524 — then a fast ramp (0.57 at 20k, 0.72 at 25k) to a
+plateau at 0.79–0.83. Real held-out Chesterton attributes at **0.714**, so from ~25k words on
 the adapter's output is attributed to Chesterton *at or above the rate of his own held-out
-prose*. The continuous mean score shows the same cliff, ruling out a threshold artifact. The
-product answer to "how much writing does a user need": **≈25k words**; below it, nothing works
-(and few-shot prompting never works at any size — see R2).
+prose*. The continuous mean score shows the same shape at every arm (and the second instrument
+agrees through the mid-cliff: AV₂ 0.504/0.571 at 15k/20k), ruling out a threshold artifact.
+Together with the training-time trace (voice fully formed by step 25 on the full corpus) the
+step-counts line up: ~10 steps nothing, ~16 steps half-formed, ~25+ steps formed — the binding
+variable looks like **optimization steps, not corpus words**. Product answer: crossover at
+**≈15k words**, saturation by ~25–50k.
 
 ### R2 — A double dissociation between prompting and tuning *(established)*
 
@@ -199,9 +205,10 @@ the pretraining-recall explanation.
 3. **"Few-shot prompting is the safe baseline"** → it is the *leaky* method; the training-based
    method is the clean one. This inverts the intuitive privacy ordering and is the single most
    product-relevant sentence in the study.
-4. **"Style should scale smoothly with data"** → it is a phase transition with a cliff at ~25k
-   words (~55 gradient steps) on Qwen-3B — and the cliff *location* moves with the base model
-   (R8) while the shape does not.
+4. **"Style should scale smoothly with data"** → it is a phase transition whose onset sits
+   between 10k and 15k words (~10 → ~16 gradient steps) on Qwen-3B, ramping to saturation by
+   ~25–50k — and the transition *location* moves with the base model (R8) while the shape does
+   not.
 5. **"DPO should stack with the best locus"** → falsified by measurement (R5): DPO helps the
    full-locus adapter and hurts the attention-only one. The two-stage curriculum is only
    worth its complexity when the first stage includes the MLP.
@@ -216,8 +223,8 @@ the pretraining-recall explanation.
 | attention-only + DPO (a15) | the interaction cell | **done** — hypothesis falsified, see R5 |
 | a17/a18 per-matrix split | q,k vs v,o (Savine test) | **done** — see R3 |
 | cross-model (a13, a16) | cliff + frontier under two more base models | **done** — see R8 / Table 5 |
-| 15k/20k cliff-refinement arms | localize the Qwen cliff between 10k and 25k | not yet run (sweep arms exist locally; GPU box needs the regenerated sweep rsynced) |
-| Twain (informal author) | second author, informal register | pairs built (914, committed); CPU tail + GPU arms pending |
+| 15k/20k cliff-refinement arms | localize the Qwen cliff between 10k and 25k | **done** — onset between 10k and 15k; see R1 |
+| Twain (informal author) | second author, informal register | GPU arms running (floor + 4 arms); CPU tail + verifiers done (AUC 0.839) |
 | BAC informal author | third author cell | corpus loader committed; pipeline not yet run |
 
 ## 5. Future work (beyond the current matrix)

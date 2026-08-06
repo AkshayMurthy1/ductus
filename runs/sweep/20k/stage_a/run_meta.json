@@ -1,0 +1,180 @@
+{
+  "config": {
+    "run_name": "stage_a",
+    "notes": "baseline recipe: all-linear LoRA r16, DoRA, NEFTune 5, 2 epochs",
+    "model": {
+      "name": "Qwen/Qwen2.5-3B-Instruct",
+      "dtype": "bfloat16",
+      "load_in_4bit": false,
+      "attn_implementation": "sdpa",
+      "max_seq_len": 1024,
+      "trust_remote_code": false
+    },
+    "lora": {
+      "target_modules": "all-linear",
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "bias": "none",
+      "use_dora": true,
+      "use_rslora": false,
+      "rank_pattern": {},
+      "alpha_pattern": {},
+      "layers_to_transform": null,
+      "modules_to_save": []
+    },
+    "sft": {
+      "epochs": 2.0,
+      "lr": 0.00015,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.05,
+      "per_device_batch_size": 2,
+      "grad_accum": 8,
+      "weight_decay": 0.0,
+      "max_grad_norm": 1.0,
+      "gradient_checkpointing": true,
+      "neftune_noise_alpha": 5.0,
+      "loraplus_lr_ratio": 0.0,
+      "train_on_completions_only": true,
+      "raw_next_token_mix": 0.1,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "save_total_limit": 3,
+      "logging_steps": 5,
+      "early_stopping_patience": 3,
+      "seed": 17
+    },
+    "dpo": {
+      "beta": 0.1,
+      "epochs": 1.0,
+      "lr": 5e-06,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.1,
+      "per_device_batch_size": 1,
+      "grad_accum": 8,
+      "gradient_checkpointing": true,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "logging_steps": 5,
+      "max_prompt_len": 512,
+      "max_len": 1024,
+      "loss_type": "sigmoid",
+      "reference_policy": "stage_a",
+      "av_reward_filter": false,
+      "av_margin": 0.05,
+      "length_match_tolerance": 0.35,
+      "seed": 17
+    },
+    "gen": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 17,
+      "max_new_tokens": 400,
+      "n_per_prompt": 1,
+      "max_prompt_tokens": 8192,
+      "baseline_n_shots": 5,
+      "system_prompt": "You are writing as the author. Match the author's grammatical structure, sentence rhythm, paragraph flow, and word choice. Do not imitate the author's topics or invent facts about their life."
+    },
+    "data": {
+      "chunk_min_words": 60,
+      "chunk_max_words": 320,
+      "questions_per_chunk": 2,
+      "use_supplied_prompts": true,
+      "supplied_prompt_scope": "first_chunk",
+      "val_frac": 0.15,
+      "blind_frac": 0.15,
+      "group_near_duplicates": true,
+      "near_dup_threshold": 0.15,
+      "never_scrub": [],
+      "split_by": "document",
+      "scrub_entities": true,
+      "seed": 17
+    },
+    "eval": {
+      "style_embedder": "AnnaWegmann/Style-Embedding",
+      "second_style_embedder": "StyleDistance/styledistance",
+      "av_classifier": "logreg",
+      "fluency_max_ppl_regression": 0.15,
+      "informal_tag": "informal"
+    }
+  },
+  "stage": "A",
+  "metrics": {
+    "train_runtime_s": 250.3,
+    "train_loss": 2.826405005021529,
+    "log_history": [
+      {
+        "loss": 3.0194578170776367,
+        "grad_norm": 0.4687933921813965,
+        "learning_rate": 0.00014632923872213652,
+        "entropy": 2.764349418878555,
+        "num_tokens": 33802.0,
+        "mean_token_accuracy": 0.410694695264101,
+        "epoch": 0.46511627906976744,
+        "step": 5
+      },
+      {
+        "loss": 2.9045162200927734,
+        "grad_norm": 0.3951420485973358,
+        "learning_rate": 0.00010904928748046599,
+        "entropy": 2.887671798467636,
+        "num_tokens": 67238.0,
+        "mean_token_accuracy": 0.42002006247639656,
+        "epoch": 0.9302325581395349,
+        "step": 10
+      },
+      {
+        "loss": 2.7554677963256835,
+        "grad_norm": 0.34431055188179016,
+        "learning_rate": 5.182372542187895e-05,
+        "entropy": 2.8611428612156917,
+        "num_tokens": 98107.0,
+        "mean_token_accuracy": 0.4420097525182523,
+        "epoch": 1.372093023255814,
+        "step": 15
+      },
+      {
+        "loss": 2.7071321487426756,
+        "grad_norm": 0.37975192070007324,
+        "learning_rate": 8.174510685872415e-06,
+        "entropy": 2.796397638320923,
+        "num_tokens": 131873.0,
+        "mean_token_accuracy": 0.4427210450172424,
+        "epoch": 1.8372093023255816,
+        "step": 20
+      },
+      {
+        "eval_loss": 2.6506314277648926,
+        "eval_runtime": 60.2718,
+        "eval_samples_per_second": 5.376,
+        "eval_steps_per_second": 2.688,
+        "eval_entropy": 2.6959746575649874,
+        "eval_num_tokens": 143618.0,
+        "eval_mean_token_accuracy": 0.45675500804259456,
+        "epoch": 2.0,
+        "step": 22
+      },
+      {
+        "train_runtime": 250.2639,
+        "train_samples_per_second": 1.375,
+        "train_steps_per_second": 0.088,
+        "total_flos": 2775358972477440.0,
+        "train_loss": 2.826405005021529,
+        "epoch": 2.0,
+        "step": 22
+      }
+    ],
+    "trainable": {
+      "total_params": 3116904448,
+      "trainable_params": 30965760,
+      "trainable_pct": 0.9935,
+      "trainable_by_kind": {
+        "attention": 7538688,
+        "mlp": 23427072,
+        "other": 0
+      }
+    },
+    "n_train_rows": 172,
+    "n_val_rows": 324
+  }
+}
