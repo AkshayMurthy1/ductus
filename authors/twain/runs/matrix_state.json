@@ -1,0 +1,15 @@
+{
+  "started_at": "2026-08-06T02:17:53",
+  "units": {
+    "floor/base-model": "ok",
+    "floor/contamination": "ok",
+    "baseline-10k": "ok",
+    "stage_a-10k": "ok",
+    "baseline-25k": "ok",
+    "stage_a-25k": "ok",
+    "baseline-50k": "ok",
+    "stage_a-50k": "ok",
+    "baseline-full": "ok",
+    "stage_a-full": "ok"
+  }
+}

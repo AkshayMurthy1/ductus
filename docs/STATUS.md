@@ -1,8 +1,8 @@
 # STATUS — the style–content frontier: what we know now
 
-**Updated 2026-08-05** (expansion results folded in: cross-model replication R8, interaction
-cell R5, per-matrix locus split, completed trajectory and noise floor). This is the living
-record of the project: motive, results with
+**Updated 2026-08-06** (Twain author-replication R9 in; cliff localized at 15k in R1; repo
+consolidated as pure research with in-repo author trees, private-author track descoped to
+future product work). This is the living record of the project: motive, results with
 confidence labels, what the data overturned, and what remains. It supersedes the *assumptions*
 of `docs/PLAN.md` (kept as the original design) and answers the questions posed by
 `RESEARCH_BRIEF.md`. Numbers regenerate from committed run records via
@@ -180,6 +180,38 @@ universal, the threshold is model-dependent" is the generality claim, now with N
 and the differing contamination ratios (0.86–0.90) don't order the outcomes, further weakening
 the pretraining-recall explanation.
 
+### R9 — The frontier replicates on a second author, in the informal register — with a twist that sharpens the story *(established; single seed)*
+
+Mark Twain (`authors/twain`): conversational first-person memoir/speech prose — different
+register, century, and continent from Chesterton. Own verifier (AUC 0.839 vs 17 era- and
+register-matched American memoirists; real held-out Twain reads at 0.852), own contamination
+probe, identical recipe:
+
+| cell | AV (primary) | AV₂ | verbatim leak |
+|---|---|---|---|
+| base model, no adapter (floor) | **0.467** | 0.607 | 0.0% |
+| few-shot, best of 4 arms | 0.541 | — | ≤4.4% (all PASS) |
+| adapter 10k | 0.430 | 0.689 | 0.0% |
+| adapter 25k | 0.696 | 0.844 | 0.0% |
+| adapter 50k | **0.904** | 0.941 | 0.0% |
+| adapter full (104k) | **0.904** | 0.970 | 0.0% |
+
+Everything structural replicates: the transition in the same 10k→25k-word band (~12 → ~22
+gradient steps — the step-count story holds), saturation above the real-text rate (0.904 >
+0.852, replicated under the second ruler: 0.970 > 0.919 — hyper-typicality is now a
+cross-author phenomenon), **zero verbatim 12-grams at every arm**, negative semantic echo,
+entity emission *falling* with corpus size (2.9 → 0.96/gen), fluency ≤1.2%.
+
+The twist: **the floor is 0.467, not zero** — the untuned base model's default conversational
+first-person voice already sits Twain-side of the memoirist decision boundary. This
+recalibrates, but does not weaken, the dissociation: few-shot prompting adds *nothing over the
+floor* (0.44–0.54 across arms — statistically the floor), while the adapter adds **+0.44**.
+And the contamination probe reads **1.17** — the base model finds Twain *less* familiar than
+matched period prose — so the best adapter performance in the study-to-date arrived on the
+author the model knows least, the strongest anti-pretraining-recall evidence we have. Caveats:
+one seed; cross-author comparisons are shape-only (different rulers); Twain's two-instrument
+rank agreement is weaker (Spearman 0.57 over 9 runs with a compressed range).
+
 ### Supporting measurements
 
 - **Noise floor** (brief §3): 2k adapter ±0.004 over 3 seeds; full adapter range 0.012 over 2
@@ -225,7 +257,7 @@ the pretraining-recall explanation.
 | a17/a18 per-matrix split | q,k vs v,o (Savine test) | **done** — see R3 |
 | cross-model (a13, a16) | cliff + frontier under two more base models | **done** — see R8 / Table 5 |
 | 15k/20k cliff-refinement arms | localize the Qwen cliff between 10k and 25k | **done** — onset between 10k and 15k; see R1 |
-| Twain (informal author) | second author, informal register | GPU arms running (floor + 4 arms); CPU tail + verifiers done (AUC 0.839) |
+| Twain (informal author) | second author, informal register | **done** — see R9 |
 | BAC informal author | third author cell | corpus loader committed; pipeline not yet run |
 
 ## 5. Future work (beyond the current matrix)
@@ -249,10 +281,11 @@ the pretraining-recall explanation.
 
 ## 6. Threats to validity (say them before a reviewer does)
 
-1. **One author, one register** so far (the base-model axis is now closed — R8 replicates the
-   shape across three models). The phase-transition *location* is demonstrably
-   model-dependent and likely author-dependent too; the *shape* (cliff + L-frontier) is the
-   claim. Locus (R3) and stage (R4/R5) results remain Qwen-scoped.
+1. **Two authors, two registers, three models** (R8, R9) — the shape claims (cliff,
+   L-frontier, dissociation, hyper-typical saturation) are replicated on every axis tried; the
+   *locations* (cliff word-count, floor height) are author- and model-dependent, as expected.
+   Locus (R3) and stage (R4/R5) results remain Qwen×Chesterton-scoped, and the informal-author
+   cell is single-seed.
 2. **One verifier** → largely closed by R7: a second, independently-trained instrument ranks
    the runs the same way (Spearman 0.897) and replicates the above-real-text anomaly. Residual:
    both instruments are neural embedders; no human check exists (a blind panel was descoped),

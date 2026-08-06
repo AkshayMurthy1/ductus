@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ductus — stage_a-50k</title><style>
+:root { color-scheme: light dark; }
+.viz-root {
+  --surface-1: #fcfcfb; --surface-2: #f4f3f0; --border: #dedcd6;
+  --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7c7a74;
+  --series-1: #2a78d6; --series-2: #eb6834;
+  --good: #008300; --bad: #e34948; --warn: #eda100;
+  --grid: #e7e5e0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) .viz-root {
+    --surface-1: #1a1a19; --surface-2: #232322; --border: #3a3a37;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #93918a;
+    --series-1: #3987e5; --series-2: #d95926;
+    --good: #4caf50; --bad: #e66767; --warn: #c98500;
+    --grid: #2e2e2c;
+  }
+}
+:root[data-theme="dark"] .viz-root {
+  --surface-1: #1a1a19; --surface-2: #232322; --border: #3a3a37;
+  --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #93918a;
+  --series-1: #3987e5; --series-2: #d95926;
+  --good: #4caf50; --bad: #e66767; --warn: #c98500; --grid: #2e2e2c;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--surface-1); }
+.viz-root {
+  background: var(--surface-1); color: var(--text-primary); min-height: 100vh;
+  font: 15px/1.55 ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  padding: 40px 28px 72px; max-width: 1080px; margin: 0 auto;
+}
+h1 { font-size: 25px; font-weight: 620; letter-spacing: -0.015em; margin: 0 0 4px; }
+h2 { font-size: 15px; font-weight: 600; margin: 44px 0 6px; letter-spacing: -0.005em; }
+.sub { color: var(--text-secondary); font-size: 13.5px; margin: 0 0 6px; }
+.muted { color: var(--text-muted); font-size: 12.5px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+         gap: 12px; margin: 22px 0 0; }
+.tile { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+        background: var(--surface-2); }
+.tile .label { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em;
+               color: var(--text-muted); font-weight: 600; }
+.tile .value { font-size: 27px; font-weight: 640; letter-spacing: -0.02em; margin-top: 5px;
+               font-variant-numeric: tabular-nums; }
+.tile .note { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600;
+        border-radius: 999px; padding: 2px 9px; border: 1px solid currentColor; }
+.pass { color: var(--good); } .fail { color: var(--bad); } .unk { color: var(--warn); }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin-top: 10px; }
+th, td { text-align: right; padding: 6px 10px; border-bottom: 1px solid var(--grid); }
+th:first-child, td:first-child { text-align: left; }
+th { color: var(--text-secondary); font-weight: 600; font-size: 12px;
+     text-transform: uppercase; letter-spacing: .05em; }
+td { font-variant-numeric: tabular-nums; }
+.legend { display: flex; gap: 16px; align-items: center; margin: 4px 0 10px;
+          font-size: 12.5px; color: var(--text-secondary); }
+.swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block;
+          margin-right: 6px; vertical-align: -1px; }
+.samples { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+.card { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+        background: var(--surface-2); font-size: 13.5px; white-space: pre-wrap; }
+.card .who { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em;
+             font-weight: 600; margin-bottom: 8px; }
+pre.cfg { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+          padding: 14px 16px; font-size: 12px; overflow-x: auto; color: var(--text-secondary); }
+svg text { font: 11.5px ui-sans-serif, -apple-system, sans-serif; }
+.bar:hover rect { opacity: .82; }
+details { margin-top: 8px; } summary { cursor: pointer; color: var(--text-secondary);
+          font-size: 13px; }
+.toggle { position: fixed; top: 14px; right: 16px; font-size: 12px; padding: 5px 11px;
+          border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2);
+          color: var(--text-secondary); cursor: pointer; }
+</style></head>
+<body><div class="viz-root">
+<button class="toggle" onclick="document.documentElement.dataset.theme =
+  document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'">theme</button>
+
+<h1>stage_a-50k</h1>
+<p class="sub">2026-08-06T06:53:16 · 135
+generations on the <strong>blind</strong> split ·
+model </p>
+<p class="sub">fluency <span class="pill pass">PASS</span> &nbsp; leakage <span class="pill pass">PASS</span> &nbsp; verifier <span class="pill pass">PASS</span></p>
+<div class="tiles"><div class="tile"><div class="label">AV attribution rate</div><div class="value">90%</div><div class="note">verifier AUC 0.839 · threshold 0.443</div></div><div class="tile"><div class="label">Stylometry distance</div><div class="value">0.0688</div><div class="note">95% CI [0.065, 0.086] · lower is better</div></div><div class="tile"><div class="label">Fluency</div><div class="value">0.005</div><div class="note">ppl on 3.30 vs off 3.29</div></div><div class="tile"><div class="label">Content leakage</div><div class="value">0.000</div><div class="note">longest verbatim run 0 tokens</div></div></div>
+
+<h2>Versus the Phase-0 prompting baseline</h2><p class="sub">The number that decides whether tuning earned its keep.</p><table><thead><tr><th>metric</th><th>baseline</th><th>this run</th><th>delta</th></tr></thead><tbody><tr><td>AV attribution rate</td><td>0.5259</td><td>0.9037</td><td>0.3778</td></tr><tr><td>stylometry distance (lower better)</td><td>0.1018</td><td>0.0688</td><td>0.0330</td></tr><tr><td>verbatim leakage rate (lower better)</td><td>0.0074</td><td>0.0000</td><td>0.0074</td></tr></tbody></table>
+
+<h2>Where the voice is still off</h2>
+<p class="sub">Largest normalized gaps between the model's output and the author's real text.
+This is the to-do list: the top item is what the next ablation should target.</p>
+<svg viewBox="0 0 660 234" width="100%" height="234" role="img" aria-label="stylometry gaps"><line x1="308.5" y1="14" x2="308.5" y2="216" stroke="var(--grid)" stroke-width="1"/><text x="308.5" y="230" fill="var(--text-muted)" text-anchor="middle">0.14</text><line x1="407.0" y1="14" x2="407.0" y2="216" stroke="var(--grid)" stroke-width="1"/><text x="407.0" y="230" fill="var(--text-muted)" text-anchor="middle">0.29</text><line x1="505.5" y1="14" x2="505.5" y2="216" stroke="var(--grid)" stroke-width="1"/><text x="505.5" y="230" fill="var(--text-muted)" text-anchor="middle">0.43</text><line x1="604.0" y1="14" x2="604.0" y2="216" stroke="var(--grid)" stroke-width="1"/><text x="604.0" y="230" fill="var(--text-muted)" text-anchor="middle">0.58</text><g class="bar"><title>em dash per 100: 0.5794</title><text x="200" y="25" text-anchor="end" fill="var(--text-secondary)">em dash per 100</text><rect x="210" y="16" width="394.0" height="14" rx="4" fill="var(--series-1)"/><text x="611.0" y="27" fill="var(--text-primary)">0.579</text></g><g class="bar"><title>sent len sd: 0.5452</title><text x="200" y="51" text-anchor="end" fill="var(--text-secondary)">sent len sd</text><rect x="210" y="42" width="370.7" height="14" rx="4" fill="var(--series-1)"/><text x="587.7" y="53" fill="var(--text-primary)">0.545</text></g><g class="bar"><title>first person rate: 0.4732</title><text x="200" y="77" text-anchor="end" fill="var(--text-secondary)">first person rate</text><rect x="210" y="68" width="321.8" height="14" rx="4" fill="var(--series-1)"/><text x="538.8" y="79" fill="var(--text-primary)">0.473</text></g><g class="bar"><title>burstiness: 0.3629</title><text x="200" y="103" text-anchor="end" fill="var(--text-secondary)">burstiness</text><rect x="210" y="94" width="246.8" height="14" rx="4" fill="var(--series-1)"/><text x="463.8" y="105" fill="var(--text-primary)">0.363</text></g><g class="bar"><title>word len mean: 0.3437</title><text x="200" y="129" text-anchor="end" fill="var(--text-secondary)">word len mean</text><rect x="210" y="120" width="233.7" height="14" rx="4" fill="var(--series-1)"/><text x="450.7" y="131" fill="var(--text-primary)">0.344</text></g><g class="bar"><title>intensifier rate: 0.2475</title><text x="200" y="155" text-anchor="end" fill="var(--text-secondary)">intensifier rate</text><rect x="210" y="146" width="168.3" height="14" rx="4" fill="var(--series-1)"/><text x="385.3" y="157" fill="var(--text-primary)">0.247</text></g><g class="bar"><title>msttr: 0.2252</title><text x="200" y="181" text-anchor="end" fill="var(--text-secondary)">msttr</text><rect x="210" y="172" width="153.1" height="14" rx="4" fill="var(--series-1)"/><text x="370.1" y="183" fill="var(--text-primary)">0.225</text></g><g class="bar"><title>exclaim per 100: 0.1546</title><text x="200" y="207" text-anchor="end" fill="var(--text-secondary)">exclaim per 100</text><rect x="210" y="198" width="105.1" height="14" rx="4" fill="var(--series-1)"/><text x="322.1" y="209" fill="var(--text-primary)">0.155</text></g></svg>
+
+<h2>Sentence-length rhythm</h2>
+<p class="sub">Distribution shape, not just the mean. Matching the mean while missing the
+spread is the classic signature of generic AI cadence.</p>
+<div class="legend"><span><span class="swatch" style="background:var(--series-1)"></span>author (real)</span><span><span class="swatch" style="background:var(--series-2)"></span>model</span></div><svg viewBox="0 0 660 220" width="100%" height="220" role="img" aria-label="share of sentences by bucket"><line x1="44" y1="186.0" x2="646" y2="186.0" stroke="var(--grid)" stroke-width="1"/><text x="36" y="190.0" text-anchor="end" fill="var(--text-muted)">0.00</text><line x1="44" y1="99.0" x2="646" y2="99.0" stroke="var(--grid)" stroke-width="1"/><text x="36" y="103.0" text-anchor="end" fill="var(--text-muted)">0.11</text><line x1="44" y1="12.0" x2="646" y2="12.0" stroke="var(--grid)" stroke-width="1"/><text x="36" y="16.0" text-anchor="end" fill="var(--text-muted)">0.21</text><g class="bar"><title>author (real) · 0-5: 0.079</title><rect x="48.0" y="121.5" width="27.4" height="64.5" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 0-5: 0.042</title><rect x="77.4" y="151.5" width="27.4" height="34.5" rx="4" fill="var(--series-2)"/></g><text x="77.4" y="208" text-anchor="middle" fill="var(--text-muted)">0-5</text><g class="bar"><title>author (real) · 5-10: 0.191</title><rect x="114.9" y="30.6" width="27.4" height="155.4" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 5-10: 0.188</title><rect x="144.3" y="33.2" width="27.4" height="152.8" rx="4" fill="var(--series-2)"/></g><text x="144.3" y="208" text-anchor="middle" fill="var(--text-muted)">5-10</text><g class="bar"><title>author (real) · 10-15: 0.179</title><rect x="181.8" y="40.6" width="27.4" height="145.4" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 10-15: 0.180</title><rect x="211.2" y="39.6" width="27.4" height="146.4" rx="4" fill="var(--series-2)"/></g><text x="211.2" y="208" text-anchor="middle" fill="var(--text-muted)">10-15</text><g class="bar"><title>author (real) · 15-20: 0.157</title><rect x="248.7" y="58.4" width="27.4" height="127.6" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 15-20: 0.172</title><rect x="278.1" y="46.3" width="27.4" height="139.7" rx="4" fill="var(--series-2)"/></g><text x="278.1" y="208" text-anchor="middle" fill="var(--text-muted)">15-20</text><g class="bar"><title>author (real) · 20-25: 0.116</title><rect x="315.6" y="91.9" width="27.4" height="94.1" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 20-25: 0.151</title><rect x="345.0" y="63.2" width="27.4" height="122.8" rx="4" fill="var(--series-2)"/></g><text x="345.0" y="208" text-anchor="middle" fill="var(--text-muted)">20-25</text><g class="bar"><title>author (real) · 25-30: 0.087</title><rect x="382.4" y="115.4" width="27.4" height="70.6" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 25-30: 0.090</title><rect x="411.9" y="112.5" width="27.4" height="73.5" rx="4" fill="var(--series-2)"/></g><text x="411.9" y="208" text-anchor="middle" fill="var(--text-muted)">25-30</text><g class="bar"><title>author (real) · 30-40: 0.082</title><rect x="449.3" y="119.7" width="27.4" height="66.3" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 30-40: 0.106</title><rect x="478.8" y="99.4" width="27.4" height="86.6" rx="4" fill="var(--series-2)"/></g><text x="478.8" y="208" text-anchor="middle" fill="var(--text-muted)">30-40</text><g class="bar"><title>author (real) · 40-60: 0.073</title><rect x="516.2" y="126.7" width="27.4" height="59.3" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 40-60: 0.056</title><rect x="545.7" y="140.6" width="27.4" height="45.4" rx="4" fill="var(--series-2)"/></g><text x="545.7" y="208" text-anchor="middle" fill="var(--text-muted)">40-60</text><g class="bar"><title>author (real) · 60+: 0.036</title><rect x="583.1" y="156.3" width="27.4" height="29.7" rx="4" fill="var(--series-1)"/></g><g class="bar"><title>model · 60+: 0.014</title><rect x="612.6" y="174.7" width="27.4" height="11.3" rx="4" fill="var(--series-2)"/></g><text x="612.6" y="208" text-anchor="middle" fill="var(--text-muted)">60+</text></svg>
+
+<h2>Stylometry detail</h2>
+<table><thead><tr><th>feature</th><th>author</th><th>model</th><th>normalized gap</th></tr>
+</thead><tbody><tr><td>sent len mean</td><td>20.239</td><td>19.526</td><td>0.089</td></tr><tr><td>sent len sd</td><td>16.464</td><td>13.193</td><td>0.545</td></tr><tr><td>burstiness</td><td>-0.103</td><td>-0.194</td><td>0.363</td></tr><tr><td>word len mean</td><td>4.115</td><td>3.840</td><td>0.344</td></tr><tr><td>msttr</td><td>0.777</td><td>0.750</td><td>0.225</td></tr><tr><td>contraction rate</td><td>0.958</td><td>1.214</td><td>0.128</td></tr><tr><td>hedge rate</td><td>0.861</td><td>0.920</td><td>0.039</td></tr><tr><td>intensifier rate</td><td>0.615</td><td>0.863</td><td>0.247</td></tr><tr><td>first person rate</td><td>5.256</td><td>6.675</td><td>0.473</td></tr><tr><td>second person rate</td><td>1.313</td><td>1.131</td><td>0.091</td></tr><tr><td>em dash per 100</td><td>0.512</td><td>0.049</td><td>0.579</td></tr><tr><td>semicolon per 100</td><td>0.764</td><td>0.788</td><td>0.049</td></tr><tr><td>paren per 100</td><td>0.043</td><td>0.014</td><td>0.036</td></tr><tr><td>question per 100</td><td>0.149</td><td>0.220</td><td>0.071</td></tr><tr><td>exclaim per 100</td><td>0.220</td><td>0.066</td><td>0.155</td></tr><tr><td>para len sents</td><td>3.667</td><td>3.906</td><td>0.096</td></tr><tr><td>sent len hist</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.012</td></tr><tr><td>word len hist</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.004</td></tr><tr><td>function words</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.018</td></tr><tr><td>punctuation</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.023</td></tr><tr><td>openers</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.142</td></tr><tr><td>pos trigrams</td><td colspan='2' class='muted'>Jensen-Shannon</td><td>0.063</td></tr></tbody></table>
+
+<h2>Side by side</h2>
+<p class="sub">Read these. The human blind test is the real bar; the numbers above are proxies
+for it.</p>
+<div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>Yesterday, for example, I was at a luncheon party. At the end of the
+party a great dignitary of &lt;ORG&gt; went away half
+an hour before anybody else and carried off my hat. Now, that was an
+innocent act on his part. He went out first, and of course had the
+choice of hats. As a rule I try to get out first myself. But I hold that
+it was an innocent, unconscious act, due, perhaps, to heredity. He
+was thinking about ecclesiastical matters, and when a man is in that
+condition of mind he will take anybody&#x27;s hat. The result was that the
+whole afternoon I was under the influence of his clerical hat and could
+not tell a lie. Of course, he was hard at it.
+
+It is a compliment to both of us. His hat fitted me exactly; my hat
+fitted him exactly. So I judge I was born to rise to high dignity in the
+Church some how or other, but I do not know what he was born for. That
+is an illustration of the influence of habit, and it is perceptible here
+when they say “an” hospital, “an” &lt;GROUP&gt;, “an” historical.
+
+The business aspects of the Fourth of July is not perfect as it stands.
+See what it costs us every year with loss of life, the crippling of
+thousands with its fireworks, and the burning down of property. It is
+not only sacred to patriotism and universal freedom, but to the surgeon,
+the undertaker, the insurance offices—and they are working it for all it
+is worth.</div><div class="card"><div class="who" style="color:var(--series-2)">model</div>We were in the habit of talking with &lt;PERSON&gt; on Sunday mornings at his
+place, when we were all together. One day he said to me: &quot;You have been
+very kind to me; you have given me something to eat. Now I am going to
+give you something.&quot; He went out, returned in a short while, and brought
+with him an enormous piece of raw hams, which he set down in the middle
+of the table. Then he sat down opposite me, took up a knife, and
+started to cut off slices for himself. I looked at him, saying:
+&quot;Sir, what will you do with this ham?&quot;
+
+&quot;I&#x27;ll give it to you,&quot; he replied.
+
+&quot;That&#x27;s a good idea,&quot; I said; &quot;I&#x27;ll accept your offer.&quot;
+
+&quot;Why, I&#x27;m going to eat it myself,&quot; said the other.
+
+&quot;Well, if you don&#x27;t intend to divide it,&quot; said I, &quot;it is of no use to
+you. I don&#x27;t want it.&quot;
+
+&quot;I shall eat it anyway,&quot; said the other. &quot;It belongs to me.&quot;
+
+I didn&#x27;t understand this. But he explained. &quot;It was my father who gave
+me this ham, and if I die without eating it I&#x27;ll never be happy.&quot;
+
+I said nothing; but I was greatly impressed by this remark and by the
+custom to which it referred. It seems to me that all men have a right to
+eat all they like, whether they die or live, and if they do not they
+have no right to complain.</div></div><div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>About a year later I got _my_ chance. But I was not hunting for it. &lt;ORG&gt; went off to &lt;PLACE&gt; for a week&#x27;s holiday, and left me to
+be chief editor. I had supposed that that was an easy berth, there being
+nothing to do but write one editorial per day; but I was disappointed in
+that superstition. I couldn&#x27;t find anything to write an article about,
+the first day. Then it occurred to me that inasmuch as it was the 22nd
+of April, 1864, the next morning would be the three-hundredth
+anniversary of &lt;PERSON&gt;&#x27;s birthday--and what better theme could I
+want than that? I got the &lt;ORG&gt; and examined it, and found out who
+&lt;PERSON&gt; was and what he had done, and I borrowed all that and laid
+it before a community that couldn&#x27;t have been better prepared for
+instruction about &lt;PERSON&gt; than if they had been prepared by art. There wasn&#x27;t enough of what &lt;PERSON&gt; had done to make an editorial of
+the necessary length, but I filled it out with what he hadn&#x27;t
+done--which in many respects was more important and striking and
+readable than the handsomest things he had really accomplished. But next
+day I was in trouble again. There were no more &lt;ORG&gt; to work up. There was nothing in past history, or in the world&#x27;s future
+possibilities, to make an editorial out of, suitable to that community;
+so there was but one theme left. That theme was Mr. &lt;PERSON&gt;, proprietor of
+&lt;ORG&gt;.&quot; _His_ editor had gone off to &lt;PLACE</div><div class="card"><div class="who" style="color:var(--series-2)">model</div>I went down to the &lt;PLACE&gt; and asked him whether there was any chance for
+me to go over there and be one of the &lt;ORG&gt; agents.
+
+He said there was no use talking about it now; that I&#x27;d have to wait
+until the next week before I could come in touch with them, and then
+there wouldn&#x27;t be any vacancy. But I asked him if he couldn&#x27;t help me
+some way, if he could think of anything I could do that would keep me
+busy until my new assignment took effect.
+
+He suggested that I might take care of the books. He hadn&#x27;t got any,
+and I had some experience there, but I didn&#x27;t know all the details. &quot;You
+needn&#x27;t worry about that,&quot; he told me, &quot;I&#x27;ll tell you what I want you
+to do.&quot;
+
+I said, &quot;What is it?&quot;
+
+&quot;Well, let&#x27;s see.&quot; He paused and thought. Then he said, &quot;When I&#x27;m out
+of town, send the stockholders&#x27; dividend checks over to the bank, by
+express, without signatures.&quot;
+
+Now I knew nothing whatever about banking, and I wasn&#x27;t going to ask.
+But the idea was such a splendidly good one, so far fetched, so
+original, that I said, &quot;I guess I can do that.&quot;
+
+The next morning I sent over the dividend checks, signed with the bank
+signatures, but they didn&#x27;t get back to me for a week. Then the bank
+said, &quot;You must have signed them yourself.&quot; I explained to them about
+the bank signers, and they said it was a good thing I did, because it
+was the only safe way to do it. Then I said, &quot;Well, I&#x27;ve got another
+divide</div></div><div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>Judge &lt;PERSON&gt; seems to have all the virtues that he ascribes to me. But,
+oh my! if you could throw an X-ray through him. We are a pair. I have
+made a life-study of trying to appear to be what he seems to think I am.
+Everybody believes that I am a monument of all the virtues, but it is
+nothing of the sort. I am living two lives, and it keeps me pretty busy.
+
+Some day there will be a chairman who will forget some of these merits
+of mine, and then he will make a speech.
+
+I have more personal vanity than modesty, and twice as much veracity as
+the two put together.
+
+When that fearless and forgetful chairman is found there will be another
+story told. At &lt;ORG&gt; recently I thought that I had found
+him. He started in in the way that I knew I should be painted with all
+sincerity, and was leading to things that would not be to my credit; but
+when he said that he never read a book of mine I knew at once that he
+was a liar, because he never could have had all the wit and intelligence
+with which he was blessed unless he had read my works as a basis.
+
+I like compliments. I like to go home and tell them all over again to
+the members of my family. They don&#x27;t believe them, but I like to tell
+them in the home circle, all the same. I like to dream of them if I can.
+
+I thank everybody for their compliments, but I don&#x27;t think that I am
+praised any more than I am entitled to be.</div><div class="card"><div class="who" style="color:var(--series-2)">model</div>I do not know whether I am to be admired or pitied. The world thinks I am
+to be admired, but I think they are mistaken.
+
+When I was young--that is, when I was about six years old--I used to get
+a great deal of pleasure out of making faces at my mother. One time she
+said, &quot;Do you want to see my teeth?&quot; I said, &quot;No.&quot; She said, &quot;Well, take
+them out,&quot; and so I did; and then she said, &quot;You are too young to do
+it now.&quot;
+
+I have always been vain about my teeth ever since that time. I don&#x27;t
+think I&#x27;ve ever been able to overcome that feeling. It is a natural
+thing, I suppose, because I am proud of those teeth which make me look
+so distinguished and important. But the reason I have been able to
+overcome it is not because I am ashamed of them--I&#x27;m not ashamed of
+them--but because I don&#x27;t care anything about them. That is to say,
+they haven&#x27;t any good points about them to speak of, so I don&#x27;t care
+anything about them. They haven&#x27;t any of the qualities which make a
+set of teeth desirable. They are small, and not very white; they have
+no character; they&#x27;re not at all distinguished-looking, or handsome.
+They&#x27;re plain, common, ordinary teeth, like everyone else&#x27;s teeth. So I
+don&#x27;t care anything about them.</div></div><div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>By-and-by, when he almost reached the station where he was to get off,
+he got up, crossed over, and he said: “Now I am going to say something
+to you which I hope you will regard as a compliment.” And then he went
+on to say: “I have never seen &lt;PERSON&gt;, but I have seen a portrait of
+him, and any friend of mine will tell you that when I have once seen a
+portrait of a man I place it in my eye and store it away in my memory,
+and I can tell you now that you look enough like &lt;PERSON&gt; to be his
+brother. Now,” he said, “I hope you take this as a compliment. Yes,
+you are a very good imitation; but when I come to look closer, you are
+probably not that man.”
+
+I said: “I will be frank with you. In my desire to look like that
+excellent character I have dressed for the character; I have been
+playing a part.”
+
+He said: “That is all right, that is all right; you look very well on
+the outside, but when it comes to the inside you are not in it with the
+original.”
+
+So when I come to a place like this with nothing valuable to say I
+always play a part. But I will say before I sit down that when it comes
+to saying anything here I will express myself in this way: I am heartily
+in sympathy with you in your efforts to help those who were sufferers
+in this calamity, and in your desire to help those who were rendered
+homeless, and in saying this I wish to impress on you the fact that I am
+not playing a p</div><div class="card"><div class="who" style="color:var(--series-2)">model</div>It was during the night before my departure for &lt;PLACE&gt; to &lt;ORG&gt; the
+book, when I had reached &lt;ORG&gt;&#x27;s house, after the long journey over
+the &lt;PLACE&gt; mountains, and was sleeping there; and I dreamed a dream.
+I thought it was &lt;PERSON&gt;, and he said: &quot;Oh, &lt;PERSON&gt;! I have not seen you
+for many years.&quot;
+
+&quot;Who is &lt;PERSON&gt;?&quot; I asked myself.
+
+&quot;Ah, that is right,&quot; said &lt;PERSON&gt;. &quot;There is a person out here whose
+appearance has greatly changed since we met--that man is &lt;PERSON&gt;,
+and he has been out here many years.&quot;
+
+I woke up, and said, to myself: &quot;Well, this reminds me of a very
+familiar situation.&quot; It seemed to be exactly like this: In 1852, when
+we were going to &lt;PLACE&gt;, I stopped at a farm-house on the road, and
+asked for some lodging, and they gave me a room to sleep in. After I had
+fallen asleep, my neighbor, a &lt;PLACE&gt; man, came in to see what kind of a
+stranger I was, and when he saw me he said: &quot;Ah, that is a familiar face,
+you have been out here thirty-six years.&quot;
+
+I knew all about it, but I did not say anything, for I was a modest
+person; so I said nothing, and slept on until morning, and left that
+house without saying anything to the &lt;PLACE&gt; farmer.</div></div><div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>&lt;PLACE&gt;, 1899.
+
+I noticed in Ambassador &lt;PERSON&gt;&#x27;s speech that he said: “You may be
+&lt;GROUP&gt; or &lt;PERSON&gt;, but you cannot be both at the same time.” You
+responded by applause.
+
+Consider the effect of a short residence here. I find the Ambassador
+rises first to speak to a toast, followed by a Senator, and I come
+third. What a subtle tribute that to monarchial influence of the country
+when you place rank above respectability!
+
+I was born modest, and if I had not been things like this would force it
+upon me. I understand it quite well. I am here to see that between them
+they do justice to the day we celebrate, and in case they do not I must
+do it myself. But I notice they have considered this day merely from one
+side—its sentimental, patriotic, poetic side. But it has another side.
+It has a commercial, a business side that needs reforming. It has a
+historical side.
+
+I do not say “an” historical side, because I am speaking the &lt;GROUP&gt;
+language. I do not see why our cousins should continue to say “an”
+ hospital, “an” historical fact, “an” horse. It seems to me the &lt;ORG&gt;
+of Women, now in session, should look to it. I think “an” is having a
+little too much to do with it. It comes of habit, which accounts for
+many things.</div><div class="card"><div class="who" style="color:var(--series-2)">model</div>I had never been to such a place before. It was a &lt;PERSON&gt; affair.
+It was full of people whose voices rang out in this language that I
+didn&#x27;t understand, but which I recognized as belonging to &lt;ORG&gt;
+and her kin. The crowd was all there, the &lt;PLACE&gt;, the
+&lt;GROUP&gt;, and the &lt;GROUP&gt;. But I didn&#x27;t see any of them; they were all behind a
+row of &lt;PERSON&gt;&#x27;s friends who stood with faces set in a
+frown. I did see a lady dressed in black, and I knew she belonged to
+that other party. She was a &lt;PERSON&gt;. There weren&#x27;t any
+men there except a few who sat at tables along the sides and
+kept out of the way, and didn&#x27;t speak unless spoken to. Then there
+was &lt;PERSON&gt;, an old friend of mine, who was sitting by himself at a table
+near me. His eyes were bright, but his face was sober and sad; he was
+a &lt;PERSON&gt;. I asked him to tell me what was the matter, and he told
+me that the &lt;GROUP&gt; had been broken up, and that he hadn&#x27;t been able to get
+a place for &lt;PERSON&gt;. He was sorry about it.
+
+The people in these things were classed in three or four groups: the
+upper class, the middle class, the lower class, and the lowest class.
+We are accustomed to these distinctions in our own country, but I
+never heard of anything like them before. I don&#x27;t know whether the
+thing is really so here or not, but it seemed so to me. I think it was
+true, for I saw some of these distinctions when we visited the &lt;ORG&gt;
+house. I th</div></div><div class="samples"><div class="card"><div class="who" style="color:var(--series-1)">author (real)</div>If the cholera or black plague should come to these shores, perhaps
+the bulk of the nation would pray to be delivered from it, but the rest
+would put their trust in &lt;ORG&gt;.
+
+I read in the papers within the last day or two of a poor young girl who
+they said was a leper. Did the people in that populous section of the
+country where she was—did they put their trust in God? The girl was
+afflicted with the leprosy, a disease which cannot be communicated from
+one person to another.
+
+Yet, instead of putting their trust in God, they harried that poor
+creature, shelterless and friendless, from place to place, exactly as
+they did in &lt;PLACE&gt;, when they made lepers wear bells, so that
+people could be warned of their approach and avoid them. Perhaps those
+people in &lt;PLACE&gt; thought they were putting their trust in God.
+
+The President ordered the removal of that motto from the coin, and I
+thought that it was well. I thought that overstatement should not stay
+there. But I think it would better read, “Within certain judicious
+limitations we trust in God,” and if there isn&#x27;t enough room on the coin
+for this, why, enlarge the coin.
+
+Now I want to tell a story about jumping at conclusions. It was told
+to me by &lt;PERSON&gt;, and it concerns a christening. There was a little
+clergyman who was prone to jump at conclusions sometimes. One day he
+was invited to officiate at a christening. He went. There sat
+t</div><div class="card"><div class="who" style="color:var(--series-2)">model</div>&lt;PERSON&gt; was a very simple and sincere person, but he never made any
+mistake when he had something in his mind that was worth a thousand
+words to say. He was not an inventive man; I think the most original
+thoughts he ever had were thoughts of &lt;PLACE&gt;, and they did not occur
+to him until after he had thought them out for himself.
+
+I used to think of him as a sort of &lt;ORG&gt; of &lt;ORG&gt;. He could do nothing
+but give vent to his opinions. When I went away from &lt;PLACE&gt;, he would
+say:
+
+&quot;Well, he can’t be blamed. If he’s been here ten days he hasn’t said
+anything but what he’s been thinking all along. He wouldn’t have done
+any other thing.&quot;
+
+A couple of weeks later I heard another person say, in reference to the
+same subject: &quot;It’s always a lucky thing for me to come to town when
+&lt;PERSON&gt; is here. It keeps me honest.&quot;
+
+&lt;PERSON&gt; was not so innocent of &lt;THING&gt;, however. At a time when things
+were very prosperous he remarked to me one day that it was a pity that
+the banks should go bankrupt now, because there was no place left for
+them to get into. He went on to say that he had just seen a sign on a
+bank door saying: &quot;We have closed our doors,&quot; and that he thought the
+banker who put up that sign had probably read this article.</div></div>
+
+<h2>Fluency smoke test</h2>
+<p class="sub">General questions, greedy decoding. Looping, dropped syntax, or answering a
+factual question in the author's voice all mean the adapter is bleeding into capability.</p>
+<p class="muted">not run</p>
+
+<h2>Run configuration</h2>
+<pre class="cfg">{
+  &quot;run_name&quot;: &quot;stage_a&quot;,
+  &quot;notes&quot;: &quot;baseline recipe: all-linear LoRA r16, DoRA, NEFTune 5, 2 epochs&quot;,
+  &quot;model&quot;: {
+    &quot;name&quot;: &quot;Qwen/Qwen2.5-3B-Instruct&quot;,
+    &quot;dtype&quot;: &quot;bfloat16&quot;,
+    &quot;load_in_4bit&quot;: false,
+    &quot;attn_implementation&quot;: &quot;sdpa&quot;,
+    &quot;max_seq_len&quot;: 1024,
+    &quot;trust_remote_code&quot;: false
+  },
+  &quot;lora&quot;: {
+    &quot;target_modules&quot;: &quot;all-linear&quot;,
+    &quot;r&quot;: 16,
+    &quot;lora_alpha&quot;: 32,
+    &quot;lora_dropout&quot;: 0.05,
+    &quot;bias&quot;: &quot;none&quot;,
+    &quot;use_dora&quot;: true,
+    &quot;use_rslora&quot;: false,
+    &quot;rank_pattern&quot;: {},
+    &quot;alpha_pattern&quot;: {},
+    &quot;layers_to_transform&quot;: null,
+    &quot;modules_to_save&quot;: []
+  },
+  &quot;sft&quot;: {
+    &quot;epochs&quot;: 2.0,
+    &quot;lr&quot;: 0.00015,
+    &quot;lr_scheduler&quot;: &quot;cosine&quot;,
+    &quot;warmup_ratio&quot;: 0.05,
+    &quot;per_device_batch_size&quot;: 2,
+    &quot;grad_accum&quot;: 8,
+    &quot;weight_decay&quot;: 0.0,
+    &quot;max_grad_norm&quot;: 1.0,
+    &quot;gradient_checkpointing&quot;: true,
+    &quot;neftune_noise_alpha&quot;: 5.0,
+    &quot;loraplus_lr_ratio&quot;: 0.0,
+    &quot;train_on_completions_only&quot;: true,
+    &quot;raw_next_token_mix&quot;: 0.1,
+    &quot;eval_steps&quot;: 25,
+    &quot;save_steps&quot;: 25,
+    &quot;save_total_limit&quot;: 3,
+    &quot;logging_steps&quot;: 5,
+    &quot;early_stopping_patience&quot;: 3,
+    &quot;seed&quot;: 17
+  },
+  &quot;dpo&quot;: {
+    &quot;beta&quot;: 0.1,
+    &quot;epochs&quot;: 1.0,
+    &quot;lr&quot;: 5e-06,
+    &quot;lr_scheduler&quot;: &quot;cosine&quot;,
+    &quot;warmup_ratio&quot;: 0.1,
+    &quot;per_device_batch_size&quot;: 1,
+    &quot;grad_accum&quot;: 8,
+    &quot;gradient_checkpointing&quot;: true,
+    &quot;eval_steps&quot;: 25,
+    &quot;save_steps&quot;: 25,
+    &quot;logging_steps&quot;: 5,
+    &quot;max_prompt_len&quot;: 512,
+    &quot;max_len&quot;: 1024,
+    &quot;loss_type&quot;: &quot;sigmoid&quot;,
+    &quot;reference_policy&quot;: &quot;stage_a&quot;,
+    &quot;av_reward_filter&quot;: false,
+    &quot;av_margin&quot;: 0.05,
+    &quot;length_match_tolerance&quot;: 0.35,
+    &quot;seed&quot;: 17
+  },
+  &quot;gen&quot;: {
+    &quot;temperature&quot;: 0.8,
+    &quot;top_p&quot;: 0.95,
+    &quot;seed&quot;: 17,
+    &quot;max_new_tokens&quot;: 400,
+    &quot;n_per_prompt&quot;: 1,
+    &quot;max_prompt_tokens&quot;: 8192,
+    &quot;baseline_n_shots&quot;: 5,
+    &quot;system_prompt&quot;: &quot;You are writing as the author. Match the author&#x27;s grammatical structure, sentence rhythm, paragraph flow, and word choice. Do not imitate the author&#x27;s topics or invent facts about their life.&quot;
+  },
+  &quot;data&quot;: {
+    &quot;chunk_min_words&quot;: 60,
+    &quot;chunk_max_words&quot;: 320,
+    &quot;questions_per_chunk&quot;: 2,
+    &quot;use_supplied_prompts&quot;: true,
+    &quot;supplied_prompt_scope&quot;: &quot;first_chunk&quot;,
+    &quot;val_frac&quot;: 0.15,
+    &quot;blind_frac&quot;: 0.15,
+    &quot;group_near_duplicates&quot;: true,
+    &quot;near_dup_threshold&quot;: 0.15,
+    &quot;never_scrub&quot;: [],
+    &quot;split_by&quot;: &quot;document&quot;,
+    &quot;scrub_entities&quot;: true,
+    &quot;seed&quot;: 17
+  },
+  &quot;eval&quot;: {
+    &quot;style_embedder&quot;: &quot;AnnaWegmann/Style-Embedding&quot;,
+    &quot;second_style_embedder&quot;: &quot;StyleDistance/styledistance&quot;,
+    &quot;av_classifier&quot;: &quot;logreg&quot;,
+    &quot;fluency_max_ppl_regression&quot;: 0.15,
+    &quot;informal_tag&quot;: &quot;informal&quot;
+  }
+}</pre>
+</div></body></html>

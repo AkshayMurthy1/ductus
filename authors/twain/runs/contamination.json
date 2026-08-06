@@ -1,0 +1,10 @@
+{
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "ppl_author": 18.5337,
+  "ppl_distractor": 15.9019,
+  "familiarity_ratio": 1.1655,
+  "n_author_texts": 48,
+  "n_distractor_texts": 48,
+  "max_texts_cap": 48,
+  "interpretation": "ratio \u2248 1.0: the base model knows this author no better than matched period prose. ratio << 1.0: pretraining contamination \u2014 discount the public-author arm's gains by comparison with the private-author control (Table 4)."
+}

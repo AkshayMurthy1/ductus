@@ -391,6 +391,28 @@ distribution without collapsing onto the targets.</p>
 <text class="lbl" x="716" y="43.2">full arm</text>
 </svg>
 
+<h2>6 · It replicates — across model families and across authors</h2>
+<p class="reading">Same protocol, new base models (each with its own few-shot floor, verifier
+unchanged) and a second author with his own verifier, register, and century. Every structural
+claim survives: the transition, the zero-leakage plateau, saturation above the real author's
+own attribution rate. The locations move — Llama needs more data, Twain starts from a high
+base-model floor — and the Twain contamination ratio (1.17: the base model finds him <em>less</em>
+familiar than matched memoirists) is the strongest evidence yet that these gains are trained,
+not recalled. Cross-author values compare shapes, not numbers — different verifiers are
+different rulers.</p>
+<div class="wrap"><table>
+<tr><th>replication</th><th>floor</th><th>10k</th><th>25k</th><th>best (arm)</th>
+<th>real-text rate</th><th>adapter leak</th><th>contamination</th></tr>
+<tr><td>Qwen2.5-3B · Chesterton (reference)</td><td>0.000</td><td>0.004</td><td>0.718</td>
+<td>0.825 (50k)</td><td>0.714</td><td>0.0%</td><td>0.90</td></tr>
+<tr><td>Qwen2.5-1.5B · Chesterton</td><td>—</td><td>0.032</td><td>0.786</td>
+<td><b>0.885</b> (full)</td><td>0.714</td><td>0.0%</td><td>0.86</td></tr>
+<tr><td>Llama-3.2-3B · Chesterton</td><td>—</td><td>0.008</td><td>0.210</td>
+<td>0.766 (full)</td><td>0.714</td><td>0.0%</td><td>0.90</td></tr>
+<tr><td>Qwen2.5-3B · <b>Twain</b> (informal, own verifier)</td><td>0.467</td><td>0.430</td>
+<td>0.696</td><td><b>0.904</b> (50k+)</td><td>0.852</td><td>0.0%</td><td>1.17</td></tr>
+</table></div>
+
 <h2>Table 1 — scaling (RQ1)</h2>
 <div class="wrap"><table>
 <tr><th>arm</th><th>few-shot AV</th><th>few-shot leak</th><th>adapter AV</th><th>mean score</th>
@@ -467,9 +489,13 @@ Rates <em>fall</em> as corpus grows.</li>
 <li><b>Scrubbing placeholders:</b> trained adapters emit &lt;PERSON&gt;-style tags at roughly corpus
 rate — by design (the privacy mechanism made visible). Tested: tags depress the verifier, so
 attribution is earned despite them. Strip at serving time.</li>
-<li><b>Still running:</b> the last full-arm seed, the training-time trajectory (localizing the
-10k→25k click-in), and the a14 no-scrub diagnostic that tests whether the recipe absorbs
-entities when scrubbing is off.</li>
+<li><b>Twain caveats:</b> single seed per cell; his two-instrument rank agreement is weaker
+(Spearman 0.57 over 9 runs on a compressed range) though both rulers agree on the ordering and
+on above-real-text saturation. Few-shot on Twain adds nothing over his 0.47 base-model floor —
+the dissociation restates in gains: prompting +0.0, adapter +0.44.</li>
+<li><b>Remaining scope:</b> the BAC informal author cell is unrun; locus and Stage-B results
+are Qwen×Chesterton-scoped; the uncontaminated private-author control is descoped to future
+product work in a separate repository (STATUS §5).</li>
 </ul>
 </div>
 

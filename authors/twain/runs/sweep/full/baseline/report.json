@@ -1,0 +1,386 @@
+{
+  "run_name": "baseline-full",
+  "split": "blind",
+  "model": "",
+  "generated_at": "2026-08-06T07:11:09",
+  "n_generations": 135,
+  "stylometry": {
+    "overall": 0.1062,
+    "distributions": {
+      "sent_len_hist": 0.031,
+      "word_len_hist": 0.0107,
+      "function_words": 0.0454,
+      "punctuation": 0.0395,
+      "openers": 0.091,
+      "pos_trigrams": 0.106
+    },
+    "scalars_normalized": {
+      "sent_len_mean": 0.5392,
+      "sent_len_sd": 1.0,
+      "burstiness": 0.5943,
+      "word_len_mean": 0.6036,
+      "msttr": 0.4998,
+      "contraction_rate": 0.7221,
+      "hedge_rate": 0.1206,
+      "intensifier_rate": 0.2002,
+      "first_person_rate": 0.1308,
+      "second_person_rate": 0.061,
+      "em_dash_per_100": 0.4381,
+      "semicolon_per_100": 1.0,
+      "paren_per_100": 0.0386,
+      "question_per_100": 0.3482,
+      "exclaim_per_100": 0.1247,
+      "para_len_sents": 0.2928
+    },
+    "scalars_raw": {
+      "sent_len_mean": [
+        20.239,
+        15.926
+      ],
+      "sent_len_sd": [
+        16.464,
+        9.527
+      ],
+      "burstiness": [
+        -0.103,
+        -0.251
+      ],
+      "word_len_mean": [
+        4.115,
+        4.598
+      ],
+      "msttr": [
+        0.777,
+        0.837
+      ],
+      "contraction_rate": [
+        0.958,
+        2.403
+      ],
+      "hedge_rate": [
+        0.861,
+        0.68
+      ],
+      "intensifier_rate": [
+        0.615,
+        0.415
+      ],
+      "first_person_rate": [
+        5.256,
+        4.863
+      ],
+      "second_person_rate": [
+        1.313,
+        1.435
+      ],
+      "em_dash_per_100": [
+        0.512,
+        0.162
+      ],
+      "semicolon_per_100": [
+        0.764,
+        0.027
+      ],
+      "paren_per_100": [
+        0.043,
+        0.012
+      ],
+      "question_per_100": [
+        0.149,
+        0.497
+      ],
+      "exclaim_per_100": [
+        0.22,
+        0.345
+      ],
+      "para_len_sents": [
+        3.667,
+        2.935
+      ]
+    },
+    "ci_lo": 0.102,
+    "ci_hi": 0.1195
+  },
+  "biggest_gaps": [
+    [
+      "scalar:sent_len_sd",
+      1.0
+    ],
+    [
+      "scalar:semicolon_per_100",
+      1.0
+    ],
+    [
+      "scalar:contraction_rate",
+      0.7221
+    ],
+    [
+      "scalar:word_len_mean",
+      0.6036
+    ],
+    [
+      "scalar:burstiness",
+      0.5943
+    ],
+    [
+      "scalar:sent_len_mean",
+      0.5392
+    ],
+    [
+      "scalar:msttr",
+      0.4998
+    ],
+    [
+      "scalar:em_dash_per_100",
+      0.4381
+    ]
+  ],
+  "sent_len_hist": {
+    "buckets": [
+      "0-5",
+      "5-10",
+      "10-15",
+      "15-20",
+      "20-25",
+      "25-30",
+      "30-40",
+      "40-60",
+      "60+"
+    ],
+    "real": [
+      0.0793,
+      0.1911,
+      0.1789,
+      0.1569,
+      0.1158,
+      0.0869,
+      0.0816,
+      0.073,
+      0.0365
+    ],
+    "generated": [
+      0.0761,
+      0.2002,
+      0.2144,
+      0.2094,
+      0.1468,
+      0.0776,
+      0.0511,
+      0.0219,
+      0.0027
+    ]
+  },
+  "config": {
+    "run_name": "stage_a",
+    "notes": "baseline recipe: all-linear LoRA r16, DoRA, NEFTune 5, 2 epochs",
+    "model": {
+      "name": "Qwen/Qwen2.5-3B-Instruct",
+      "dtype": "bfloat16",
+      "load_in_4bit": false,
+      "attn_implementation": "sdpa",
+      "max_seq_len": 1024,
+      "trust_remote_code": false
+    },
+    "lora": {
+      "target_modules": "all-linear",
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "bias": "none",
+      "use_dora": true,
+      "use_rslora": false,
+      "rank_pattern": {},
+      "alpha_pattern": {},
+      "layers_to_transform": null,
+      "modules_to_save": []
+    },
+    "sft": {
+      "epochs": 2.0,
+      "lr": 0.00015,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.05,
+      "per_device_batch_size": 2,
+      "grad_accum": 8,
+      "weight_decay": 0.0,
+      "max_grad_norm": 1.0,
+      "gradient_checkpointing": true,
+      "neftune_noise_alpha": 5.0,
+      "loraplus_lr_ratio": 0.0,
+      "train_on_completions_only": true,
+      "raw_next_token_mix": 0.1,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "save_total_limit": 3,
+      "logging_steps": 5,
+      "early_stopping_patience": 3,
+      "seed": 17
+    },
+    "dpo": {
+      "beta": 0.1,
+      "epochs": 1.0,
+      "lr": 5e-06,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.1,
+      "per_device_batch_size": 1,
+      "grad_accum": 8,
+      "gradient_checkpointing": true,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "logging_steps": 5,
+      "max_prompt_len": 512,
+      "max_len": 1024,
+      "loss_type": "sigmoid",
+      "reference_policy": "stage_a",
+      "av_reward_filter": false,
+      "av_margin": 0.05,
+      "length_match_tolerance": 0.35,
+      "seed": 17
+    },
+    "gen": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 17,
+      "max_new_tokens": 400,
+      "n_per_prompt": 1,
+      "max_prompt_tokens": 8192,
+      "baseline_n_shots": 5,
+      "system_prompt": "You are writing as the author. Match the author's grammatical structure, sentence rhythm, paragraph flow, and word choice. Do not imitate the author's topics or invent facts about their life."
+    },
+    "data": {
+      "chunk_min_words": 60,
+      "chunk_max_words": 320,
+      "questions_per_chunk": 2,
+      "use_supplied_prompts": true,
+      "supplied_prompt_scope": "first_chunk",
+      "val_frac": 0.15,
+      "blind_frac": 0.15,
+      "group_near_duplicates": true,
+      "near_dup_threshold": 0.15,
+      "never_scrub": [],
+      "split_by": "document",
+      "scrub_entities": true,
+      "seed": 17
+    },
+    "eval": {
+      "style_embedder": "AnnaWegmann/Style-Embedding",
+      "second_style_embedder": "StyleDistance/styledistance",
+      "av_classifier": "logreg",
+      "fluency_max_ppl_regression": 0.15,
+      "informal_tag": "informal"
+    }
+  },
+  "av": {
+    "attribution_rate": 0.437,
+    "score_mean": 0.4483,
+    "score_median": 0.3947,
+    "score_sd": 0.2541,
+    "n": 135,
+    "threshold": 0.4434,
+    "real_reference_attribution_rate": 0.8519,
+    "verifier_auc": 0.8385,
+    "verifier_accuracy": 0.7922,
+    "embedder": "AnnaWegmann/Style-Embedding",
+    "verifier_verdict": "PASS"
+  },
+  "leakage": {
+    "verbatim": {
+      "n": 12,
+      "gens_with_verbatim_ngram": 0,
+      "rate": 0.0,
+      "longest_verbatim_run_tokens": 0,
+      "examples": []
+    },
+    "entities": {
+      "n_distinct_leaked": 49,
+      "n_occurrences": 334,
+      "per_generation": 2.474,
+      "top": [
+        [
+          "The",
+          189
+        ],
+        [
+          "John",
+          23
+        ],
+        [
+          "Harold",
+          10
+        ],
+        [
+          "Next",
+          8
+        ],
+        [
+          "Tom",
+          8
+        ],
+        [
+          "Mary",
+          8
+        ],
+        [
+          "Jack",
+          7
+        ],
+        [
+          "Jane",
+          5
+        ],
+        [
+          "Quaker",
+          5
+        ],
+        [
+          "Thomas",
+          5
+        ]
+      ],
+      "author_entity_vocab": 404
+    },
+    "semantic_echo": {
+      "n": 135,
+      "gen_mean_max_sim": 0.4943,
+      "heldout_mean_max_sim": 0.5514,
+      "echo": -0.0571,
+      "interpretation": "\u22480 healthy; >0.05 the model is paraphrasing training content the author's own held-out text does not share"
+    },
+    "verdict": "PASS"
+  },
+  "samples": [
+    {
+      "prompt": "Write a short informal essay that uses humorous personal anecdotes to illustrate broader observations about human nature, social customs, or how people's circumstances influence their behavior.",
+      "generated": "To wit: \n\n\"Life, if you look at it closely enough, is a series of funny coincidences. Here's why:\n\nOne day, I was walking down Main Street, minding my own business - you know, the usual. I happened to glance up and notice a peculiar sign hanging off the side of a quaint little diner. It read: \"We serve the finest coffee in town! Please excuse the mess.\" Now, I had no idea what I was seeing, but the irony was so absurd, I couldn't help but laugh out loud. Little did I know that the owner was just about to clean up his act. \n\nAnother time, I was on my way home from work, driving past the local post office. I noticed a guy standing outside, holding a sign that read: \"Help Wanted: Anybody Need an Extra Pair of Hands?\" I stopped the car and rolled down the window, feeling smug about having a job opportunity. The guy, a bit surprised at my interest, asked if I was interested in working for free. He explained he was trying to earn money to help his wife pay the rent. My heart sank. That's when I remembered the $300 I owed the bank on my latest credit card purchase. I felt like a jerk, really. \n\nThese little moments show the human spirit - a mix of determination and occasional stupidity. Sometimes we're motivated to help others, other times we're looking for easy ways out of our problems. And then there's the inevitable coincidence - the coffee shop that looks like it hasn't been clean",
+      "real": "Yesterday, for example, I was at a luncheon party. At the end of the\nparty a great dignitary of <ORG> went away half\nan hour before anybody else and carried off my hat. Now, that was an\ninnocent act on his part. He went out first, and of course had the\nchoice of hats. As a rule I try to get out first myself. But I hold that\nit was an innocent, unconscious act, due, perhaps, to heredity. He\nwas thinking about ecclesiastical matters, and when a man is in that\ncondition of mind he will take anybody's hat. The result was that the\nwhole afternoon I was under the influence of his clerical hat and could\nnot tell a lie. Of course, he was hard at it.\n\nIt is a compliment to both of us. His hat fitted me exactly; my hat\nfitted him exactly. So I judge I was born to rise to high dignity in the\nChurch some how or other, but I do not know what he was born for. That\nis an illustration of the influence of habit, and it is perceptible here\nwhen they say \u201can\u201d hospital, \u201can\u201d <GROUP>, \u201can\u201d historical.\n\nThe business aspects of the Fourth of July is not perfect as it stands.\nSee what it costs us every year with loss of life, the crippling of\nthousands with its fireworks, and the burning down of property. It is\nnot only sacred to patriotism and universal freedom, but to the surgeon,\nthe undertaker, the insurance offices\u2014and they are working it for all it\nis worth."
+    },
+    {
+      "prompt": "Write an informal first-person anecdote about a time you were unexpectedly given responsibility at work and had to improvise your way through it, focusing on the creative solutions you came up with when facing an unfamiliar challenge.",
+      "generated": "I\u2019ll never forget the day I found myself in charge of the company\u2019s annual Christmas party. Normally, organizing such a big event is a team effort involving our events coordinator, the marketing manager, and a few other folks. But that year, the events coordinator called in sick right before the deadline, and well, let\u2019s just say my boss was feeling under the weather too.\n\nSo here I was, with a full week to go until the party and no clear plan. My initial reaction was one of panic \u2013 how was I supposed to pull this off single-handedly? But then I remembered all the DIY skills and creativity I\u2019ve picked up over the years. Here\u2019s how I improvised:\n\nFirst up was the decorations. The marketing manager had sent over some festive garlands and balloons, but I knew we needed something more special than that. So I raided the office supply closet and commandeered some rolls of crepe paper. I taped together lengths of it, cut intricate shapes, and hung the messily glued creations all around the main hall. People couldn\u2019t help but stop to admire them \u2013 some even tried to touch them, wondering what kind of glue was holding the stuff together. \n\nNext came the food. We needed to serve hors d'oeuvres and cocktail hors d'oeuvres. Again, I had to think outside the box. I grabbed a few cookie cutters and some leftover frosting from another project, and whipped up some edible snowflakes and candy c",
+      "real": "About a year later I got _my_ chance. But I was not hunting for it. <ORG> went off to <PLACE> for a week's holiday, and left me to\nbe chief editor. I had supposed that that was an easy berth, there being\nnothing to do but write one editorial per day; but I was disappointed in\nthat superstition. I couldn't find anything to write an article about,\nthe first day. Then it occurred to me that inasmuch as it was the 22nd\nof April, 1864, the next morning would be the three-hundredth\nanniversary of <PERSON>'s birthday--and what better theme could I\nwant than that? I got the <ORG> and examined it, and found out who\n<PERSON> was and what he had done, and I borrowed all that and laid\nit before a community that couldn't have been better prepared for\ninstruction about <PERSON> than if they had been prepared by art. There wasn't enough of what <PERSON> had done to make an editorial of\nthe necessary length, but I filled it out with what he hadn't\ndone--which in many respects was more important and striking and\nreadable than the handsomest things he had really accomplished. But next\nday I was in trouble again. There were no more <ORG> to work up. There was nothing in past history, or in the world's future\npossibilities, to make an editorial out of, suitable to that community;\nso there was but one theme left. That theme was Mr. <PERSON>, proprietor of\n<ORG>.\" _His_ editor had gone off to <PLACE"
+    },
+    {
+      "prompt": "Write a candid reflection on the gap between public perception and private reality, using humor and irony to explore personal vanity.",
+      "generated": "Alas! alas! a\u2013alas!\n\nFor as I sit here, penning my thoughts, a peculiar dichotomy looms before me - a stark contrast between what's publicly perceived and what quietly lingers in the private chambers of my soul. \n\nPublicly, I present a polished exterior - smooth as a billiard ball, glistening under scrutiny. My Facebook page is a meticulously curated garden of achievements, with lush green lawns of honors, tall, flourishing trees of accolades, and vibrant blooms of glowing testimonials. Each post is crafted with a meticulous attention to detail, ensuring every rose is perfumed with praise and every leaf dusted with accolades. \n\nYet, privately, I harbor a garden of modesty and self-deprecation. The roses here are a less-than-floral shade of beige, lacking the glossy sheen of the public ones. The leaves whisper secrets of my own humility, often obscured by layers of self-conscious disdain. I dare not reveal these inner truths for fear they would tarnish the pristine facade I've carefully constructed for the world to view.\n\nA throb of vanity strikes me, a tidal wave of narcissistic self-importance. Why must I always paint myself in the most flattering glow? Why can't I be content with the quiet, unassuming truth?\n\nSometimes I wonder if my public persona is actually more of an insult to my own soul. Isn't it telling that I'm willing to sacrifice genuine authenticity for a false ima",
+      "real": "Judge <PERSON> seems to have all the virtues that he ascribes to me. But,\noh my! if you could throw an X-ray through him. We are a pair. I have\nmade a life-study of trying to appear to be what he seems to think I am.\nEverybody believes that I am a monument of all the virtues, but it is\nnothing of the sort. I am living two lives, and it keeps me pretty busy.\n\nSome day there will be a chairman who will forget some of these merits\nof mine, and then he will make a speech.\n\nI have more personal vanity than modesty, and twice as much veracity as\nthe two put together.\n\nWhen that fearless and forgetful chairman is found there will be another\nstory told. At <ORG> recently I thought that I had found\nhim. He started in in the way that I knew I should be painted with all\nsincerity, and was leading to things that would not be to my credit; but\nwhen he said that he never read a book of mine I knew at once that he\nwas a liar, because he never could have had all the wit and intelligence\nwith which he was blessed unless he had read my works as a basis.\n\nI like compliments. I like to go home and tell them all over again to\nthe members of my family. They don't believe them, but I like to tell\nthem in the home circle, all the same. I like to dream of them if I can.\n\nI thank everybody for their compliments, but I don't think that I am\npraised any more than I am entitled to be."
+    },
+    {
+      "prompt": "Write an anecdote about a chance encounter with a stranger who comments on your appearance, followed by your reflection on how that interaction relates to a current situation you're in. Use an informal, conversational tone and include direct dialogue.",
+      "generated": "As I was walking down Main Street, my attention was caught by a peculiar sight: a man dressed entirely in black, with a bowler hat perched jauntily on his head. He stopped beside me, his eyes twinkling with curiosity.\n\n**Man:** \"Aren\u2019t you feeling a bit overdressed for a stroll, mate?\"\n\n**Me:** \"Overdressed? No way! I\u2019m just passing through town.\"\n\n**Man:** \"Well, let\u2019s hear it. You seem to have a flair for the dramatic.\"\n\n**Me:** \"You\u2019re right. I suppose my jacket is a tad too fancy, maybe my tie\u2019s a little too loud. Maybe I should lighten things up a bit.\"\n\n**Man:** \"I\u2019ll bet you\u2019ve been on a quest to find the perfect balance. Maybe a softer fabric for your jacket, a less showy pattern for your tie?\"\n\n**Me:** \"That\u2019s a great suggestion! You\u2019ve really hit the nail on the head. So insightful, for someone who barely knows me.\"\n\n**Man:** \"Just a fellow who\u2019s been paying attention. Now, tell me, what brings you to this charming little town?\"\n\n**Me:** \"Well, I\u2019m actually here for a job interview. My hopes are high, though, the company sounds promising.\"\n\n**Man:** \"Oh, really? Well, you\u2019ve got a good look about you. I can tell you\u2019ll do great. Remember to bring your charm and your confidence to the interview. They love that around here.\"\n\n**Me:** \"Thanks for the advice! You must be a local, huh? You sure have a way with words.\"\n\n**Man:** \"Not always, but sometimes a bit of wit can g",
+      "real": "By-and-by, when he almost reached the station where he was to get off,\nhe got up, crossed over, and he said: \u201cNow I am going to say something\nto you which I hope you will regard as a compliment.\u201d And then he went\non to say: \u201cI have never seen <PERSON>, but I have seen a portrait of\nhim, and any friend of mine will tell you that when I have once seen a\nportrait of a man I place it in my eye and store it away in my memory,\nand I can tell you now that you look enough like <PERSON> to be his\nbrother. Now,\u201d he said, \u201cI hope you take this as a compliment. Yes,\nyou are a very good imitation; but when I come to look closer, you are\nprobably not that man.\u201d\n\nI said: \u201cI will be frank with you. In my desire to look like that\nexcellent character I have dressed for the character; I have been\nplaying a part.\u201d\n\nHe said: \u201cThat is all right, that is all right; you look very well on\nthe outside, but when it comes to the inside you are not in it with the\noriginal.\u201d\n\nSo when I come to a place like this with nothing valuable to say I\nalways play a part. But I will say before I sit down that when it comes\nto saying anything here I will express myself in this way: I am heartily\nin sympathy with you in your efforts to help those who were sufferers\nin this calamity, and in your desire to help those who were rendered\nhomeless, and in saying this I wish to impress on you the fact that I am\nnot playing a p"
+    },
+    {
+      "prompt": "Write a first-person account of attending a formal public event. Describe the social hierarchy you observed and reflect on what was missing from the proceedings. Include a brief comment on a linguistic observation.",
+      "generated": "Lately, I attended a formal public event, a gala dinner hosted by the city's Chamber of Commerce, and it left me feeling uneasy. The room was filled with a sea of suits and gowns, each person appearing to belong to a different stratum of society. \n\nThe first thing that struck me was the social hierarchy, a clear delineation of status and wealth. There were the impeccably groomed and dressed guests, whose attire seemed to gleam under the artificial glow of the chandeliers. They sat at the head of the tables, their conversation filled with the usual banalities - the weather, the latest gossip, and the stock market. They spoke in measured tones, as if their words were carefully chosen and must not offend anyone.\n\nThen there were those who seemed to occupy a lower level, their attire less expensive and certainly less polished. These individuals leaned forward, their elbows resting on the table, their chatter more animated and often more crude. They seemed to regard the upper echelon with disdain, a sentiment I found troubling to witness. \n\nA peculiar observation I made was the frequent use of the phrase \"in my opinion.\" It was as though everyone felt compelled to preface their remarks with a disclaimer, suggesting that their views were merely subjective. This linguistic tic, I noticed, reinforced the notion that everyone\u2019s opinions were equally valid, regardless of their social sta",
+      "real": "<PLACE>, 1899.\n\nI noticed in Ambassador <PERSON>'s speech that he said: \u201cYou may be\n<GROUP> or <PERSON>, but you cannot be both at the same time.\u201d You\nresponded by applause.\n\nConsider the effect of a short residence here. I find the Ambassador\nrises first to speak to a toast, followed by a Senator, and I come\nthird. What a subtle tribute that to monarchial influence of the country\nwhen you place rank above respectability!\n\nI was born modest, and if I had not been things like this would force it\nupon me. I understand it quite well. I am here to see that between them\nthey do justice to the day we celebrate, and in case they do not I must\ndo it myself. But I notice they have considered this day merely from one\nside\u2014its sentimental, patriotic, poetic side. But it has another side.\nIt has a commercial, a business side that needs reforming. It has a\nhistorical side.\n\nI do not say \u201can\u201d historical side, because I am speaking the <GROUP>\nlanguage. I do not see why our cousins should continue to say \u201can\u201d\n hospital, \u201can\u201d historical fact, \u201can\u201d horse. It seems to me the <ORG>\nof Women, now in session, should look to it. I think \u201can\u201d is having a\nlittle too much to do with it. It comes of habit, which accounts for\nmany things."
+    },
+    {
+      "prompt": "Write a reflective piece that weaves together social commentary on human behavior with a humorous anecdote illustrating how people jump to conclusions.",
+      "generated": "Upon reflection, we notice a peculiar social dynamic that often ensues when individuals perceive an anomaly. It\u2019s as though human nature is predisposed to misconstrue minor occurrences as evidence of larger, sinister intentions. One such moment remains etched in my memory, a humorous testament to this inclination.\n\nA few years ago, during a routine walk in the park, I happened to pass by a local community garden. My presence attracted minimal attention, save for a curious glance or two. However, as I strolled past, a group of elderly neighbors gathered nearby. With their backs turned towards me, they began to deliberate animatedly. Their animated conversation continued for several moments, their heads bent closely together, voices raised.\n\nMy curiosity piqued, I decided to approach and inquire what the commotion was about. As I neared, one of the neighbors, a kindly old woman named Martha, spotted me and waved me over, her eyes twinkling with mirth. \"Oh, hello there!\" she exclaimed, \"Why, look what we've discovered!\"\n\nShe pointed to a small pile of seeds scattered across the lawn near their discussion circle. \"Isn't it fascinating?\" she quizzed. \"Just look at how neatly arranged they are!\"\n\nI couldn\u2019t help but laugh, intrigued by the coincidence. \"Yes, it is a bit odd,\" I replied, genuinely puzzled. \"Do you know how someone could have spread them so orderly?\"\n\nMartha chuckled s",
+      "real": "If the cholera or black plague should come to these shores, perhaps\nthe bulk of the nation would pray to be delivered from it, but the rest\nwould put their trust in <ORG>.\n\nI read in the papers within the last day or two of a poor young girl who\nthey said was a leper. Did the people in that populous section of the\ncountry where she was\u2014did they put their trust in God? The girl was\nafflicted with the leprosy, a disease which cannot be communicated from\none person to another.\n\nYet, instead of putting their trust in God, they harried that poor\ncreature, shelterless and friendless, from place to place, exactly as\nthey did in <PLACE>, when they made lepers wear bells, so that\npeople could be warned of their approach and avoid them. Perhaps those\npeople in <PLACE> thought they were putting their trust in God.\n\nThe President ordered the removal of that motto from the coin, and I\nthought that it was well. I thought that overstatement should not stay\nthere. But I think it would better read, \u201cWithin certain judicious\nlimitations we trust in God,\u201d and if there isn't enough room on the coin\nfor this, why, enlarge the coin.\n\nNow I want to tell a story about jumping at conclusions. It was told\nto me by <PERSON>, and it concerns a christening. There was a little\nclergyman who was prone to jump at conclusions sometimes. One day he\nwas invited to officiate at a christening. He went. There sat\nt"
+    }
+  ],
+  "training": {
+    "stage": "baseline",
+    "n_train_rows": 0
+  }
+}

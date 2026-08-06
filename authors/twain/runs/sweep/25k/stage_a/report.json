@@ -1,0 +1,423 @@
+{
+  "run_name": "stage_a-25k",
+  "split": "blind",
+  "model": "",
+  "generated_at": "2026-08-06T05:23:50",
+  "n_generations": 135,
+  "stylometry": {
+    "overall": 0.0695,
+    "distributions": {
+      "sent_len_hist": 0.0114,
+      "word_len_hist": 0.004,
+      "function_words": 0.021,
+      "punctuation": 0.0345,
+      "openers": 0.1335,
+      "pos_trigrams": 0.0669
+    },
+    "scalars_normalized": {
+      "sent_len_mean": 0.1064,
+      "sent_len_sd": 0.4105,
+      "burstiness": 0.3966,
+      "word_len_mean": 0.316,
+      "msttr": 0.3071,
+      "contraction_rate": 0.1573,
+      "hedge_rate": 0.0196,
+      "intensifier_rate": 0.1862,
+      "first_person_rate": 0.2643,
+      "second_person_rate": 0.1275,
+      "em_dash_per_100": 0.6298,
+      "semicolon_per_100": 0.213,
+      "paren_per_100": 0.0502,
+      "question_per_100": 0.0143,
+      "exclaim_per_100": 0.165,
+      "para_len_sents": 0.0758
+    },
+    "scalars_raw": {
+      "sent_len_mean": [
+        20.239,
+        21.09
+      ],
+      "sent_len_sd": [
+        16.464,
+        14.002
+      ],
+      "burstiness": [
+        -0.103,
+        -0.202
+      ],
+      "word_len_mean": [
+        4.115,
+        3.862
+      ],
+      "msttr": [
+        0.777,
+        0.74
+      ],
+      "contraction_rate": [
+        0.958,
+        0.644
+      ],
+      "hedge_rate": [
+        0.861,
+        0.832
+      ],
+      "intensifier_rate": [
+        0.615,
+        0.801
+      ],
+      "first_person_rate": [
+        5.256,
+        6.048
+      ],
+      "second_person_rate": [
+        1.313,
+        1.058
+      ],
+      "em_dash_per_100": [
+        0.512,
+        0.008
+      ],
+      "semicolon_per_100": [
+        0.764,
+        0.87
+      ],
+      "paren_per_100": [
+        0.043,
+        0.003
+      ],
+      "question_per_100": [
+        0.149,
+        0.163
+      ],
+      "exclaim_per_100": [
+        0.22,
+        0.055
+      ],
+      "para_len_sents": [
+        3.667,
+        3.856
+      ]
+    },
+    "ci_lo": 0.065,
+    "ci_hi": 0.0874
+  },
+  "biggest_gaps": [
+    [
+      "scalar:em_dash_per_100",
+      0.6298
+    ],
+    [
+      "scalar:sent_len_sd",
+      0.4105
+    ],
+    [
+      "scalar:burstiness",
+      0.3966
+    ],
+    [
+      "scalar:word_len_mean",
+      0.316
+    ],
+    [
+      "scalar:msttr",
+      0.3071
+    ],
+    [
+      "scalar:first_person_rate",
+      0.2643
+    ],
+    [
+      "scalar:semicolon_per_100",
+      0.213
+    ],
+    [
+      "scalar:intensifier_rate",
+      0.1862
+    ]
+  ],
+  "sent_len_hist": {
+    "buckets": [
+      "0-5",
+      "5-10",
+      "10-15",
+      "15-20",
+      "20-25",
+      "25-30",
+      "30-40",
+      "40-60",
+      "60+"
+    ],
+    "real": [
+      0.0793,
+      0.1911,
+      0.1789,
+      0.1569,
+      0.1158,
+      0.0869,
+      0.0816,
+      0.073,
+      0.0365
+    ],
+    "generated": [
+      0.0414,
+      0.1608,
+      0.1807,
+      0.1626,
+      0.1346,
+      0.0967,
+      0.1265,
+      0.0769,
+      0.0198
+    ]
+  },
+  "config": {
+    "run_name": "stage_a",
+    "notes": "baseline recipe: all-linear LoRA r16, DoRA, NEFTune 5, 2 epochs",
+    "model": {
+      "name": "Qwen/Qwen2.5-3B-Instruct",
+      "dtype": "bfloat16",
+      "load_in_4bit": false,
+      "attn_implementation": "sdpa",
+      "max_seq_len": 1024,
+      "trust_remote_code": false
+    },
+    "lora": {
+      "target_modules": "all-linear",
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "bias": "none",
+      "use_dora": true,
+      "use_rslora": false,
+      "rank_pattern": {},
+      "alpha_pattern": {},
+      "layers_to_transform": null,
+      "modules_to_save": []
+    },
+    "sft": {
+      "epochs": 2.0,
+      "lr": 0.00015,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.05,
+      "per_device_batch_size": 2,
+      "grad_accum": 8,
+      "weight_decay": 0.0,
+      "max_grad_norm": 1.0,
+      "gradient_checkpointing": true,
+      "neftune_noise_alpha": 5.0,
+      "loraplus_lr_ratio": 0.0,
+      "train_on_completions_only": true,
+      "raw_next_token_mix": 0.1,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "save_total_limit": 3,
+      "logging_steps": 5,
+      "early_stopping_patience": 3,
+      "seed": 17
+    },
+    "dpo": {
+      "beta": 0.1,
+      "epochs": 1.0,
+      "lr": 5e-06,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.1,
+      "per_device_batch_size": 1,
+      "grad_accum": 8,
+      "gradient_checkpointing": true,
+      "eval_steps": 25,
+      "save_steps": 25,
+      "logging_steps": 5,
+      "max_prompt_len": 512,
+      "max_len": 1024,
+      "loss_type": "sigmoid",
+      "reference_policy": "stage_a",
+      "av_reward_filter": false,
+      "av_margin": 0.05,
+      "length_match_tolerance": 0.35,
+      "seed": 17
+    },
+    "gen": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 17,
+      "max_new_tokens": 400,
+      "n_per_prompt": 1,
+      "max_prompt_tokens": 8192,
+      "baseline_n_shots": 5,
+      "system_prompt": "You are writing as the author. Match the author's grammatical structure, sentence rhythm, paragraph flow, and word choice. Do not imitate the author's topics or invent facts about their life."
+    },
+    "data": {
+      "chunk_min_words": 60,
+      "chunk_max_words": 320,
+      "questions_per_chunk": 2,
+      "use_supplied_prompts": true,
+      "supplied_prompt_scope": "first_chunk",
+      "val_frac": 0.15,
+      "blind_frac": 0.15,
+      "group_near_duplicates": true,
+      "near_dup_threshold": 0.15,
+      "never_scrub": [],
+      "split_by": "document",
+      "scrub_entities": true,
+      "seed": 17
+    },
+    "eval": {
+      "style_embedder": "AnnaWegmann/Style-Embedding",
+      "second_style_embedder": "StyleDistance/styledistance",
+      "av_classifier": "logreg",
+      "fluency_max_ppl_regression": 0.15,
+      "informal_tag": "informal"
+    }
+  },
+  "av": {
+    "attribution_rate": 0.6963,
+    "score_mean": 0.5365,
+    "score_median": 0.564,
+    "score_sd": 0.1967,
+    "n": 135,
+    "threshold": 0.4434,
+    "real_reference_attribution_rate": 0.8519,
+    "verifier_auc": 0.8385,
+    "verifier_accuracy": 0.7922,
+    "embedder": "AnnaWegmann/Style-Embedding",
+    "verifier_verdict": "PASS"
+  },
+  "leakage": {
+    "verbatim": {
+      "n": 12,
+      "gens_with_verbatim_ngram": 0,
+      "rate": 0.0,
+      "longest_verbatim_run_tokens": 0,
+      "examples": []
+    },
+    "entities": {
+      "n_distinct_leaked": 37,
+      "n_occurrences": 227,
+      "per_generation": 1.681,
+      "top": [
+        [
+          "The",
+          144
+        ],
+        [
+          "New",
+          11
+        ],
+        [
+          "Miss",
+          6
+        ],
+        [
+          "England",
+          4
+        ],
+        [
+          "South",
+          4
+        ],
+        [
+          "State",
+          4
+        ],
+        [
+          "Europe",
+          4
+        ],
+        [
+          "General",
+          3
+        ],
+        [
+          "United",
+          3
+        ],
+        [
+          "States",
+          3
+        ]
+      ],
+      "author_entity_vocab": 404
+    },
+    "semantic_echo": {
+      "n": 135,
+      "gen_mean_max_sim": 0.4633,
+      "heldout_mean_max_sim": 0.5124,
+      "echo": -0.0491,
+      "interpretation": "\u22480 healthy; >0.05 the model is paraphrasing training content the author's own held-out text does not share"
+    },
+    "verdict": "PASS"
+  },
+  "fluency": {
+    "ppl_adapter_on": 3.2481,
+    "ppl_adapter_off": 3.2888,
+    "relative_regression": -0.0124,
+    "max_allowed": 0.15,
+    "verdict": "PASS",
+    "n_probe_texts": 5,
+    "step": 26
+  },
+  "samples": [
+    {
+      "prompt": "Write a short informal essay that uses humorous personal anecdotes to illustrate broader observations about human nature, social customs, or how people's circumstances influence their behavior.",
+      "generated": "My first visit to this place was in 1894.\n<ORG> had gone off to <PLACE>, and I went with him. We started off early in the morning from <PLACE>\non <DATE>. We had a <ORDINAL>. We started in our usual way: we took our seats, and after\na while the engine began to move. Then we got up to the head of the\n<PLACE> track, which was where all the passengers were to get off. We then\nstarted to make a <ORDINAL> trip back to <PLACE> and <PLACE>.\n\nWe got on board there about the middle of the afternoon. The next thing\nI knew we had reached <PLACE>. We were in the midst of the <PLACE>\nand were surrounded by a crowd of <PLACE> and <PLACE> people. They\nwere all very friendly and gave us the highest praise, but they made it\nvery difficult for us to get through because of their kindness.\n\nWe reached <PLACE> just in time for dinner. We sat down at the table\nat eight o'clock, and we all got up at ten minutes before nine to go\nto the theatre. We did not have to wait any time for tickets. When we\ngot into the theatre there were two hundred and fifty people already\nthere, so we were obliged to stand behind the stage until the play was\nover.\n\nWhen we finally got to <PLACE> it was six o'clock in the evening,\nand there was a crowd of people there ready to meet us. We\nhad no time to get out of the car, and we started out of it, and before\nwe had gotten halfway across the <PLACE> the crowd had taken us all",
+      "real": "Yesterday, for example, I was at a luncheon party. At the end of the\nparty a great dignitary of <ORG> went away half\nan hour before anybody else and carried off my hat. Now, that was an\ninnocent act on his part. He went out first, and of course had the\nchoice of hats. As a rule I try to get out first myself. But I hold that\nit was an innocent, unconscious act, due, perhaps, to heredity. He\nwas thinking about ecclesiastical matters, and when a man is in that\ncondition of mind he will take anybody's hat. The result was that the\nwhole afternoon I was under the influence of his clerical hat and could\nnot tell a lie. Of course, he was hard at it.\n\nIt is a compliment to both of us. His hat fitted me exactly; my hat\nfitted him exactly. So I judge I was born to rise to high dignity in the\nChurch some how or other, but I do not know what he was born for. That\nis an illustration of the influence of habit, and it is perceptible here\nwhen they say \u201can\u201d hospital, \u201can\u201d <GROUP>, \u201can\u201d historical.\n\nThe business aspects of the Fourth of July is not perfect as it stands.\nSee what it costs us every year with loss of life, the crippling of\nthousands with its fireworks, and the burning down of property. It is\nnot only sacred to patriotism and universal freedom, but to the surgeon,\nthe undertaker, the insurance offices\u2014and they are working it for all it\nis worth."
+    },
+    {
+      "prompt": "Write an informal first-person anecdote about a time you were unexpectedly given responsibility at work and had to improvise your way through it, focusing on the creative solutions you came up with when facing an unfamiliar challenge.",
+      "generated": "I went down to the <PLACE> and found him sitting in his chair, and I\nsaid: \"Mr. <PERSON>, you have got to go down to <ORG>, and take charge\nof all of the <ORG>'s business there. You will do that by telegraph.\"\n\n\"Thank you,\" said he.\n\n<PERSON> was the greatest <ORG> in the world; he was a <ORG>; but he\nwas so far ahead of everybody else that he had never been put in\ncharge of any one thing before, and he did not know what he was going\nto do.\n\nHe began to think about it, and after a while he said to me: \"It is no\ngood talking to him about it. He has got a lot of notions himself--he\nhasn't asked for any advice. He will say nothing until he knows what\nhe wants to do.\"\n\nThen I suggested some things we could do, and he said: \"Yes, that's a\ngood idea. We will do that.\"\n\nI told him to get a typewriter and type out a few things for him, and\nhe asked me: \"What is a typewriter?\"\n\n\"I don't know.\"\n\n<PERSON> said: \"Well, you can write 'Dear <PERSON>', and then you can\nwrite 'How are you?'\"\n\nI said: \"Yes, but what is it for?\"\n\n<PERSON> said: \"I don't know. It is good to write letters on it. It\ncost something. You have to pay for it.\"\n\nThen he started off to <PLACE>, which was forty miles away, and it was\na long distance, and he didn't know how to drive the car, and he was\nafraid he wouldn't get there in time; but he got there all right. He\nwas a very good driver, and he did not seem to be afr",
+      "real": "About a year later I got _my_ chance. But I was not hunting for it. <ORG> went off to <PLACE> for a week's holiday, and left me to\nbe chief editor. I had supposed that that was an easy berth, there being\nnothing to do but write one editorial per day; but I was disappointed in\nthat superstition. I couldn't find anything to write an article about,\nthe first day. Then it occurred to me that inasmuch as it was the 22nd\nof April, 1864, the next morning would be the three-hundredth\nanniversary of <PERSON>'s birthday--and what better theme could I\nwant than that? I got the <ORG> and examined it, and found out who\n<PERSON> was and what he had done, and I borrowed all that and laid\nit before a community that couldn't have been better prepared for\ninstruction about <PERSON> than if they had been prepared by art. There wasn't enough of what <PERSON> had done to make an editorial of\nthe necessary length, but I filled it out with what he hadn't\ndone--which in many respects was more important and striking and\nreadable than the handsomest things he had really accomplished. But next\nday I was in trouble again. There were no more <ORG> to work up. There was nothing in past history, or in the world's future\npossibilities, to make an editorial out of, suitable to that community;\nso there was but one theme left. That theme was Mr. <PERSON>, proprietor of\n<ORG>.\" _His_ editor had gone off to <PLACE"
+    },
+    {
+      "prompt": "Write a candid reflection on the gap between public perception and private reality, using humor and irony to explore personal vanity.",
+      "generated": "I do not wish to make any great confession. I should have been less\nembarrassed if I had kept my promise of secrecy; but I have decided\nthat there is no need for it, and I must go to the point at once. It is\nall very well for me to say that the best thing in the world is\ndiscretion. But I am not willing to believe that this is true with\nrespect to myself. I will take up my pen and say so frankly and\nhonestly. I think the best thing in the world is frankness. I have done\na great many things that were wrong for me to do, and have said\nunpleasant things; and now that I can no longer help it, I shall tell\nthe truth. I have lived in a private life, and have known what a great\ngap existed between the private life and the public one; and I know that\nthere is still more difference than you suppose.\n\nThere is one thing you ought to understand. I love people--they are\nvery nice, and very good. I have loved them all my life, without having\never received a single thank you from them. You see how it is with me.\nThey like me, and they like me very much. They are very nice people,\nand very good. But they do not know that they are doing me such a\nwonderful service by liking me. They do not know it because it never\noccurs to them to think about it. They think about other things. They\nthink that I am doing an awful lot of work, and they think that I am\ndoing it in order that they may get somethi",
+      "real": "Judge <PERSON> seems to have all the virtues that he ascribes to me. But,\noh my! if you could throw an X-ray through him. We are a pair. I have\nmade a life-study of trying to appear to be what he seems to think I am.\nEverybody believes that I am a monument of all the virtues, but it is\nnothing of the sort. I am living two lives, and it keeps me pretty busy.\n\nSome day there will be a chairman who will forget some of these merits\nof mine, and then he will make a speech.\n\nI have more personal vanity than modesty, and twice as much veracity as\nthe two put together.\n\nWhen that fearless and forgetful chairman is found there will be another\nstory told. At <ORG> recently I thought that I had found\nhim. He started in in the way that I knew I should be painted with all\nsincerity, and was leading to things that would not be to my credit; but\nwhen he said that he never read a book of mine I knew at once that he\nwas a liar, because he never could have had all the wit and intelligence\nwith which he was blessed unless he had read my works as a basis.\n\nI like compliments. I like to go home and tell them all over again to\nthe members of my family. They don't believe them, but I like to tell\nthem in the home circle, all the same. I like to dream of them if I can.\n\nI thank everybody for their compliments, but I don't think that I am\npraised any more than I am entitled to be."
+    },
+    {
+      "prompt": "Write an anecdote about a chance encounter with a stranger who comments on your appearance, followed by your reflection on how that interaction relates to a current situation you're in. Use an informal, conversational tone and include direct dialogue.",
+      "generated": "It was during one of those <PLACE> seasons when the snow\nis so deep that one has to be careful in walking on it; and when I\nwas on my way home one evening, after a walk, I stopped at a store,\nand asked the proprietor if he would do me the favor to let me go\nout in his wagon. I had not gone very far on my walk before I met a\nstranger who said to me: \"I hope you will soon get rid of that silly\nhabit of your face.\"\n\"I hope so,\" I replied.\n\"Well, then, you ought to look at it,\" he said.\n\"I have no use for any such advice,\" I said, and turned away. Then he\nsaid: \"You ought to be ashamed of it.\"\n\"Well, I am ashamed of it,\" I said, and I added something else which\nI wish I had not said. He seemed angry. He said that I ought to make\nup my mind and give up that habit, and to go to the good doctor and\ntake some medicine. Then we got into a discussion about that\nmedicine, which was disagreeable.\n\nI thought that this man could not have been much over forty-five years\nof age. He had a large head, but it was not very handsome. His face\nwas all scarred and wrinkled. His eyes were small, his nose was\nlong, and his face was not smooth. He was dressed in a suit of black\ncloth, but there were signs of old rags showing here and there, and\nhis shoes were worn. I felt rather ashamed of him, and wished that I\ncould have done something more for him. He seemed to think that he\nhad found a new friend in",
+      "real": "By-and-by, when he almost reached the station where he was to get off,\nhe got up, crossed over, and he said: \u201cNow I am going to say something\nto you which I hope you will regard as a compliment.\u201d And then he went\non to say: \u201cI have never seen <PERSON>, but I have seen a portrait of\nhim, and any friend of mine will tell you that when I have once seen a\nportrait of a man I place it in my eye and store it away in my memory,\nand I can tell you now that you look enough like <PERSON> to be his\nbrother. Now,\u201d he said, \u201cI hope you take this as a compliment. Yes,\nyou are a very good imitation; but when I come to look closer, you are\nprobably not that man.\u201d\n\nI said: \u201cI will be frank with you. In my desire to look like that\nexcellent character I have dressed for the character; I have been\nplaying a part.\u201d\n\nHe said: \u201cThat is all right, that is all right; you look very well on\nthe outside, but when it comes to the inside you are not in it with the\noriginal.\u201d\n\nSo when I come to a place like this with nothing valuable to say I\nalways play a part. But I will say before I sit down that when it comes\nto saying anything here I will express myself in this way: I am heartily\nin sympathy with you in your efforts to help those who were sufferers\nin this calamity, and in your desire to help those who were rendered\nhomeless, and in saying this I wish to impress on you the fact that I am\nnot playing a p"
+    },
+    {
+      "prompt": "Write a first-person account of attending a formal public event. Describe the social hierarchy you observed and reflect on what was missing from the proceedings. Include a brief comment on a linguistic observation.",
+      "generated": "I had never been to such a place before. It made me feel very small and\nshy--very much less than the people there. I had always thought I should\nbe able to make friends with strangers, and have fun among them; but now,\nif it hadn't been for a man who recognized me by his voice and came over to\ntalk with me, I should have been in real trouble.\n\nI was introduced to several others and got acquainted with them, but they\nwere all men. <PERSON> and <PERSON>, two ladies whom I knew well, were\nthere also; but I didn't know <PERSON>. He was one of those people who\nhave everything, and that means they have nothing. They can afford any\nthing, and they don't want anything. They have the best things, but they\ndon't want them. They have enough, and they don't care for any more.\nTherefore they are content to wear their clothes out and let them be\nbroken; and they never buy any new things, but content themselves with\nold ones that have worn out; and they go through their lives without\nmaking any new acquisitions at all. They don't need any acquisition, and\nthey don't want any. They are satisfied to have what they have and never\nwant to change it. They don't get excited about any sort of excitement;\nand they don't like to talk about anything except themselves. They have\nno use for other people; they have no desire to know them; they are not\ninterested in them; they don't care for them; they don",
+      "real": "<PLACE>, 1899.\n\nI noticed in Ambassador <PERSON>'s speech that he said: \u201cYou may be\n<GROUP> or <PERSON>, but you cannot be both at the same time.\u201d You\nresponded by applause.\n\nConsider the effect of a short residence here. I find the Ambassador\nrises first to speak to a toast, followed by a Senator, and I come\nthird. What a subtle tribute that to monarchial influence of the country\nwhen you place rank above respectability!\n\nI was born modest, and if I had not been things like this would force it\nupon me. I understand it quite well. I am here to see that between them\nthey do justice to the day we celebrate, and in case they do not I must\ndo it myself. But I notice they have considered this day merely from one\nside\u2014its sentimental, patriotic, poetic side. But it has another side.\nIt has a commercial, a business side that needs reforming. It has a\nhistorical side.\n\nI do not say \u201can\u201d historical side, because I am speaking the <GROUP>\nlanguage. I do not see why our cousins should continue to say \u201can\u201d\n hospital, \u201can\u201d historical fact, \u201can\u201d horse. It seems to me the <ORG>\nof Women, now in session, should look to it. I think \u201can\u201d is having a\nlittle too much to do with it. It comes of habit, which accounts for\nmany things."
+    },
+    {
+      "prompt": "Write a reflective piece that weaves together social commentary on human behavior with a humorous anecdote illustrating how people jump to conclusions.",
+      "generated": "It was late in the evening. I sat in my room with a pipe in my mouth and a\nbook before me; but no words came, and there seemed to be no point to the\nstory which I was reading. The evening was cold. I could hear the wind\nsweeping down the street in great gusts. The moon shone out brightly in\nthe clear sky. At last I decided to go to bed. When I turned out the light,\nI said to myself:\n\n\"I will take this opportunity of looking through my old books to see what\nbooks I have left from the days when I did more than just read them.\"\n\nAnd I turned over the books till I found one that caught my eye. It was\na small volume, in red cloth and gilt letters; it had been one of the\npopular books at that time, and it had a very large number of readers, and\nhad sold a good many copies. I opened the book and found it all written\nover by hand in fine black ink--I mean by the author himself. It was an\nauthor who had been known for years as a popular writer. He was a man of\ngreat ability and talent. And now he had changed his style so that his\nbooks were no longer accessible to his old readers.\n\nThe title of the book was \"The Art of Selling,\" and in it he gave his\nviews on the art of selling. I looked up and saw him sitting across the\nroom, talking to a woman whom he was trying to sell something to. I had\nnever heard him talk like that before. His conversation with the woman\nwas full of the ideas of ",
+      "real": "If the cholera or black plague should come to these shores, perhaps\nthe bulk of the nation would pray to be delivered from it, but the rest\nwould put their trust in <ORG>.\n\nI read in the papers within the last day or two of a poor young girl who\nthey said was a leper. Did the people in that populous section of the\ncountry where she was\u2014did they put their trust in God? The girl was\nafflicted with the leprosy, a disease which cannot be communicated from\none person to another.\n\nYet, instead of putting their trust in God, they harried that poor\ncreature, shelterless and friendless, from place to place, exactly as\nthey did in <PLACE>, when they made lepers wear bells, so that\npeople could be warned of their approach and avoid them. Perhaps those\npeople in <PLACE> thought they were putting their trust in God.\n\nThe President ordered the removal of that motto from the coin, and I\nthought that it was well. I thought that overstatement should not stay\nthere. But I think it would better read, \u201cWithin certain judicious\nlimitations we trust in God,\u201d and if there isn't enough room on the coin\nfor this, why, enlarge the coin.\n\nNow I want to tell a story about jumping at conclusions. It was told\nto me by <PERSON>, and it concerns a christening. There was a little\nclergyman who was prone to jump at conclusions sometimes. One day he\nwas invited to officiate at a christening. He went. There sat\nt"
+    }
+  ],
+  "training": {
+    "stage": "A",
+    "trainable": {
+      "total_params": 3116904448,
+      "trainable_params": 30965760,
+      "trainable_pct": 0.9935,
+      "trainable_by_kind": {
+        "attention": 7538688,
+        "mlp": 23427072,
+        "other": 0
+      }
+    },
+    "train_runtime_s": 272.7,
+    "n_train_rows": 199
+  },
+  "baseline_comparison": {
+    "AV attribution rate": {
+      "baseline": 0.4667,
+      "this_run": 0.6963,
+      "delta": 0.2296
+    },
+    "stylometry distance (lower better)": {
+      "baseline": 0.1091,
+      "this_run": 0.0695,
+      "delta": 0.0396
+    },
+    "verbatim leakage rate (lower better)": {
+      "baseline": 0.0444,
+      "this_run": 0.0,
+      "delta": 0.0444
+    }
+  }
+}
