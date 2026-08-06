@@ -15,6 +15,14 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 TWAIN_ROOT="${TWAIN_ROOT:-$HOME/authors/twain}"
 
+# run_matrix exits non-zero when any unit fails — but a unit "failing" is often a leakage-gate
+# veto, which is an expected research outcome (small-arm baselines parrot their exemplars),
+# not a reason to abandon the remaining tiers. Record and continue; read matrix_state.json.
+matrix() {
+  python scripts/run_matrix.py "$@" || \
+    echo "[06] run_matrix recorded failed unit(s) — continuing; gate vetoes are data points. See runs/matrix_state.json"
+}
+
 echo "== 1. Tier 0: remaining confound closers (Chesterton) =="
 # a14 no-scrub diagnostic (already ran and committed at runs/matrix/a14_no_scrubbing; the
 # guard keeps this re-runnable from scratch on a fresh box). DIAGNOSTIC ONLY — never ship it.
@@ -33,31 +41,31 @@ if [ ! -f runs/matrix/a14_no_scrubbing/report.json ]; then
 fi
 python scripts/adapter_anatomy.py runs/matrix/a14_no_scrubbing \
     --json runs/results/anatomy_a14.json || true
-python scripts/run_matrix.py --only seeds rq2x    # third seed + the interaction cell
+matrix --only seeds rq2x    # third seed + the interaction cell
 # Checkpoint-trajectory eval: interrupted after step-100 — the script skips finished steps.
 if [ -d runs/trajectory ]; then
   scripts/05_checkpoint_trajectory.sh runs/trajectory
 fi
 
 echo "== 2. Cliff shape: the 15k/20k arms (only the new arms actually run) =="
-python scripts/run_matrix.py --only rq1
+matrix --only rq1
 
 echo "== 3. Per-matrix locus split (Savine test): q,k vs v,o =="
-python scripts/run_matrix.py --only rq2 --rq2-configs a17_qk_only a18_vo_only
+matrix --only rq2 --rq2-configs a17_qk_only a18_vo_only
 
 echo "== 4. Cross-model replication =="
 if python -c "import huggingface_hub as h; h.whoami()" >/dev/null 2>&1; then
-  python scripts/run_matrix.py --only models --model-configs a16_llama3b a13_1p5b
+  matrix --only models --model-configs a16_llama3b a13_1p5b
 else
   echo "  no HF login found — meta-llama/Llama-3.2-3B-Instruct is gated. Running the"
   echo "  ungated within-family point only; accept the Llama license + huggingface-cli login,"
   echo "  then re-run this script for a16."
-  python scripts/run_matrix.py --only models --model-configs a13_1p5b
+  matrix --only models --model-configs a13_1p5b
 fi
 
 echo "== 5. Second author (Twain, informal register) =="
 if [ -f "$TWAIN_ROOT/data/processed/blind.jsonl" ]; then
-  WLM_ROOT="$TWAIN_ROOT" python scripts/run_matrix.py --only floor rq1
+  WLM_ROOT="$TWAIN_ROOT" matrix --only floor rq1
   WLM_ROOT="$TWAIN_ROOT" python scripts/assemble_results.py \
       --runs "$TWAIN_ROOT/runs" --out "$TWAIN_ROOT/runs/results"
 else
