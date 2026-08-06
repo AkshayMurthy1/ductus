@@ -6,8 +6,8 @@ change. This script creates that tree, writes the corpus checklist and the exact
 sequence into it, and refuses to scaffold inside the repo — extra-author corpora (and
 especially private ones) live outside version control, always.
 
-    python scripts/new_author.py ~/authors/orwell --name "George Orwell" --register formal
-    python scripts/new_author.py ~/authors/blogger01 --register informal --private
+    python scripts/new_author.py authors/orwell --name "George Orwell" --register formal
+    python scripts/new_author.py authors/blogger01 --register informal   # BAC: stays untracked (no allow-list line)
 
 The tree it creates is exactly what scripts/00_phase0_cpu.sh expects under WLM_ROOT:
 
@@ -81,7 +81,7 @@ Per-corpus rules that do not bend (docs/RUN_MATRIX.md):
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("root", help="directory to scaffold (created if missing); NOT inside the repo")
+    ap.add_argument("root", help="directory to scaffold (created if missing); public authors go in authors/<name>")
     ap.add_argument("--name", default=None, help="author display name (default: directory name)")
     ap.add_argument("--register", default="formal", choices=["formal", "informal", "mixed"])
     ap.add_argument("--private", action="store_true",
@@ -91,7 +91,7 @@ def main() -> int:
     root = Path(args.root).expanduser().resolve()
     if root == REPO or REPO in root.parents or root in (REPO / "data").parents:
         print(f"refusing to scaffold inside the repo ({REPO}) — author corpora live outside "
-              "version control. Pick a path like ~/authors/<name>.")
+              "version control. Private-author work belongs in a separate repository (docs/STATUS.md §5).")
         return 1
     if (root / "RUNBOOK.md").exists():
         print(f"{root} already has a RUNBOOK.md — not overwriting an existing author root.")

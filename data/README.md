@@ -20,13 +20,14 @@ private writing is about to be committed.
 
 **Total ≈ 22 MB.** Under GitHub's limits with room to spare; no Git LFS required.
 
-## Expansion authors (`data/authors/`)
+## Replication authors (`authors/<name>/`, repo root)
 
-Public-domain expansion authors (docs/EXPANSION.md) are snapshotted here with the same
-provenance rules as the fixture — corpus, distractors, and paid `pairs.jsonl` per author,
-one explicit `.gitignore` allow-list line each. See `data/authors/README.md`. Research-use-only
-corpora (the Blog Authorship Corpus blogger) and private authors are never snapshotted;
-`scripts/snapshot_author.py` enforces both guards mechanically.
+Each replication author is a complete in-repo experiment tree — `authors/<name>/{data,runs}` —
+mirroring this root's layout and provenance rules (corpus + distractors + paid `pairs.jsonl` +
+run records commit; deterministic intermediates and weights don't). One explicit `.gitignore`
+allow-list block per author, never a wildcard: research-use-only corpora (the Blog Authorship
+Corpus blogger) get no committable path, and private-author work lives in a separate
+repository, not here (docs/STATUS.md §5). See `authors/README.md`.
 
 ## Not committed
 

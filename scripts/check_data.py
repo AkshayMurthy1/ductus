@@ -42,7 +42,8 @@ def human(n: float) -> str:
 
 
 def main() -> int:
-    files = sorted(set(tracked_or_untracked("data") + tracked_or_untracked("runs")))
+    files = sorted(set(tracked_or_untracked("data") + tracked_or_untracked("runs")
+                       + tracked_or_untracked("authors")))
     if not files:
         print("nothing under data/ or runs/ would be committed.")
         return 0

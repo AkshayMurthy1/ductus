@@ -13,7 +13,9 @@
 #   skipped with a warning if no token is visible; a13 (Qwen 1.5B, ungated) still runs.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-TWAIN_ROOT="${TWAIN_ROOT:-$HOME/authors/twain}"
+# Authors live in-repo now (authors/<name>/ — see authors/README.md); absolute path because
+# WLM_ROOT is consumed by subprocesses whose cwd may differ.
+TWAIN_ROOT="${TWAIN_ROOT:-$(pwd)/authors/twain}"
 
 # run_matrix exits non-zero when any unit fails — but a unit "failing" is often a leakage-gate
 # veto, which is an expected research outcome (small-arm baselines parrot their exemplars),

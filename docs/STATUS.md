@@ -187,7 +187,8 @@ the pretraining-recall explanation.
 - **Contamination control:** base-model perplexity familiarity ratio **0.90** (author vs matched
   period prose) — mild familiarity; yet the untuned base attributes **0.000** and few-shot
   0.004. Whatever the base model remembers of Chesterton, it cannot *perform* him: the gains
-  are trained, not recalled. Private-author control arm (Table 4's second column) not yet run.
+  are trained, not recalled. The uncontaminated private-author control is descoped (§5);
+  Table 4's second column stays empty in this repository by design.
 - **Verifier sanity:** real-text attribution 0.714 constant across runs; injecting fake scrub
   placeholders into distractor text drops attribution to 0.0 (the verifier is not keying on
   placeholders); replacing placeholders with a neutral word raises real-text attribution to
@@ -229,9 +230,13 @@ the pretraining-recall explanation.
 
 ## 5. Future work (beyond the current matrix)
 
-- **Private control author** (Table 4, brief §3 — "not optional"): identical protocol under a
-  second `WLM_ROOT`; the Chesterton-vs-private gap isolates pretraining recall. Records from
-  that arm are never committed (see data policy below).
+- **Private control author — descoped from this project (2026-08-06).** The brief's private
+  control targeted the *product* question (does this work on an uncontaminated real person's
+  writing); this repository is now consolidated as pure research, and private-author work will
+  happen in a separate, private repository when the product track resumes. What substitutes for
+  it scientifically here: per-model contamination familiarity ratios (0.86–0.90, uncorrelated
+  with outcomes), base-model floors of 0.000, and replication across models (R8) and authors —
+  the paper states the residual limitation honestly rather than claiming the control ran.
 - **The informal register**: the dev corpus is all formal essays; the product's hard case is
   casual first-person prose. Requires a real user corpus; the pipeline stratifies by register
   and the per-register AV breakdown already exists.
@@ -252,10 +257,13 @@ the pretraining-recall explanation.
    the runs the same way (Spearman 0.897) and replicates the above-real-text anomaly. Residual:
    both instruments are neural embedders; no human check exists (a blind panel was descoped),
    and the paper should say so in limitations.
-3. **Chesterton is in pretraining.** Familiarity ratio 0.90 bounds the concern and the floor is
-   0.000, but the private-author control is the real answer and hasn't run.
-4. **Two seeds at the decisive cell** (third queued). Every ordering claim is labeled against
-   the current floor.
+3. **Every author studied is in pretraining.** Familiarity ratios (0.86–0.90) bound the
+   concern, floors are 0.000 everywhere, and the ratios don't order the outcomes across models
+   — but the definitive uncontaminated-author control is *descoped* to future private-repo
+   product work (§5), and the paper must state this as an open limitation, not a closed door.
+4. **Three seeds at two cells only.** The noise floor is measured (full-arm adapter
+   0.786 ± 0.007), but most cells carry a single seed; every ordering claim is labeled against
+   the measured floor.
 5. **The 80-token cap** on verbatim-run measurement means baseline copying is *understated*.
 
 ## 7. Reproduction and data policy

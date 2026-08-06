@@ -86,11 +86,13 @@ Undoing any of these looks like a simplification and is not one.
   the public-domain fixture corpus, the paid-for `pairs.jsonl`, and run *records*
   (`report.json`, `run_meta.json`, `gen.jsonl`, `runs/results/`) are committed for
   verifiability; weights, checkpoints, and deterministic intermediates never are. Run
-  `make check-data` before any commit touching `data/` or `runs/` — and if `data/raw/author`
-  ever holds a real person's writing, it must not ship regardless of the allow-list.
-  **Public-domain expansion authors** get the same treatment via `data/authors/<name>/`
-  (`scripts/snapshot_author.py`, per-author `.gitignore` allow-list — see
-  `data/authors/README.md`); private and research-use-only corpora (the BAC blogger) never do.
+  `make check-data` before any commit touching `data/`, `runs/`, or `authors/` — and if
+  `data/raw/author` ever holds a real person's writing, it must not ship regardless of the
+  allow-list. **Replication authors live in-repo as full trees** under `authors/<name>/`
+  (same layout and rules as the repo root; per-author `.gitignore` allow-list — see
+  `authors/README.md`). Research-use-only corpora (the BAC blogger) stay untracked, and
+  private-author work happens in a separate repository, never here (this repo is pure
+  research as of 2026-08-06; see docs/STATUS.md §5).
 
 ## Testing
 

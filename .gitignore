@@ -22,11 +22,27 @@ runs/**
 # deterministic functions of raw + seed, so they regenerate exactly and stay out.
 !data/interim/pairs.jsonl
 
-# --- Expansion authors (docs/EXPANSION.md): snapshots via scripts/snapshot_author.py ---------
+# --- Replication authors: full in-repo roots under authors/<name>/ --------------------------
+# Each author is a complete WLM_ROOT tree (authors/<name>/{data,runs}) following the same
+# provenance rules as the repo root: corpus + paid pairs + run records commit; deterministic
+# intermediates, processed splits, verifier pickles, weights and caches do not.
 # Allow-listed PER AUTHOR and never by wildcard: research-use-only corpora (the Blog
-# Authorship Corpus root) and private authors must never gain a committable path by default.
-# Each line here asserts "this author's corpus is public domain" — add one deliberately.
-!data/authors/twain/**
+# Authorship Corpus root) must never gain a committable path by default, and private-author
+# work happens in a separate repository, not here (docs/STATUS.md §5).
+authors/**
+!authors/**/
+!authors/README.md
+!authors/*/RUNBOOK.md
+!authors/twain/data/raw/author/**
+!authors/twain/data/raw/distractor/**
+!authors/twain/data/interim/pairs.jsonl
+!authors/twain/runs/**/report.json
+!authors/twain/runs/**/report.html
+!authors/twain/runs/**/run_meta.json
+!authors/twain/runs/**/gen.jsonl
+!authors/twain/runs/results/**
+!authors/twain/runs/matrix_state.json
+!authors/twain/runs/contamination.json
 
 # --- Run records: the science, never the weights ---------------------------------------------
 # report.json is the one record of a run (resolved config + metrics + wall-clock); gen.jsonl

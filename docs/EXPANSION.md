@@ -44,7 +44,7 @@ evidence, citing Schaeffer et al. 2023 explicitly.
 
 **Extra authors.** One command scaffolds a complete author root outside the repo:
 
-    python scripts/new_author.py ~/authors/<name> --register informal [--private]
+    python scripts/new_author.py authors/<name> --register informal   # in-repo root, see authors/README.md
 
 It writes a `RUNBOOK.md` with the corpus checklist and the exact per-author command sequence
 (phase-0, both verifier fits, matched sweep arms, `run_matrix`, per-root assembly). Two
@@ -107,8 +107,8 @@ models → Twain arms → assembly).
 - **Done:** a14 (see STATUS R6), seed 43, second instrument over all 29 runs (STATUS R7,
   `runs/results/instruments.md`), the checkpoint-trajectory evals (L-shaped in training time),
   15k/20k arms built (existing arms verified byte-identical), Twain corpus built + CPU
-  pipeline through scrub (`~/authors/twain`), BAC informal author built + CPU pipeline
-  through scrub (`~/authors/blogger`, blogger 1417798: 480 posts / 150k words, 20 blogger
+  pipeline through scrub (`authors/twain`), BAC informal author built + CPU pipeline
+  through scrub (`authors/blogger` — untracked by design, research-use-only license, blogger 1417798: 480 posts / 150k words, 20 blogger
   distractors — note 2,754 scrubbed PERSON entities, the PII-dense hard case).
 - **In flight:** Twain backtranslation (claude-haiku-4-5, ~$2).
 - **Needs a decision (paid, ~$2):** BAC blogger backtranslation, then both roots'

@@ -7,8 +7,8 @@ verified title, and the extraction is deterministic — so an extra-author resul
 from this script alone, exactly like `build_dev_corpus.py` (which stays frozen as the producer
 of the committed dev fixture).
 
-    python scripts/new_author.py ~/authors/twain --name "Mark Twain" --register informal
-    python scripts/build_author_corpus.py twain --root ~/authors/twain
+    python scripts/new_author.py authors/twain --name "Mark Twain" --register informal
+    python scripts/build_author_corpus.py twain --root authors/twain
 
 Why Twain is the first expansion author: he varies every axis the dev author holds fixed —
 informal first-person American prose (autobiography, travel narration, speeches) against
