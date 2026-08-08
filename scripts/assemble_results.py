@@ -70,8 +70,15 @@ def load_records(runs_dir: Path) -> list[dict[str, Any]]:
             "trainable": get(r, "training", "trainable", "trainable_params"),
             "wallclock": get(r, "training", "train_runtime_s"),
             "stage": get(r, "training", "stage"),
+            "generated_at": r.get("generated_at"),
         })
     return recs
+
+
+# Stated by the operator (2026-08-07); the run records predate environment capture, so the
+# device is not machine-readable from them. Every training time in these tables was measured
+# on this card. See docs/GPU_SETUP.md for the target-hardware envelope.
+HARDWARE = "1× NVIDIA L40S (48 GB, compute capability 8.9)"
 
 
 def attach_second_instrument(recs: list[dict], runs_dir: Path) -> dict | None:
@@ -113,8 +120,8 @@ def fmt(x, nd=4):
 # ------------------------------------------------------------------ tables
 def table1(recs, manifest) -> str:
     rows = ["| corpus (words) | docs | few-shot AV | adapter AV | AV₂ | Δ | verbatim leak | "
-            "entity/gen | sem. echo | stylometry ↓ | fluency Δ | gates |",
-            "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+            "entity/gen | sem. echo | stylometry ↓ | fluency Δ | train (s) | gates |",
+            "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     crossover = None
     for m in manifest:
         arm = m["arm"]
@@ -134,7 +141,8 @@ def table1(recs, manifest) -> str:
             f"{fmt(s and s['av'])} | {fmt(s and s.get('av2'))} | {fmt(delta)} | "
             f"{fmt(s and s['leak'])} | "
             f"{fmt(s and s['entities'])} | {fmt(s and s['echo'])} | {fmt(s and s['sty'])} | "
-            f"{fmt(s and s['flu'])} | {'PASS' if ok else ('FAIL' if s else '—')} |")
+            f"{fmt(s and s['flu'])} | {fmt(s and s['wallclock'], 0)} | "
+            f"{'PASS' if ok else ('FAIL' if s else '—')} |")
     tail = (f"\nCrossover (first arm where the adapter beats its own few-shot baseline with "
             f"both gates passing): **{crossover}**.\n" if crossover
             else "\nNo crossover: no arm beats its own baseline with both gates passing.\n")
@@ -177,8 +185,8 @@ def table2(recs, floor_av, rq2_arm) -> str:
 
 def table3(recs, manifest) -> str:
     rows = ["| corpus | stage | AV | AV₂ | verbatim leak | sem. echo | stylometry ↓ | "
-            "fluency Δ | gates |",
-            "|---|---|---|---|---|---|---|---|---|"]
+            "fluency Δ | train (s) | gates |",
+            "|---|---|---|---|---|---|---|---|---|---|"]
     any_b = False
     for m in manifest:
         arm = m["arm"]
@@ -193,16 +201,19 @@ def table3(recs, manifest) -> str:
             rows.append(f"| {m['actual_words']:,} | {stage} | {fmt(r['av'])} | "
                         f"{fmt(r.get('av2'))} | {fmt(r['leak'])} | "
                         f"{fmt(r['echo'])} | {fmt(r['sty'])} | {fmt(r['flu'])} | "
+                        f"{fmt(r['wallclock'], 0)} | "
                         f"{'PASS' if gates_ok(r) else 'FAIL'} |")
     a15 = by_rel(recs, "matrix/rq2x/a15_attn_dpo")
     if a15 is not None:
         rows.append(f"| full | attn-only A + B (a15) | {fmt(a15['av'])} | "
                     f"{fmt(a15.get('av2'))} | {fmt(a15['leak'])} | {fmt(a15['echo'])} | "
-                    f"{fmt(a15['sty'])} | {fmt(a15['flu'])} | "
+                    f"{fmt(a15['sty'])} | {fmt(a15['flu'])} | {fmt(a15['wallclock'], 0)} | "
                     f"{'PASS' if gates_ok(a15) else 'FAIL'} |")
     if not any_b:
         return "## Table 3 — stage (RQ3)\n\n_No Stage-B runs recorded yet._\n"
-    return ("## Table 3 — stage (RQ3)\n\n" + "\n".join(rows)
+    return ("## Table 3 — stage (RQ3)\n\n"
+            "Train (s) is the listed stage's own wall-clock; a Stage-B time excludes the "
+            "Stage-A run it starts from.\n\n" + "\n".join(rows)
             + "\n\nThe a15 interaction cell reads against attention-only Stage A (0.857): "
             "DPO's gain does **not** stack on the attention-only adapter.\n")
 
@@ -242,15 +253,16 @@ def table5_models(recs, runs_dir) -> str:
     if not model_dirs:
         return ""
     rows = ["| model | arm | few-shot AV | few-shot leak | adapter AV | AV₂ | adapter leak | "
-            "fluency Δ | contamination ratio |",
-            "|---|---|---|---|---|---|---|---|---|"]
+            "fluency Δ | train (s) | contamination ratio |",
+            "|---|---|---|---|---|---|---|---|---|---|"]
     # Qwen2.5-3B reference rows come from the main sweep so the table is self-contained.
     for arm in ("10k", "25k", "full"):
         b = by_rel(recs, f"sweep/{arm}/baseline")
         s = by_rel(recs, f"sweep/{arm}/stage_a")
         rows.append(f"| Qwen2.5-3B (reference) | {arm} | {fmt(b and b['av'])} | "
                     f"{fmt(b and b['leak'])} | {fmt(s and s['av'])} | {fmt(s and s.get('av2'))} | "
-                    f"{fmt(s and s['leak'])} | {fmt(s and s['flu'])} | 0.8996 |")
+                    f"{fmt(s and s['leak'])} | {fmt(s and s['flu'])} | "
+                    f"{fmt(s and s['wallclock'], 0)} | 0.8996 |")
     for md in model_dirs:
         cont = md / "contamination.json"
         ratio = (json.loads(cont.read_text()).get("familiarity_ratio")
@@ -263,7 +275,8 @@ def table5_models(recs, runs_dir) -> str:
             s = by_rel(recs, f"matrix/models/{md.name}/{arm}/stage_a")
             rows.append(f"| {md.name} | {arm} | {fmt(b and b['av'])} | {fmt(b and b['leak'])} | "
                         f"{fmt(s and s['av'])} | {fmt(s and s.get('av2'))} | "
-                        f"{fmt(s and s['leak'])} | {fmt(s and s['flu'])} | {fmt(ratio)} |")
+                        f"{fmt(s and s['leak'])} | {fmt(s and s['flu'])} | "
+                        f"{fmt(s and s['wallclock'], 0)} | {fmt(ratio)} |")
     return ("## Table 5 — cross-model replication\n\n"
             "Same corpus, splits, verifier and recipe; only the base model changes. Each model "
             "gets its own few-shot floor and contamination probe.\n\n" + "\n".join(rows) + "\n")
@@ -290,6 +303,43 @@ def noise_floor(recs, manifest) -> str:
                    "Until this section is populated, report every ranking as provisional._")
     out.append("\nAny between-condition difference smaller than the ranges above is "
                "**within noise** and must be reported as a tie (brief §8).")
+    return "\n".join(out) + "\n"
+
+
+def provenance(recs) -> str:
+    """Compute cost and run chronology, from the wall-clock and timestamp in every record."""
+    def hms(secs: float) -> str:
+        return f"{secs / 3600:.1f} h" if secs >= 3600 else f"{secs / 60:.0f} min"
+
+    def group(rel: str) -> str:
+        p = rel.split("/")
+        return "/".join(p[:2]) if p[0] == "matrix" else p[0]
+
+    groups: dict[str, dict] = {}
+    for r in recs:
+        g = groups.setdefault(group(r["rel"]), {"n": 0, "secs": 0.0, "stamps": []})
+        g["n"] += 1
+        g["secs"] += r["wallclock"] or 0.0
+        if r["generated_at"]:
+            g["stamps"].append(r["generated_at"])
+    total = sum(g["secs"] for g in groups.values())
+    stamps = sorted(s for g in groups.values() for s in g["stamps"])
+
+    out = ["## Compute & provenance", "",
+           f"Hardware: {HARDWARE}. All wall-clock numbers in these tables were measured on "
+           "this card (`training.train_runtime_s` in each record; eval-only records train "
+           "nothing).", "",
+           f"Total recorded training wall-clock: **{hms(total)}** across "
+           f"{sum(1 for r in recs if r['wallclock'])} trained runs. Records span "
+           f"{stamps[0][:10]} → {stamps[-1][:10]}." if stamps else "", "",
+           "| phase | records | trained | GPU wall-clock | first record | last record |",
+           "|---|---|---|---|---|---|"]
+    for name, g in sorted(groups.items(), key=lambda kv: min(kv[1]["stamps"] or ["~"])):
+        st = sorted(g["stamps"])
+        trained = sum(1 for r in recs if group(r["rel"]) == name and r["wallclock"])
+        out.append(f"| {name} | {g['n']} | {trained} | "
+                   f"{hms(g['secs']) if g['secs'] else '—'} | "
+                   f"{st[0][:16] if st else '—'} | {st[-1][:16] if st else '—'} |")
     return "\n".join(out) + "\n"
 
 
@@ -494,6 +544,7 @@ def main() -> int:
                manifest),
         table5_models(recs, runs_dir),
         noise_floor(recs, manifest),
+        provenance(recs),
     ]
     (out_dir / "tables.md").write_text("\n".join(sections), encoding="utf-8")
 

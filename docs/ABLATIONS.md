@@ -28,16 +28,16 @@ one-variable diff from the Stage-A recipe, so a delta is attributable.
 | — | `stage_a.yaml` | (reference recipe) | | | | | | | | all-linear r16 DoRA NEFTune5 |
 | a01 | `a01_attention_only` | q,k,v,o only | | | | | | | | expect: cadence yes, word choice no |
 | a02 | `a02_mlp_only` | gate,up,down only | | | | | | | | expect: idiom yes, rhythm no |
-| a03 | `a03_rank8` | r=8 | | | | | | | | often matches r16 with less overfit |
-| a04 | `a04_rank32` | r=32 + rsLoRA | | | | | | | | watch leak, not just val loss |
+| ~~03~~ | `a03_rank8` | r=8 | | | | | | | | often matches r16 with less overfit |
+| a~~04~~ | `a04_rank32` | r=32 + rsLoRA | | | | | | | | watch leak, not just val loss |
 | a05 | `a05_split_rank_low_mlp` | attn r16 / MLP r8 | | | | | | | | the prescribed fix if a14 shows leak |
-| a06 | `a06_no_dora` | plain LoRA | | | | | | | | isolates DoRA's contribution |
-| a07 | `a07_no_neftune` | NEFTune off | | | | | | | | should cost something at this data size |
-| a08 | `a08_no_raw_mix` | raw mix 0.0 | | | | | | | | does the raw mix buy cadence or leak? |
-| a09 | `a09_heavy_raw_mix` | raw mix 0.4 | | | | | | | | expect better cadence AND worse leak |
-| a10 | `a10_upper_layers_only` | layers 12–35 | | | | | | | | fewer params, less overfit |
-| a11 | `a11_loraplus` | LoRA+ ratio 4.0 | | | | | | | | near-free if it helps |
-| a12 | `a12_embeddings` | embed/lm_head saved | | | | | | | | only for distinctive tokens; overfits |
+| ~~a06~~ | `a06_no_dora` | plain LoRA | | | | | | | | isolates DoRA's contribution |
+| ~~a07~~ | `a07_no_neftune` | NEFTune off | | | | | | | | should cost something at this data size |
+| ~~a08~~ | `a08_no_raw_mix` | raw mix 0.0 | | | | | | | | does the raw mix buy cadence or leak? |
+| ~~a09~~ | `a09_heavy_raw_mix` | raw mix 0.4 | | | | | | | | expect better cadence AND worse leak |
+| ~~a10~~ **[interesting to try]** | `a10_upper_layers_only` | layers 12–35 | | | | | | | | fewer params, less overfit |
+| ~~a11~~ | `a11_loraplus` | LoRA+ ratio 4.0 | | | | | | | | near-free if it helps |
+| ~~a12~~| `a12_embeddings` | embed/lm_head saved | | | | | | | | only for distinctive tokens; overfits |
 | a13 | `a13_1p5b` | Qwen2.5-1.5B | | | | | | | | iteration speed; not a headline number |
 | a14 | `a14_no_scrubbing` | entity scrubbing off | | | | | | | | **DIAGNOSTIC — do not ship this adapter** |
 
